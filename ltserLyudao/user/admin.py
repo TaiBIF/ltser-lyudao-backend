@@ -10,7 +10,7 @@ class MyUserAdmin(admin.ModelAdmin):
         return obj.is_verified
 
     def get_name(self, obj):
-        return obj.first_name+obj.last_name
+        return obj.last_name + obj.first_name
 
     def get_last_login(self, obj):
         return obj.last_login
