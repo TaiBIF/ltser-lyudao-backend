@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import MyUser
 class MyUserAdmin(admin.ModelAdmin):
-    list_display = ('get_email', 'get_name', 'get_verified', 'get_last_login')
+    list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
     def get_email(self, obj):
         return obj.email
