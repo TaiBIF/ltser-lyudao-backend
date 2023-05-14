@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MyUser
+from .models import MyUser, Contact
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -20,4 +20,9 @@ class MyUserAdmin(admin.ModelAdmin):
     get_name.short_description = 'NAME'
     get_last_login.short_description = 'LAST LOGIN'
 
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('id', 'type', 'name', 'unit', 'content', 'contact')
+    ordering = ['id']
+    
 admin.site.register(MyUser, MyUserAdmin)
+admin.site.register(Contact, ContactAdmin)

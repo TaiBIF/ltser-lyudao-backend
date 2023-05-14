@@ -58,3 +58,22 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     def update_last_login(self):
         self.last_login = timezone.now()
         self.save(update_fields=['last_login'])
+
+
+class Contact(models.Model):
+    TYPE_CHOICES = [
+        ('leader', '計畫總主持人'),
+        ('executor', '計畫執行人員'),
+        ('other', '其他人員'),
+    ]
+
+    type = models.CharField(max_length=10, choices=TYPE_CHOICES)
+    name = models.CharField(max_length=50, blank=False, null=False)
+    unit = models.CharField(max_length=50, blank=False, null=False)
+    content = models.CharField(max_length=50, blank=False, null=False)
+    contact = models.CharField(max_length=50, blank=False, null=False)
+    image = models.ImageField(upload_to='images', blank=False, null=False)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    class Meta:
+        db_table = 'Contact'
