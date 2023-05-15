@@ -86,3 +86,23 @@ class Literature(models.Model):
 
     class Meta:
         db_table = 'Literature'
+
+
+class QATag(models.Model):
+    title = models.CharField(max_length=50, blank=False, null=False)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.title}"
+    class Meta:
+        db_table = 'QATag'
+
+class QuestionAnswer(models.Model):
+    type = models.ForeignKey(QATag, on_delete=models.CASCADE)
+    question = models.CharField(max_length=1000, blank=False, null=False)
+    answer = models.TextField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'QuestionAnswer'
