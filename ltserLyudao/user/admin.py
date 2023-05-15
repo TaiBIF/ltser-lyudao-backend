@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MyUser, Contact
+from .models import MyUser, Contact, Literature
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -23,6 +23,11 @@ class MyUserAdmin(admin.ModelAdmin):
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'name', 'unit', 'content', 'contact')
     ordering = ['id']
+
+class LiteratureAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')
+    ordering = ['id']
     
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Contact, ContactAdmin)
+admin.site.register(Literature, LiteratureAdmin)

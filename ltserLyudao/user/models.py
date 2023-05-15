@@ -77,3 +77,12 @@ class Contact(models.Model):
     updated_at = models.DateField(auto_now=True)
     class Meta:
         db_table = 'Contact'
+
+
+class Literature(models.Model):
+    name = models.CharField(max_length=500, blank=False, null=False)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'Literature'
