@@ -5,13 +5,13 @@ from django.utils import timezone
 
 class MyUserManager(BaseUserManager):
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, password=None, **extra_fields):
         if username is None:
             raise TypeError('創建使用者必須輸入 username')
         if email is None:
             raise TypeError('創建使用者必須輸入 email')
 
-        user = self.model(username=username, email=self.normalize_email(email))
+        user = self.model(username=username, email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save()
         return user

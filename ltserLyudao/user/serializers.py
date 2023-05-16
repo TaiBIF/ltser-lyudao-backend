@@ -1,5 +1,60 @@
 from rest_framework import serializers
-from .models import Contact, Literature
+from .models import Contact, Literature, MyUser
+from django.utils.translation import gettext
+from rest_framework.validators import UniqueValidator
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[UniqueValidator(queryset=MyUser.objects.all())]
+    )
+    password = serializers.CharField(
+        max_length=68,
+        min_length=8,
+        write_only=True,
+        error_messages={
+            'min_length': gettext('密碼至少8位數'),
+            'required': gettext('密碼是必填'),
+        }
+    )
+    password2 = serializers.CharField(write_only=True, required=True)
+    first_name = serializers.CharField(required=True, error_messages={
+        'required': gettext('需要填入名')
+    })
+    last_name = serializers.CharField(required=True, error_messages={
+        'required': gettext('需要填入姓')
+    })
+    class Meta:
+        model = MyUser
+        fields = ('username', 'email', 'password', 'password2', 'first_name', 'last_name')
+
+    @staticmethod
+    def validate_password(value):
+        # 自定义验证逻辑
+        has_letter = False
+        has_number = False
+
+        for char in value:
+            if char.isalpha():
+                has_letter = True
+            elif char.isdigit():
+                has_number = True
+
+        if not (has_letter and has_number):
+            raise serializers.ValidationError(gettext('密碼必須包含至少一個字母和一個數字'))
+
+        return value
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"message": "密碼欄位不相符"})
+
+        return attrs
+
+    def create(self, validated_data):
+        validated_data.pop('password2')
+        return MyUser.objects.create_user(**validated_data)
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
