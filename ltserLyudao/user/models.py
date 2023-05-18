@@ -106,3 +106,34 @@ class QuestionAnswer(models.Model):
 
     class Meta:
         db_table = 'QuestionAnswer'
+
+class NewsTag(models.Model):
+    title = models.CharField(max_length=50, blank=False, null=False)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    def __str__(self):
+        return f"{self.title}"
+    class Meta:
+        db_table = 'NewsTag'
+
+
+
+class News(models.Model):
+    type = models.ManyToManyField('NewsTag', blank=True)
+    user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    content = models.TextField()
+    newsDate = models.DateField()
+    image = models.ImageField(upload_to='images', blank=True, null=True)
+    #attachments = models.FileField(upload_to='attachments', blank=True, null=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    class Meta:
+        db_table = 'News'
+
+class Attachment(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='attachments')
+
+    class Meta:
+        db_table = 'Attachment'
