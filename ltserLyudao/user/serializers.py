@@ -1,8 +1,10 @@
 from rest_framework import serializers
-from .models import Contact, Literature, MyUser, QATag
+from .models import Contact, Literature, MyUser, QATag, QuestionAnswer
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
-
+from drf_yasg.openapi import Schema, TYPE_STRING
+from drf_yasg.utils import swagger_serializer_method
+from drf_yasg import openapi
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -79,3 +81,28 @@ class QATagSerializer(serializers.ModelSerializer):
     class Meta:
         model = QATag
         fields = ['id', 'title', 'created_at', 'updated_at']
+
+class QuestionAnswerSerializer(serializers.ModelSerializer):
+    type_id = serializers.PrimaryKeyRelatedField(
+        queryset=QATag.objects.all(),
+        source='type',
+        write_only=True
+    )
+    type = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = QuestionAnswer
+        fields = ['id', 'type_id', 'type', 'question', 'answer', 'created_at', 'updated_at']
+
+    def get_type(self, obj):
+        return f"{obj.type.title}"
+
+    def create(self, validated_data):
+        type_instance = validated_data.pop('type')
+        validated_data['type'] = type_instance
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        type_instance = validated_data.pop('type')
+        validated_data['type'] = type_instance
+        return super().update(instance, validated_data)
