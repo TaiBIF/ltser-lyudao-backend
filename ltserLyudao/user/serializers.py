@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contact, Literature, MyUser
+from .models import Contact, Literature, MyUser, QATag
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 
@@ -74,3 +74,8 @@ class LiteratureSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Literature.objects.create(**validated_data)
+
+class QATagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QATag
+        fields = ['id', 'title', 'created_at', 'updated_at']
