@@ -86,16 +86,11 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         queryset=QATag.objects.all(),
         source='type',
-        write_only=True
     )
-    type = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = QuestionAnswer
-        fields = ['id', 'type_id', 'type', 'question', 'answer', 'created_at', 'updated_at']
-
-    def get_type(self, obj):
-        return f"{obj.type.title}"
+        fields = ['id', 'type_id', 'question', 'answer', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         type_instance = validated_data.pop('type')
