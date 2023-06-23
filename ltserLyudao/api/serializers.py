@@ -18,6 +18,7 @@ class WeatherDetailSerializer(serializers.Serializer):
 
     class SeasonalSerializer(serializers.Serializer):
         season = serializers.CharField()
+        airTemperature = serializers.FloatField(allow_null=True)
         precipitation = serializers.FloatField(allow_null=True)
 
     seasonal = SeasonalSerializer(many=True)
