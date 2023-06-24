@@ -24,3 +24,20 @@ class WeatherDetailSerializer(serializers.Serializer):
     seasonal = SeasonalSerializer(many=True)
 
 
+class SeaTemperatureTimeRangeSerializer(serializers.Serializer):
+    site = serializers.CharField(max_length=255)
+    start = serializers.DateField()
+    end = serializers.DateField()
+
+class SeaTemperatureDetailSerializer(serializers.Serializer):
+    site = serializers.CharField()
+    year = serializers.CharField()
+    annual = serializers.DictField(child=serializers.FloatField())
+
+    class SeasonalSerializer(serializers.Serializer):
+        season = serializers.CharField()
+        seaTemperature = serializers.FloatField(allow_null=True)
+
+    seasonal = SeasonalSerializer(many=True)
+
+
