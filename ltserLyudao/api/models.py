@@ -77,3 +77,37 @@ class SeaTemperatureYZH2023(BaseSeaTemperatureData):
 class SeaTemperatureZP2023(BaseSeaTemperatureData):
     class Meta:
         db_table = 'SeaTemperatureZP2023'
+
+class CoralData(models.Model):
+    dataID = models.CharField(max_length=50)
+    eventID = models.CharField(max_length=50)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    eventDate = models.DateTimeField()
+    locationID = models.CharField(max_length=50)
+    verbatimLocality = models.CharField(max_length=50)
+    locality = models.CharField(max_length=50)
+    verbatimDepth = models.CharField(max_length=50)
+    decimalLatitude = models.DecimalField(max_digits=10, decimal_places=8)
+    decimalLongitude = models.DecimalField(max_digits=10, decimal_places=8)
+    replicate = models.IntegerField()
+    scientificName = models.CharField(max_length=50)
+    taxonRank = models.CharField(max_length=50)
+    family = models.CharField(max_length=50)
+    identificationRemarks = models.CharField(max_length=50, blank=True, null=True)
+    measurementType = models.CharField(max_length=50)
+    measurementValue = models.FloatField()
+    measurementUnit = models.CharField(max_length=50)
+    individualCount = models.IntegerField()
+    recordedBy = models.CharField(max_length=50)
+    identifiedBy = models.CharField(max_length=50)
+    samplingProtocol = models.CharField(max_length=50)
+    sampleSizeValue = models.FloatField()
+    sampleSizeUnit = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'CoralData'

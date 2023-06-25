@@ -41,3 +41,7 @@ class SeaTemperatureDetailSerializer(serializers.Serializer):
     seasonal = SeasonalSerializer(many=True)
 
 
+class CoralDetailSerializer(serializers.Serializer):
+    site = serializers.CharField()
+    year = serializers.CharField()
+    count = serializers.IntegerField()
