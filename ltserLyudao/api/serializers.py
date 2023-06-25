@@ -45,3 +45,7 @@ class CoralDetailSerializer(serializers.Serializer):
     site = serializers.CharField()
     year = serializers.CharField()
     count = serializers.IntegerField()
+
+class PlantDetailSerializer(serializers.Serializer):
+    season = serializers.CharField()
+    count = serializers.IntegerField()

@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperatureTimeRangeView, GetSeaTemperatureDetailView, GetCoralDetailView
+from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperatureTimeRangeView, \
+    GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -8,4 +9,5 @@ urlpatterns = [
          name='get_sea_temperature_time_range'),
     path('data/sea-temperature/detail/', GetSeaTemperatureDetailView.as_view(), name='get_sea_temperature_detail'),
     path('data/coral-rec/detail/', GetCoralDetailView.as_view(), name='get_coral_detail'),
+    path('data/plant/detail/', GetPlantDetailView.as_view(), name='get_plant_detail')
 ]

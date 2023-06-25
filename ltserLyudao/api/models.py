@@ -111,3 +111,34 @@ class CoralData(models.Model):
 
     class Meta:
         db_table = 'CoralData'
+
+class PlantData(models.Model):
+    dataID = models.CharField(max_length=50)
+    eventID = models.CharField(max_length=50)
+    eventDate = models.DateTimeField()
+    locationID = models.IntegerField()
+    habitat = models.CharField(max_length=50)
+    samplingProtocol = models.CharField(max_length=50)
+    sampleSizeValue = models.IntegerField()
+    sampleSizeUnit = models.CharField(max_length=50)
+    decimalLatitude = models.FloatField()
+    decimalLongitude = models.FloatField()
+    coordinatePrecision = models.FloatField()
+    verbatimElevation = models.CharField(max_length=50)
+    family = models.CharField(max_length=50)
+    scientificName = models.CharField(max_length=50)
+    vernacularName = models.CharField(max_length=50)
+    taxonRank = models.CharField(max_length=50)
+    recordedBy = models.CharField(max_length=50)
+    identifiedBy = models.CharField(max_length=50)
+    measurementType = models.CharField(max_length=50)
+    measurementValue = models.FloatField()
+    measurementUnit = models.CharField(max_length=50)
+    layer = models.CharField(max_length=50)
+    measurementDeterminedDate = models.DateTimeField()
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'PlantData'
