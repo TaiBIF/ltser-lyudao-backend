@@ -142,3 +142,46 @@ class PlantData(models.Model):
 
     class Meta:
         db_table = 'PlantData'
+
+
+from django.db import models
+
+class BaseBirdNetSoundData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    species_list = models.CharField(max_length=255, null=True, blank=True)  # Use None for no species
+    scientificName = models.CharField(max_length=255)
+    taxonRank = models.CharField(max_length=255)
+    vernacularName = models.CharField(max_length=255)
+    model = models.CharField(max_length=255)
+    time_begin = models.IntegerField()
+    time_end = models.IntegerField()
+    confidence = models.FloatField()
+    associatedMedia = models.CharField(max_length=255)
+    week = models.IntegerField()
+    overlap = models.IntegerField()
+    sensitivity = models.IntegerField()
+    min_conf = models.FloatField()
+    measurementDeterminedDate = models.DateTimeField()
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        abstract = True
+
+class BirdNetSoundBS2023(BaseBirdNetSoundData):
+    class Meta:
+        db_table = 'BirdNetSoundBS2023'
+
+class BirdNetSoundGST2023(BaseBirdNetSoundData):
+    class Meta:
+        db_table = 'BirdNetSoundGST2023'
+
+class BirdNetSoundLH2023(BaseBirdNetSoundData):
+    class Meta:
+        db_table = 'BirdNetSoundLH2023'
+
+class BirdNetSoundYZH2023(BaseBirdNetSoundData):
+    class Meta:
+        db_table = 'BirdNetSoundYZH2023'

@@ -49,3 +49,13 @@ class CoralDetailSerializer(serializers.Serializer):
 class PlantDetailSerializer(serializers.Serializer):
     season = serializers.CharField()
     count = serializers.IntegerField()
+
+class BirdNetSoundDetailSerializer(serializers.Serializer):
+    site = serializers.CharField()
+    year = serializers.CharField()
+
+    class SeasonalSerializer(serializers.Serializer):
+        season = serializers.CharField()
+        count = serializers.IntegerField()
+
+    seasonal = SeasonalSerializer(many=True)

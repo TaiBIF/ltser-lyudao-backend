@@ -28,6 +28,7 @@ for file_name in os.listdir(folder_path):
         df.to_csv(f"{file_name}_post_process.csv", index=False, encoding='utf-8')
 """
 
+"""
 input_file = './plant.csv'
 data = pd.read_csv(input_file, encoding='utf-8')
 data.insert(0, "id", range(1, len(data) + 1))
@@ -36,3 +37,16 @@ data['eventDate'] = data['eventDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
 data['measurementDeterminedDate'] = pd.to_datetime(data['measurementDeterminedDate'])
 data['measurementDeterminedDate'] = data['measurementDeterminedDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
 data.to_csv('plant_post_process.csv', index=False, encoding='utf-8')
+"""
+
+folder_path = 'birdNetSound'
+
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(folder_path, file_name)
+        df = pd.read_csv(file_path)
+        #df.replace(['', pd.NA, np.nan], np.nan, inplace=True)
+        df.insert(0, "id", range(1, len(df) + 1))
+        df['measurementDeterminedDate'] = pd.to_datetime(df['measurementDeterminedDate'])
+        df['measurementDeterminedDate'] = df['measurementDeterminedDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
+        df.to_csv(f"{file_name}_post_process.csv", index=False, encoding='utf-8')
