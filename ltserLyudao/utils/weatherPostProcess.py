@@ -39,6 +39,7 @@ data['measurementDeterminedDate'] = data['measurementDeterminedDate'].dt.strftim
 data.to_csv('plant_post_process.csv', index=False, encoding='utf-8')
 """
 
+"""
 folder_path = 'birdNetSound'
 
 for file_name in os.listdir(folder_path):
@@ -50,3 +51,11 @@ for file_name in os.listdir(folder_path):
         df['measurementDeterminedDate'] = pd.to_datetime(df['measurementDeterminedDate'])
         df['measurementDeterminedDate'] = df['measurementDeterminedDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
         df.to_csv(f"{file_name}_post_process.csv", index=False, encoding='utf-8')
+"""
+
+input_file = './fish_diversity_2023_Spring.csv'
+data = pd.read_csv(input_file, encoding='utf-8')
+data.insert(0, "id", range(1, len(data) + 1))
+data['eventDate'] = pd.to_datetime(data['eventDate'])
+data['eventDate'] = data['eventDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
+data.to_csv('fish_diversity_2023_Srping_post_process.csv', index=False, encoding='utf-8')

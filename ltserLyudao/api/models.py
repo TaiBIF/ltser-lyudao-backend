@@ -185,3 +185,35 @@ class BirdNetSoundLH2023(BaseBirdNetSoundData):
 class BirdNetSoundYZH2023(BaseBirdNetSoundData):
     class Meta:
         db_table = 'BirdNetSoundYZH2023'
+
+
+from django.db import models
+
+class FishData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    eventDate =  models.DateTimeField()
+    season = models.CharField(max_length=255)
+    year = models.IntegerField()
+    region = models.CharField(max_length=255)
+    locationID = models.CharField(max_length=255)
+    locality = models.CharField(max_length=255)
+    verbatimDepth = models.CharField(max_length=255)
+    replicate = models.IntegerField()
+    sampleSizeValue = models.IntegerField()
+    sampleSizeUnit = models.CharField(max_length=255)
+    fieldNotes = models.CharField(max_length=255)
+    recordedBy = models.CharField(max_length=255)
+    family = models.CharField(max_length=255)
+    ScientificName = models.CharField(max_length=255)
+    taxonRank = models.CharField(max_length=255)
+    bodyLength = models.FloatField()
+    samplingProtocol = models.CharField(max_length=255)
+    individualCount = models.IntegerField()
+    identifiedBy = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'FishData'

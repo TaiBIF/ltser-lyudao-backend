@@ -59,3 +59,13 @@ class BirdNetSoundDetailSerializer(serializers.Serializer):
         count = serializers.IntegerField()
 
     seasonal = SeasonalSerializer(many=True)
+
+class FishDetailSerializer(serializers.Serializer):
+    site = serializers.CharField()
+    year = serializers.CharField()
+
+    class SeasonalSerializer(serializers.Serializer):
+        season = serializers.CharField()
+        count = serializers.IntegerField()
+
+    seasonal = SeasonalSerializer(many=True)
