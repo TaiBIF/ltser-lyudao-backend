@@ -5,6 +5,8 @@ from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
 from drf_yasg.utils import swagger_serializer_method
 from drf_yasg import openapi
+from django.apps import apps
+from django.db import models
 
 class WeatherTimeRangeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,7 +83,3 @@ class ZoobenthosDataSerializer(serializers.Serializer):
     seasonal = SeasonalSerializer(many=True)
 
 
-
-class TableFieldsSerializer(serializers.Serializer):
-    table = serializers.CharField()
-    fields = serializers.ListField(child=serializers.CharField())
