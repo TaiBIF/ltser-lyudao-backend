@@ -49,3 +49,10 @@ Thumbs.db
 *.wmv
 
 /ltserLyudao/.env
+/ltserLyudao/utils/birdNetSound/
+/ltserLyudao/utils/coral/
+/ltserLyudao/utils/fish/
+/ltserLyudao/utils/plant/
+/ltserLyudao/utils/seaTemperature/
+/ltserLyudao/utils/weather/
+/ltserLyudao/utils/zoobenthos/

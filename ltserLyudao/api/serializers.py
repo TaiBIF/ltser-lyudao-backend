@@ -79,3 +79,9 @@ class ZoobenthosDataSerializer(serializers.Serializer):
         count = serializers.IntegerField()
 
     seasonal = SeasonalSerializer(many=True)
+
+
+
+class TableFieldsSerializer(serializers.Serializer):
+    table = serializers.CharField()
+    fields = serializers.ListField(child=serializers.CharField())

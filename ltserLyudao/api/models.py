@@ -144,8 +144,6 @@ class PlantData(models.Model):
         db_table = 'PlantData'
 
 
-from django.db import models
-
 class BaseBirdNetSoundData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
