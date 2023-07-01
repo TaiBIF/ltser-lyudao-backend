@@ -187,8 +187,6 @@ class BirdNetSoundYZH2023(BaseBirdNetSoundData):
         db_table = 'BirdNetSoundYZH2023'
 
 
-from django.db import models
-
 class FishData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
@@ -217,3 +215,35 @@ class FishData(models.Model):
 
     class Meta:
         db_table = 'FishData'
+
+class ZoobenthosData(models.Model):
+    dataID = models.CharField(max_length=100)
+    eventID = models.CharField(max_length=100)
+    eventDate = models.DateField()
+    season = models.CharField(max_length=50)
+    day_or_night = models.CharField(max_length=50)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    river = models.CharField(max_length=100)
+    locationID = models.CharField(max_length=10)
+    surveyObjectID = models.CharField(max_length=10)
+    surveyObject = models.CharField(max_length=100)
+    phylum = models.CharField(max_length=100)
+    phylum_c = models.CharField(max_length=100)
+    class_name = models.CharField(max_length=100)  # 使用 class_name 作為欄位名稱
+    class_c = models.CharField(max_length=100)
+    family = models.CharField(max_length=100, null=True)
+    family_c = models.CharField(max_length=100, null=True)
+    scientificName = models.CharField(max_length=100, null=True)
+    vernacularName = models.CharField(max_length=100, null=True)
+    taxonRank = models.CharField(max_length=50, null=True)
+    individualCount = models.IntegerField()
+    samplingProtocol = models.CharField(max_length=100, null=True)
+    habitat = models.CharField(max_length=100, null=True)
+    informationWithheld = models.CharField(max_length=100, null=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'ZoobenthosData'

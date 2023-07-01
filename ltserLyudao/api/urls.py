@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperatureTimeRangeView, \
-    GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, GetFishDetailView
+    GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, \
+    GetFishDetailView, GetZoobenthosDetailView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -11,5 +12,6 @@ urlpatterns = [
     path('data/coral-rec/detail/', GetCoralDetailView.as_view(), name='get_coral_detail'),
     path('data/plant/detail/', GetPlantDetailView.as_view(), name='get_plant_detail'),
     path('data/bird-net-sound/detail/', GetBirdNetSoundDetailView.as_view(), name='get_bird_net_sound_detail'),
-    path('data/fish-div/detail/', GetFishDetailView.as_view(), name='get_fish_detail')
+    path('data/fish-div/detail/', GetFishDetailView.as_view(), name='get_fish_detail'),
+    path('data/zoobenthos/detail/', GetZoobenthosDetailView.as_view(), name='get_zoobenthos_detail')
 ]

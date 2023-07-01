@@ -53,9 +53,17 @@ for file_name in os.listdir(folder_path):
         df.to_csv(f"{file_name}_post_process.csv", index=False, encoding='utf-8')
 """
 
-input_file = './fish_diversity_2023_Spring.csv'
+"""input_file = './fish_diversity_2023_Spring.csv'
 data = pd.read_csv(input_file, encoding='utf-8')
 data.insert(0, "id", range(1, len(data) + 1))
 data['eventDate'] = pd.to_datetime(data['eventDate'])
 data['eventDate'] = data['eventDate'].dt.strftime("%Y-%m-%d %H:%M:%S")
-data.to_csv('fish_diversity_2023_Srping_post_process.csv', index=False, encoding='utf-8')
+data.to_csv('fish_diversity_2023_Srping_post_process.csv', index=False, encoding='utf-8')"""
+
+input_file = './zoobenthos.csv'
+data = pd.read_csv(input_file, encoding='utf-8')
+data = data.rename(columns={'class': 'class_name'})
+data.insert(0, "id", range(1, len(data) + 1))
+data['eventDate'] = pd.to_datetime(data['eventDate'], format="%Y-%m-%d")
+data['eventDate'] = data['eventDate'].dt.strftime("%Y-%m-%d")
+data.to_csv('zoobenthos_post_process.csv', index=False, encoding='utf-8')
