@@ -25,6 +25,16 @@ class WeatherDetailSerializer(serializers.Serializer):
 
     seasonal = SeasonalSerializer(many=True)
 
+class WeatherChartSerializer(serializers.ModelSerializer):
+    time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WeatherData
+        fields = ('time', 'windSpeed', 'windDirection', 'precipitation', 'airTemperature')
+
+    def get_time(self, obj):
+        return obj.eventDate.strftime('%Y/%m/%d %H:%M:%S')
+
 
 class SeaTemperatureTimeRangeSerializer(serializers.Serializer):
     site = serializers.CharField(max_length=255)
