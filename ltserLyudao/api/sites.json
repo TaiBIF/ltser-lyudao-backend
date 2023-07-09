@@ -1,0 +1,830 @@
+[
+    {
+      "site": "A1",
+      "items": ["weather"]
+    },
+    {
+      "site": "CK",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "DBS",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "GG",
+      "items": ["sea-temperature","coral-rec", "fish-div"]
+    },
+    {
+      "site": "GW",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "NL",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "SL",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "WQG",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "YZH",
+      "items": ["sea-temperature", "coral-rec", "zoobenthos", "bird-net-sound", "fish-div"]
+    },
+    {
+      "site": "ZP",
+      "items": ["sea-temperature", "coral-rec", "fish-div"]
+    },
+    {
+      "site": "DMM",
+      "items": ["zoobenthos"]
+    },
+    {
+      "site": "BS",
+      "items": ["bird-net-sound"]
+    },
+    {
+      "site": "GST",
+      "items": ["bird-net-sound"]
+    },
+    {
+      "site": "LH",
+      "items": ["bird-net-sound"]
+    },
+    {
+      "site": "KZY",
+      "items": ["fish-div"]
+    },
+    {
+        "site": "1",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "2",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "3",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "4",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "5",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "6",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "7",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "8",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "9",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "10",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "11",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "13",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "14",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "15",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "19",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "20",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "21",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "22",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "25",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "26",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "31",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "32",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "33",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "35",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "36",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "37",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "38",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "39",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "40",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "41",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "42",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "44",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "45",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "46",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "47",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "49",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "50",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "53",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "54",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "55",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "56",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "57",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "58",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "59",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "60",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "61",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "62",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "63",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "65",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "67",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "69",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "70",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "71",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "72",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "73",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "74",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "75",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "76",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "78",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "79",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "80",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "81",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "82",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "83",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "84",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "85",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "86",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "87",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "88",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "89",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "90",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "91",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "92",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "93",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "94",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "95",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "96",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "97",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "98",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "99",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "100",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "101",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "102",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "103",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "104",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "106",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "107",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "108",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "109",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "111",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "112",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "113",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "114",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "115",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "116",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "118",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "119",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "120",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "121",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "123",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "124",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "125",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "128",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "129",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "130",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "131",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "136",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "137",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "138",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "139",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "140",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "141",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "142",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "143",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "144",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "145",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "147",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "148",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "149",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "150",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "151",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "152",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "153",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "154",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "155",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "156",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "157",
+        "items": [
+            "plant"
+        ]
+    },
+    {
+        "site": "158",
+        "items": [
+            "plant"
+        ]
+    }
+]
