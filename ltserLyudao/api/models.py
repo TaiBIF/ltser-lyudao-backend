@@ -201,7 +201,7 @@ class FishData(models.Model):
     fieldNotes = models.CharField(max_length=255)
     recordedBy = models.CharField(max_length=255)
     family = models.CharField(max_length=255)
-    ScientificName = models.CharField(max_length=255)
+    scientificName = models.CharField(max_length=255)
     taxonRank = models.CharField(max_length=255)
     bodyLength = models.FloatField()
     samplingProtocol = models.CharField(max_length=255)
@@ -245,3 +245,42 @@ class ZoobenthosData(models.Model):
 
     class Meta:
         db_table = 'ZoobenthosData'
+
+class BaseTerreSoundIndexData(models.Model):
+    id = models.AutoField(primary_key=True)
+    dataID = models.CharField(max_length=200)
+    eventID = models.CharField(max_length=200)
+    sh = models.FloatField()
+    th = models.FloatField()
+    H = models.FloatField()
+    ACI = models.FloatField()
+    ADI = models.FloatField()
+    AEI = models.FloatField()
+    BI = models.FloatField()
+    NDSI = models.FloatField()
+    associatedMedia = models.CharField(max_length=200)
+    min = models.FloatField()
+    sec = models.FloatField()
+    measurementDeterminedDate = models.DateTimeField()
+
+    def __str__(self):
+        return self.dataID
+    class Meta:
+        abstract = True
+
+
+class TerreSoundIndexBS2023(BaseTerreSoundIndexData):
+    class Meta:
+        db_table = 'TerreSoundIndexBS2023'
+
+class TerreSoundIndexGST2023(BaseTerreSoundIndexData):
+    class Meta:
+        db_table = 'TerreSoundIndexGST2023'
+
+class TerreSoundIndexLH2023(BaseTerreSoundIndexData):
+    class Meta:
+        db_table = 'TerreSoundIndexLH2023'
+
+class TerreSoundIndexYZH2023(BaseTerreSoundIndexData):
+    class Meta:
+        db_table = 'TerreSoundIndexYZH2023'

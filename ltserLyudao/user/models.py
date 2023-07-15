@@ -120,20 +120,35 @@ class NewsTag(models.Model):
 
 class News(models.Model):
     type = models.ManyToManyField('NewsTag', blank=True)
-    user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()
     newsDate = models.DateField()
     image = models.ImageField(upload_to='images', blank=True, null=True)
-    #attachments = models.FileField(upload_to='attachments', blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     class Meta:
         db_table = 'News'
 
-class Attachment(models.Model):
-    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='attachments')
-    file = models.FileField(upload_to='attachments')
+class NewsAttachment(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='newsAttachments')
+    file = models.FileField(upload_to='newsAttachments')
 
     class Meta:
-        db_table = 'Attachment'
+        db_table = 'NewsAttachment'
+
+
+class FormLink(models.Model):
+    title = models.CharField(max_length=255)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'FormLink'
+
+class FormLinkAttachment(models.Model):
+    form_link = models.ForeignKey(FormLink, on_delete=models.CASCADE, related_name='formLinkAttachments')
+    file = models.FileField(upload_to='formLinkAttachments')
+
+    class Meta:
+        db_table = 'FormLinkAttachment'
