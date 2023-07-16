@@ -16,9 +16,9 @@ urlpatterns = [
     path('data/fish-div/detail/', GetFishDetailView.as_view(), name='get_fish_detail'),
     path('data/zoobenthos/detail/', GetZoobenthosDetailView.as_view(), name='get_zoobenthos_detail'),
     path('data/<str:table>/fields/', GetTableFieldsView.as_view(), name='get_table_fields'),
-    path('data/<str:table>/',GetDataListView.as_view(), name='get_data_list'),
+    path('data/<str:table>/raws/',GetDataListView.as_view(), name='get_data_list_raws'),
     path('data/<str:table>/sites/', GetTableSitesAPIView.as_view(), name='get_table_sites'),
-    path('data/<str:table>/raws/', GetTableRawDataAPIView.as_view(), name='get_table_raws'),
+    path('data/<str:table>/series/', GetTableRawDataAPIView.as_view(), name='get_table_series'),
     path('data/weather/chart/', GetWeatherChartAPIView.as_view(), name='get_weather_chart'),
     path('download/site/', DownloadAPIView.as_view(), name='download_site')
 ]

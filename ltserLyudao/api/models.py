@@ -3,7 +3,7 @@ from django.db import models
 class WeatherData(models.Model):
     dataID = models.CharField(max_length=255)
     resourceName = models.CharField(max_length=255)
-    eventDate = models.DateTimeField()
+    time = models.DateTimeField()
     locationID = models.CharField(max_length=255)
     locality = models.CharField(max_length=255)
     stationAttribute = models.CharField(max_length=255)
@@ -33,7 +33,7 @@ class BaseSeaTemperatureData(models.Model):
     locationID = models.CharField(max_length=255)
     verbatimDepth = models.CharField(max_length=255)
     fieldNumber = models.IntegerField(null=True)
-    measurementDeterminedDate = models.DateTimeField()
+    time = models.DateTimeField()
     seaTemperature = models.FloatField(null=True)
 
     def __str__(self):
@@ -84,7 +84,7 @@ class CoralData(models.Model):
     year = models.IntegerField()
     month = models.IntegerField()
     day = models.IntegerField()
-    eventDate = models.DateTimeField()
+    time = models.DateTimeField()
     locationID = models.CharField(max_length=50)
     verbatimLocality = models.CharField(max_length=50)
     locality = models.CharField(max_length=50)
@@ -115,7 +115,7 @@ class CoralData(models.Model):
 class PlantData(models.Model):
     dataID = models.CharField(max_length=50)
     eventID = models.CharField(max_length=50)
-    eventDate = models.DateTimeField()
+    time = models.DateTimeField()
     locationID = models.IntegerField()
     habitat = models.CharField(max_length=50)
     samplingProtocol = models.CharField(max_length=50)
@@ -160,7 +160,7 @@ class BaseBirdNetSoundData(models.Model):
     overlap = models.IntegerField()
     sensitivity = models.IntegerField()
     min_conf = models.FloatField()
-    measurementDeterminedDate = models.DateTimeField()
+    time = models.DateTimeField()
 
     def __str__(self):
         return self.dataID
@@ -188,7 +188,7 @@ class BirdNetSoundYZH2023(BaseBirdNetSoundData):
 class FishData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
-    eventDate =  models.DateTimeField()
+    time =  models.DateTimeField()
     season = models.CharField(max_length=255)
     year = models.IntegerField()
     region = models.CharField(max_length=255)
@@ -217,7 +217,7 @@ class FishData(models.Model):
 class ZoobenthosData(models.Model):
     dataID = models.CharField(max_length=100)
     eventID = models.CharField(max_length=100)
-    eventDate = models.DateField()
+    time = models.DateField()
     season = models.CharField(max_length=50)
     day_or_night = models.CharField(max_length=50)
     year = models.IntegerField()
@@ -261,7 +261,7 @@ class BaseTerreSoundIndexData(models.Model):
     associatedMedia = models.CharField(max_length=200)
     min = models.FloatField()
     sec = models.FloatField()
-    measurementDeterminedDate = models.DateTimeField()
+    time = models.DateTimeField()
 
     def __str__(self):
         return self.dataID
