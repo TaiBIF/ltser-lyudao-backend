@@ -140,6 +140,7 @@ class NewsAttachment(models.Model):
 
 class FormLink(models.Model):
     title = models.CharField(max_length=255)
+    link = models.URLField(null=True, blank=True, default="")
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 

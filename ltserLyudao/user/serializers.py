@@ -105,11 +105,11 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
 class FormLinkAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = FormLinkAttachment
-        fields = '__all__'
+        fields = ['file']
 
 class FormLinkSerializer(serializers.ModelSerializer):
-    formLinkAttachments = FormLinkAttachmentSerializer(read_only=True, many=True)
+    formLinkAttachments = FormLinkAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = FormLink
-        fields = ('id', 'title', 'created_at', 'updated_at', 'formLinkAttachments')
+        fields = ('id', 'title', 'created_at', 'link', 'formLinkAttachments')
