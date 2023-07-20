@@ -112,4 +112,4 @@ class FormLinkSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FormLink
-        fields = ('id', 'title', 'created_at', 'link', 'formLinkAttachments')
+        fields = ('id', 'name', 'created_at', 'link', 'formLinkAttachments')

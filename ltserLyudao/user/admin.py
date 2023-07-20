@@ -56,7 +56,7 @@ class FormLinkAttachmentInline(admin.StackedInline):
 
 class FormLinkAdmin(admin.ModelAdmin):
     inlines = [FormLinkAttachmentInline]
-    list_display = ('id', 'title', 'created_at', 'updated_at', 'has_attachments')
+    list_display = ('id', 'name', 'created_at', 'updated_at', 'has_attachments')
 
     def has_attachments(self, obj):
         return FormLinkAttachment.objects.filter(form_link=obj).exists()
