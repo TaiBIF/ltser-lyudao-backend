@@ -60,17 +60,18 @@ class NewsAttachmentInline(admin.TabularInline):
 
 class NewsAdmin(admin.ModelAdmin):
     inlines = [NewsImageInline, NewsAttachmentInline]
-    list_display = ['id', 'title', 'user', 'newsDate', 'count_images', 'count_attachments']
+    list_display = ['id', 'title', 'display_type', 'newsDate', 'display_content']
 
-    def count_images(self, obj):
-        return obj.images.count()
+    def display_type(self, obj):
+        # 顯示多對多關聯字段 'type' 的名稱列表
+        return ", ".join(tag.title for tag in obj.type.all())
 
-    count_images.short_description = 'Images Count'
+    def display_content(self, obj):
+        # 截取 'content' 字段的前 100 個字
+        return obj.content[:100]
 
-    def count_attachments(self, obj):
-        return obj.newsAttachments.count()
-
-    count_attachments.short_description = 'Attachments Count'
+    display_type.short_description = 'Type'  # 顯示的欄位名稱
+    display_content.short_description = 'Content'  # 顯示的欄位名稱
 
 class NewsTagAdmin(admin.ModelAdmin):
     list_display = ['id', 'title']

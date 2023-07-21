@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag
+from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
+    NewsImage, NewsAttachment
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -118,3 +119,38 @@ class NewsTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsTag
         fields = ['id', 'title', 'created_at', 'updated_at']
+
+class NewsSerializer(serializers.ModelSerializer):
+    content = serializers.SerializerMethodField()
+    class Meta:
+        model = News
+        fields = ['id', 'type', 'title', 'content', 'newsDate']
+
+    def get_content(self, obj):
+        # 獲取 content 字段的前 100 個字
+        return obj.content[:100]
+
+class NewsImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsImage
+        fields = ['image']
+
+
+class NewsAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsAttachment
+        fields = ['file']
+
+
+class NewsDetailSerializer(serializers.ModelSerializer):
+    images = NewsImageSerializer(many=True, read_only=True)
+    newsAttachments = NewsAttachmentSerializer(many=True, read_only=True)
+    user_email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = News
+        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'newsAttachments']
+
+    def get_user_email(self, obj):
+        # 獲取 user 的 email
+        return obj.user.email
