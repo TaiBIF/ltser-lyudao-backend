@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, News, NewsTag, NewsAttachment, FormLink, FormLinkAttachment
+from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
+    NewsImage, NewsAttachment
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -36,20 +37,6 @@ class QuestionAnswerAdmin(admin.ModelAdmin):
     list_display = ('type', 'question', 'answer')
     ordering = ['id']
 
-
-# class AttachmentInline(admin.TabularInline):
-#     model = Attachment
-# class AttachmentAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'file', 'news_id')
-# class NewsAdmin(admin.ModelAdmin):
-#     def display_type(self, obj):
-#         return ", ".join([t.title for t in obj.type.all()])
-#     list_display = ('title', 'newsDate', 'user_id', 'created_at', 'updated_at', 'display_type')
-#     inlines = [AttachmentInline]
-
-class NewsTagAdmin(admin.ModelAdmin):
-    list_display = ['title']
-
 class FormLinkAttachmentInline(admin.StackedInline):
     model = FormLinkAttachment
     extra = 1
@@ -63,12 +50,36 @@ class FormLinkAdmin(admin.ModelAdmin):
     has_attachments.boolean = True
     has_attachments.short_description = 'Attachments'
 
+class NewsImageInline(admin.TabularInline):
+    model = NewsImage
+    extra = 1  # Number of extra "empty" forms
+
+class NewsAttachmentInline(admin.TabularInline):
+    model = NewsAttachment
+    extra = 1
+
+class NewsAdmin(admin.ModelAdmin):
+    inlines = [NewsImageInline, NewsAttachmentInline]
+    list_display = ['id', 'title', 'user', 'newsDate', 'count_images', 'count_attachments']
+
+    def count_images(self, obj):
+        return obj.images.count()
+
+    count_images.short_description = 'Images Count'
+
+    def count_attachments(self, obj):
+        return obj.newsAttachments.count()
+
+    count_attachments.short_description = 'Attachments Count'
+
+class NewsTagAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title']
+
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Literature, LiteratureAdmin)
 admin.site.register(QATag, QATagAdmin)
 admin.site.register(QuestionAnswer, QuestionAnswerAdmin)
 admin.site.register(FormLink, FormLinkAdmin)
-# admin.site.register(News, NewsAdmin)
-# admin.site.register(NewsTag, NewsTagAdmin)
-# admin.site.register(Attachment, AttachmentAdmin)
+admin.site.register(News, NewsAdmin)
+admin.site.register(NewsTag, NewsTagAdmin)

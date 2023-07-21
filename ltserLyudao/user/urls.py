@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, FormLinkAPIVIew
+from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, \
+    FormLinkAPIVIew, FormLinkDownloadAPIview
 
 
 urlpatterns = [
@@ -9,4 +10,5 @@ urlpatterns = [
     path('users/qatags/', QATagAPIView.as_view(), name='qatag'),
     path('users/question-answers/', QuestionAnswerAPIView.as_view(), name='question-answers'),
     path('users/form-link/', FormLinkAPIVIew.as_view(), name='form-link'),
+    path('users/download/form-link/', FormLinkDownloadAPIview.as_view(), name='form-link-attachments-download')
 ]

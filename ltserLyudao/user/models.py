@@ -117,18 +117,24 @@ class NewsTag(models.Model):
         db_table = 'NewsTag'
 
 
-
 class News(models.Model):
     type = models.ManyToManyField('NewsTag', blank=True)
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     content = models.TextField()
     newsDate = models.DateField()
-    image = models.ImageField(upload_to='images', blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+
     class Meta:
         db_table = 'News'
+
+class NewsImage(models.Model):
+    news = models.ForeignKey(News, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='newsImages', blank=True, null=True)
+
+    class Meta:
+        db_table = 'NewsImage'
 
 class NewsAttachment(models.Model):
     news = models.ForeignKey(News, on_delete=models.CASCADE, related_name='newsAttachments')
