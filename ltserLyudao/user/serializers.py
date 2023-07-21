@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment
+from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -113,3 +113,8 @@ class FormLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = FormLink
         fields = ('id', 'name', 'created_at', 'link', 'formLinkAttachments')
+
+class NewsTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsTag
+        fields = ['id', 'title', 'created_at', 'updated_at']

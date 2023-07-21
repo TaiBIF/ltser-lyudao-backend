@@ -107,6 +107,23 @@ class QuestionAnswer(models.Model):
     class Meta:
         db_table = 'QuestionAnswer'
 
+class FormLink(models.Model):
+    name = models.CharField(max_length=255)
+    link = models.URLField(null=True, blank=True, default="")
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'FormLink'
+
+class FormLinkAttachment(models.Model):
+    form_link = models.ForeignKey(FormLink, on_delete=models.CASCADE, related_name='formLinkAttachments')
+    file = models.FileField(upload_to='formLinkAttachments')
+
+    class Meta:
+        db_table = 'FormLinkAttachment'
+
+
 class NewsTag(models.Model):
     title = models.CharField(max_length=50, blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
@@ -115,7 +132,6 @@ class NewsTag(models.Model):
         return f"{self.title}"
     class Meta:
         db_table = 'NewsTag'
-
 
 class News(models.Model):
     type = models.ManyToManyField('NewsTag', blank=True)
@@ -143,19 +159,3 @@ class NewsAttachment(models.Model):
     class Meta:
         db_table = 'NewsAttachment'
 
-
-class FormLink(models.Model):
-    name = models.CharField(max_length=255)
-    link = models.URLField(null=True, blank=True, default="")
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
-
-    class Meta:
-        db_table = 'FormLink'
-
-class FormLinkAttachment(models.Model):
-    form_link = models.ForeignKey(FormLink, on_delete=models.CASCADE, related_name='formLinkAttachments')
-    file = models.FileField(upload_to='formLinkAttachments')
-
-    class Meta:
-        db_table = 'FormLinkAttachment'
