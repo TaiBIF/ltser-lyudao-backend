@@ -150,12 +150,17 @@ class NewsDetailSerializer(serializers.ModelSerializer):
     images = NewsImageSerializer(many=True, read_only=True)
     attachments = NewsAttachmentSerializer(many=True, read_only=True, source='newsAttachments')
     user_email = serializers.SerializerMethodField()
-    cover_image = NewsCoverImageSerializer(read_only=True)
+    cover = serializers.SerializerMethodField()  # Add this line
 
     class Meta:
         model = News
-        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'attachments', 'cover_image']
+        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'attachments', 'cover']
 
     def get_user_email(self, obj):
         # 獲取 user 的 email
         return obj.user.email
+
+    def get_cover(self, obj):  # Add this method
+        if obj.cover_image:
+            return obj.cover_image.image.url
+        return None
