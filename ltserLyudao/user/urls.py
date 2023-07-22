@@ -10,8 +10,8 @@ urlpatterns = [
     path('users/qatags/', QATagAPIView.as_view(), name='qatag'),
     path('users/question-answers/', QuestionAnswerAPIView.as_view(), name='question-answers'),
     path('users/form-link/', FormLinkAPIVIew.as_view(), name='form-link'),
-    path('users/download/form-link/', FormLinkDownloadAPIview.as_view(), name='form-link-attachments-download'),
+    path('download/form-link/', FormLinkDownloadAPIview.as_view(), name='form-link-attachments-download'),
     path('users/newstags/', NewsTagAPIView.as_view(), name='newsTag'),
     path('users/news/', NewsAPIView.as_view(), name='news'),
-    path('users/download/news/', NewsDownloadAPIViews.as_view(), name='news-images-attachments-download'),
+    path('download/news/', NewsDownloadAPIViews.as_view(), name='news-images-attachments-download'),
 ]

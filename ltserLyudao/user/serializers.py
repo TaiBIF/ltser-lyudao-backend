@@ -109,11 +109,11 @@ class FormLinkAttachmentSerializer(serializers.ModelSerializer):
         fields = ['file']
 
 class FormLinkSerializer(serializers.ModelSerializer):
-    formLinkAttachments = FormLinkAttachmentSerializer(many=True, read_only=True)
+    attachments = FormLinkAttachmentSerializer(many=True, read_only=True, source='formLinkAttachments')
 
     class Meta:
         model = FormLink
-        fields = ('id', 'name', 'created_at', 'link', 'formLinkAttachments')
+        fields = ('id', 'name', 'created_at', 'link', 'attachments')
 
 class NewsTagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -144,12 +144,12 @@ class NewsAttachmentSerializer(serializers.ModelSerializer):
 
 class NewsDetailSerializer(serializers.ModelSerializer):
     images = NewsImageSerializer(many=True, read_only=True)
-    newsAttachments = NewsAttachmentSerializer(many=True, read_only=True)
+    attachments = NewsAttachmentSerializer(many=True, read_only=True, source='newsAttachments')
     user_email = serializers.SerializerMethodField()
 
     class Meta:
         model = News
-        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'newsAttachments']
+        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'attachments']
 
     def get_user_email(self, obj):
         # 獲取 user 的 email
