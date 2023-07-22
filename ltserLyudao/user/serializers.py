@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
-    NewsImage, NewsAttachment
+    NewsImage, NewsAttachment, NewsCoverImage
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -141,15 +141,20 @@ class NewsAttachmentSerializer(serializers.ModelSerializer):
         model = NewsAttachment
         fields = ['file']
 
+class NewsCoverImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsCoverImage
+        fields = ['image']
 
 class NewsDetailSerializer(serializers.ModelSerializer):
     images = NewsImageSerializer(many=True, read_only=True)
     attachments = NewsAttachmentSerializer(many=True, read_only=True, source='newsAttachments')
     user_email = serializers.SerializerMethodField()
+    cover_image = NewsCoverImageSerializer(read_only=True)
 
     class Meta:
         model = News
-        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'attachments']
+        fields = ['id', 'type', 'title', 'content', 'newsDate', 'user', 'user_email', 'images', 'attachments', 'cover_image']
 
     def get_user_email(self, obj):
         # 獲取 user 的 email
