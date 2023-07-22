@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
-    NewsImage, NewsAttachment
+    NewsImage, NewsAttachment, NewsCoverImage
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -58,8 +58,16 @@ class NewsAttachmentInline(admin.TabularInline):
     model = NewsAttachment
     extra = 1
 
+class NewsCoverImageInline(admin.StackedInline):
+    model = NewsCoverImage
+    can_delete = False
+    verbose_name_plural = 'News Cover Images'
+    extra = 0
+    max_num = 1
+
+
 class NewsAdmin(admin.ModelAdmin):
-    inlines = [NewsImageInline, NewsAttachmentInline]
+    inlines = [NewsCoverImageInline, NewsImageInline, NewsAttachmentInline]
     list_display = ['id', 'title', 'display_type', 'newsDate', 'display_content']
 
     def display_type(self, obj):

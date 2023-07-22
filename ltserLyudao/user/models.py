@@ -141,9 +141,21 @@ class News(models.Model):
     newsDate = models.DateField()
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
-
+    cover_image = models.OneToOneField('NewsCoverImage', null=True, blank=True, on_delete=models.SET_NULL,
+                                       related_name='news_cover_image')
     class Meta:
         db_table = 'News'
+
+
+class NewsCoverImage(models.Model):
+    news = models.OneToOneField(News, related_name='newsCoverImage', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='newsCoverImages')
+
+    def __str__(self):
+        return f"{self.image}"
+    class Meta:
+        db_table = 'NewsCoverImage'
+
 
 class NewsImage(models.Model):
     news = models.ForeignKey(News, related_name='images', on_delete=models.CASCADE)
