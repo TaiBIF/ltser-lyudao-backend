@@ -1,63 +1,60 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
     NewsImage, NewsAttachment, NewsCoverImage
-from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
-from drf_yasg.openapi import Schema, TYPE_STRING
-from drf_yasg.utils import swagger_serializer_method
-from drf_yasg import openapi
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.validators import RegexValidator
 
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
         validators=[UniqueValidator(queryset=MyUser.objects.all())]
     )
-    password = serializers.CharField(
-        max_length=68,
-        min_length=8,
-        write_only=True,
-        error_messages={
-            'min_length': gettext('密碼至少8位數'),
-            'required': gettext('密碼是必填'),
-        }
-    )
+    password = serializers.CharField(write_only=True, required=True,
+                                     validators=[RegexValidator(regex=r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\:\;\.\,]{8,}$'
+,message="密碼長度至少8位，並且包含至少一個英文字母和一個數字")])
     password2 = serializers.CharField(write_only=True, required=True)
-    first_name = serializers.CharField(required=True, error_messages={
-        'required': gettext('需要填入名')
-    })
-    last_name = serializers.CharField(required=True, error_messages={
-        'required': gettext('需要填入姓')
-    })
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+
+
     class Meta:
         model = MyUser
         fields = ('username', 'email', 'password', 'password2', 'first_name', 'last_name')
 
-    @staticmethod
-    def validate_password(value):
-        # 自定义验证逻辑
-        has_letter = False
-        has_number = False
-
-        for char in value:
-            if char.isalpha():
-                has_letter = True
-            elif char.isdigit():
-                has_number = True
-
-        if not (has_letter and has_number):
-            raise serializers.ValidationError(gettext('密碼必須包含至少一個字母和一個數字'))
-
-        return value
-
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"message": "密碼欄位不相符"})
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
 
         return attrs
 
     def create(self, validated_data):
-        validated_data.pop('password2')
-        return MyUser.objects.create_user(**validated_data)
+        user = MyUser.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+class LoginSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(max_length=255, min_length=3)
+    password = serializers.CharField(max_length=255, min_length=8, write_only=True)
+    token = serializers.SerializerMethodField()
+
+    class Meta:
+        model = MyUser
+        fields = ['email', 'password', 'token']
+
+    @staticmethod
+    def get_token(obj):
+        refresh = RefreshToken.for_user(obj)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token)
+        }
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
