@@ -4,7 +4,11 @@ from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import RegexValidator
-
+from django.contrib.auth import authenticate
+from rest_framework.exceptions import AuthenticationFailed
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -39,6 +43,26 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=1000)
+
+    class Meta:
+        model = MyUser
+        fields = ['token']
+
+class ResendEmailVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    class Meta:
+        fields = ['email']
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        # 檢查郵件是否存在於 User 模型中
+        if not MyUser.objects.filter(email=email).exists():
+            raise serializers.ValidationError('提供的郵件地址不存在。')
+
+        return attrs
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=255, min_length=3)
     password = serializers.CharField(max_length=255, min_length=8, write_only=True)
@@ -56,6 +80,65 @@ class LoginSerializer(serializers.ModelSerializer):
             'access': str(refresh.access_token)
         }
 
+    def validate(self, attrs):
+        email = attrs['email']
+        password = attrs['password']
+        user = authenticate(email=email, password=password)
+
+
+        if not user:
+            raise AuthenticationFailed('無效的帳號或密碼')
+
+        if not user.is_verified:
+            raise AuthenticationFailed('尚未確認驗證信')
+
+        return user
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        token = self.get_token(instance)
+        return token
+
+class UpdatePasswordSerializer(serializers.ModelSerializer):
+    newPassword = serializers.CharField(write_only=True, required=True)
+    newPassword2 = serializers.CharField(write_only=True, required=True)
+    oldPassword= serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = MyUser
+        fields = ('newPassword', 'newPassword2', 'oldPassword')
+
+class ResetPasswordEmailRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField(min_length=2)
+    class Meta:
+        fields = ['email']
+
+class SetNewPasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(min_length=8, max_length=68, write_only=True)
+    token = serializers.CharField(min_length=1, write_only=True)
+    uidb64 = serializers.CharField(min_length=1, write_only=True)
+
+    class Meta:
+        model = MyUser
+        fields = ['password', 'token', 'uidb64']
+
+    def validate(self, attrs):
+        try:
+            password = attrs.get('password')
+            token = attrs.get('token')
+            uidb64 = attrs.get('uidb64')
+
+            id = force_str(urlsafe_base64_decode(uidb64))
+            user = MyUser.objects.get(id = id)
+
+            if not PasswordResetTokenGenerator().check_token(user, token):
+                raise AuthenticationFailed('The reset link is invalid', 401)
+            user.set_password(password)
+            user.save()
+            return user
+        except Exception as e:
+            raise AuthenticationFailed('The rest link is invalid', 401)
+
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
@@ -64,7 +147,6 @@ class ContactSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         contact = Contact.objects.create(**validated_data)
         return contact
-
 
 class LiteratureSerializer(serializers.ModelSerializer):
     class Meta:
