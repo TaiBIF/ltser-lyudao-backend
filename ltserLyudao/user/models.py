@@ -161,6 +161,9 @@ class NewsImage(models.Model):
     news = models.ForeignKey(News, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='newsImages', blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.image}"
+
     class Meta:
         db_table = 'NewsImage'
 
@@ -170,4 +173,39 @@ class NewsAttachment(models.Model):
 
     class Meta:
         db_table = 'NewsAttachment'
+
+class About(models.Model):
+    TYPE_CHOICES = [
+        ('ecologicalObservation', '生態觀測'),
+        ('environmentalObservation', '環境觀測'),
+        ('socialObservation', '社會觀測'),
+    ]
+
+    type = models.CharField(max_length=200, choices=TYPE_CHOICES)
+    name = models.CharField(max_length=200)
+    content = models.TextField()
+    image = models.ImageField(upload_to="aboutImage")
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name}"
+    class Meta:
+        db_table = 'About'
+
+
+class AboutAttachment(models.Model):
+    about = models.ForeignKey(About, on_delete=models.CASCADE, related_name='aboutAttachments')
+    name = models.CharField(max_length=200)
+    content = models.TextField(null=True, blank=True)
+    file = models.FileField(upload_to='aboutAttachments')
+    image = models.ImageField(upload_to='aboutAttachments')
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'AboutAttachment'
+
+    def __str__(self):
+        return f"{self.name}"
 
