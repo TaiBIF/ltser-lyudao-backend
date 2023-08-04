@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
-    NewsImage, NewsAttachment, NewsCoverImage
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -84,6 +84,17 @@ class NewsAdmin(admin.ModelAdmin):
 class NewsTagAdmin(admin.ModelAdmin):
     list_display = ['id', 'title']
 
+class AboutAttachmentInline(admin.TabularInline):
+    model = AboutAttachment
+    extra = 1
+
+class AboutAdmin(admin.ModelAdmin):
+    list_display = ('id', 'type', 'name', 'created_at', 'updated_at')  # 在列表中要顯示的字段
+    list_filter = ('type',)  # 添加快速过滤选项
+    search_fields = ('name', 'content')  # 搜索框可以搜尋的字段
+    inlines = [AboutAttachmentInline]  # 在 About 詳細頁面可以管理 AboutAttachment
+
+
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Literature, LiteratureAdmin)
@@ -92,3 +103,4 @@ admin.site.register(QuestionAnswer, QuestionAnswerAdmin)
 admin.site.register(FormLink, FormLinkAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(NewsTag, NewsTagAdmin)
+admin.site.register(About, AboutAdmin)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
-    NewsImage, NewsAttachment, NewsCoverImage
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import RegexValidator
@@ -243,3 +243,19 @@ class NewsDetailSerializer(serializers.ModelSerializer):
         if obj.cover_image:
             return obj.cover_image.image.url
         return None
+
+class AboutOutlineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = About
+        fields = ['id', 'type', 'name']
+
+class AboutAttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AboutAttachment
+        fields = ['id', 'name', 'content', 'file', 'image', 'created_at', 'updated_at']
+
+class AboutDetailSerializer(serializers.ModelSerializer):
+    attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
+    class Meta:
+        model = About
+        fields = ['id', 'type', 'name', 'content', 'image', 'created_at', 'updated_at', 'attachments']
