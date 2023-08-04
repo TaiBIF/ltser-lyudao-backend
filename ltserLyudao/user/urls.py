@@ -2,7 +2,7 @@ from django.urls import path
 from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, \
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, NewsDownloadAPIViews, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
-    PasswordTokenCheckAPIView, SetNewPasswordAPIView
+    PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -19,6 +19,7 @@ urlpatterns = [
     path('auth/request-rest-email/', RequestPasswordResetEmailAPIView.as_view(), name='request-rest-email'),
     path('auth/password-reset/<uidb64>/<token>/', PasswordTokenCheckAPIView.as_view(), name='password-reset-confirm'),
     path('auth/password-reset-complete/', SetNewPasswordAPIView.as_view(), name='password-reset-complete'),
+    path('auth/identity/', UserIdentityAPIView.as_view(), name='identity'),
     path('users/contacts/', ContactAPIView.as_view(), name='contact'),
     path('users/literatures/', LiteratureAPIView.as_view(), name='literature'),
     path('users/qatags/', QATagAPIView.as_view(), name='qatag'),
