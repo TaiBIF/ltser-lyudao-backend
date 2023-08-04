@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, \
-    FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, NewsDownloadAPIViews, VerifyEmailAPIView, \
+    FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
     PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView
 
@@ -28,5 +28,4 @@ urlpatterns = [
     path('download/form-link/', FormLinkDownloadAPIview.as_view(), name='form-link-attachments-download'),
     path('users/newstags/', NewsTagAPIView.as_view(), name='newsTag'),
     path('users/news/', NewsAPIView.as_view(), name='news'),
-    path('download/news/', NewsDownloadAPIViews.as_view(), name='news-images-attachments-download'),
 ]
