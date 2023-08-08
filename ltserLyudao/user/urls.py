@@ -2,7 +2,7 @@ from django.urls import path
 from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, \
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
-    PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView
+    PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -28,5 +28,6 @@ urlpatterns = [
     path('download/form-link/', FormLinkDownloadAPIview.as_view(), name='form-link-attachments-download'),
     path('users/newstags/', NewsTagAPIView.as_view(), name='newsTag'),
     path('users/news/', NewsAPIView.as_view(), name='news'),
-    path('users/about/', AboutAPIView.as_view(), name='about')
+    path('users/about/', AboutAPIView.as_view(), name='about'),
+    path('users/about-outline/', AboutOutlineAPIView.as_view(), name='about-outline'),
 ]

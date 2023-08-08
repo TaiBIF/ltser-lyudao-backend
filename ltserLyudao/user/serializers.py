@@ -244,15 +244,15 @@ class NewsDetailSerializer(serializers.ModelSerializer):
             return obj.cover_image.image.url
         return None
 
-class AboutOutlineSerializer(serializers.ModelSerializer):
+class AboutSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
-        fields = ['id', 'type', 'name']
+        fields = ['id', 'type', 'name', 'image']
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = AboutAttachment
-        fields = ['id', 'name', 'content', 'file', 'image', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'content', 'file', 'image']
 
 class AboutDetailSerializer(serializers.ModelSerializer):
     attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
