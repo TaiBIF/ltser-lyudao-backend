@@ -3,7 +3,7 @@ from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIV
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
     PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, \
-    ContactAllAPIView, AboutAttachmentAPIView
+    ContactAllAPIView, AboutAttachmentAPIView, DownloadRecordAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -33,4 +33,5 @@ urlpatterns = [
     path('users/about/', AboutAPIView.as_view(), name='about'),
     path('users/about-outline/', AboutOutlineAPIView.as_view(), name='about-outline'),
     path('users/about-attachment/', AboutAttachmentAPIView.as_view(), name='about-attachment'),
+    path('users/download-record/', DownloadRecordAPIView.as_view(), name='download-record')
 ]

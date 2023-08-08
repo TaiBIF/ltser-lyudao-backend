@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
-    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord, DownloadApply
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 
@@ -95,6 +95,9 @@ class AboutAdmin(admin.ModelAdmin):
     inlines = [AboutAttachmentInline]  # 在 About 詳細頁面可以管理 AboutAttachment
 
 
+class DownloadRecordAdmin(admin.ModelAdmin):
+    list_display = ['id', 'filename', 'time', 'user']
+
 admin.site.register(MyUser, MyUserAdmin)
 admin.site.register(Contact, ContactAdmin)
 admin.site.register(Literature, LiteratureAdmin)
@@ -104,3 +107,4 @@ admin.site.register(FormLink, FormLinkAdmin)
 admin.site.register(News, NewsAdmin)
 admin.site.register(NewsTag, NewsTagAdmin)
 admin.site.register(About, AboutAdmin)
+admin.site.register(DownloadRecord, DownloadRecordAdmin)

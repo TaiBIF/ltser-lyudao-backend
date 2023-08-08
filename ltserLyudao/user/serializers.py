@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
-    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import RegexValidator
@@ -9,6 +9,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
+from django.utils import timezone
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -251,7 +252,7 @@ class AboutSerializer(serializers.ModelSerializer):
 
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
-    aboutId = serializers.IntegerField(write_only=True, required=False)
+    aboutId = serializers.SerializerMethodField()
 
     class Meta:
         model = AboutAttachment
@@ -265,9 +266,21 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
         instance = AboutAttachment(**validated_data)
         instance.save()
         return instance
+    def get_aboutId(self, obj):
+        return obj.about.id
 
 
 class AboutPostPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
         fields = ['type', 'name', 'content', 'image']
+
+
+class DownloadRecordSerializer(serializers.ModelSerializer):
+    time = serializers.SerializerMethodField()
+    class Meta:
+        model = DownloadRecord
+        fields = ['filename', 'time']
+
+    def get_time(self, obj):
+        return (obj.time + timezone.timedelta(hours=8)).strftime('%Y-%m-%d %H:%M')
