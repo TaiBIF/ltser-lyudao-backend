@@ -252,20 +252,21 @@ class AboutSerializer(serializers.ModelSerializer):
 
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
-    aboutId = serializers.SerializerMethodField()
+    aboutId = serializers.IntegerField(source='about.id')
 
     class Meta:
         model = AboutAttachment
         fields = ['id', 'aboutId', 'name', 'content', 'file', 'image']
 
     def create(self, validated_data):
-        about_id = validated_data.pop('aboutId', None)
+        about_data = validated_data.pop('about', {})
+        about_id = about_data.get('id')
         if about_id:
-            about = About.objects.get(pk=about_id)
-            validated_data['about'] = about
+            validated_data['about'] = About.objects.get(pk=about_id)
         instance = AboutAttachment(**validated_data)
         instance.save()
         return instance
+
     def get_aboutId(self, obj):
         return obj.about.id
 
