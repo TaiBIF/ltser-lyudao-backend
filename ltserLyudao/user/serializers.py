@@ -259,3 +259,9 @@ class AboutDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
         fields = ['id', 'type', 'name', 'content', 'image', 'created_at', 'updated_at', 'attachments']
+
+
+class AboutPostPatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = About
+        fields = ['type', 'name', 'content', 'image']
