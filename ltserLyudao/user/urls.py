@@ -2,7 +2,8 @@ from django.urls import path
 from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIView, QuestionAnswerAPIView, \
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
-    PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, ContactAllAPIView
+    PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, \
+    ContactAllAPIView, AboutAttachmentAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -31,4 +32,5 @@ urlpatterns = [
     path('users/news/', NewsAPIView.as_view(), name='news'),
     path('users/about/', AboutAPIView.as_view(), name='about'),
     path('users/about-outline/', AboutOutlineAPIView.as_view(), name='about-outline'),
+    path('users/about-attachment/', AboutAttachmentAPIView.as_view(), name='about-attachment'),
 ]

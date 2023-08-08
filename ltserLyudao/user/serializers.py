@@ -249,16 +249,22 @@ class AboutSerializer(serializers.ModelSerializer):
         model = About
         fields = ['id', 'type', 'name', 'image']
 
+
 class AboutAttachmentSerializer(serializers.ModelSerializer):
+    aboutId = serializers.IntegerField(write_only=True, required=False)
+
     class Meta:
         model = AboutAttachment
-        fields = ['id', 'name', 'content', 'file', 'image']
+        fields = ['id', 'aboutId', 'name', 'content', 'file', 'image']
 
-class AboutDetailSerializer(serializers.ModelSerializer):
-    attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
-    class Meta:
-        model = About
-        fields = ['id', 'type', 'name', 'content', 'image', 'created_at', 'updated_at', 'attachments']
+    def create(self, validated_data):
+        about_id = validated_data.pop('aboutId', None)
+        if about_id:
+            about = About.objects.get(pk=about_id)
+            validated_data['about'] = about
+        instance = AboutAttachment(**validated_data)
+        instance.save()
+        return instance
 
 
 class AboutPostPatchSerializer(serializers.ModelSerializer):

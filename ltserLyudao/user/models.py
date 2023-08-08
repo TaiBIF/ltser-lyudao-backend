@@ -198,8 +198,8 @@ class AboutAttachment(models.Model):
     about = models.ForeignKey(About, on_delete=models.CASCADE, related_name='aboutAttachments')
     name = models.CharField(max_length=200)
     content = models.TextField(null=True, blank=True)
-    file = models.FileField(upload_to='aboutAttachments')
-    image = models.ImageField(upload_to='aboutAttachments')
+    file = models.FileField(upload_to='aboutAttachments', null=True, blank=True)
+    image = models.ImageField(upload_to='aboutAttachments', null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
