@@ -270,6 +270,11 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
     def get_aboutId(self, obj):
         return obj.about.id
 
+class AboutDetailSerializer(serializers.ModelSerializer):
+    attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
+    class Meta:
+        model = About
+        fields = ['id', 'type', 'name', 'content', 'image',  'attachments']
 
 class AboutPostPatchSerializer(serializers.ModelSerializer):
     class Meta:
