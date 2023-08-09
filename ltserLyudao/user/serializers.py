@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
-    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord, DownloadApply
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import RegexValidator
@@ -290,3 +290,12 @@ class DownloadRecordSerializer(serializers.ModelSerializer):
 
     def get_time(self, obj):
         return (obj.time + timezone.timedelta(hours=8)).strftime('%Y-%m-%d %H:%M')
+
+class DownloadApplySerializer(serializers.ModelSerializer):
+    time = serializers.SerializerMethodField()
+    class Meta:
+        model = DownloadApply
+        fields = ['email', 'time', 'role', 'content', 'filename']
+
+    def get_time(self, obj):
+        return (obj.created_at + timezone.timedelta(hours=8)).strftime('%Y-%m-%d')
