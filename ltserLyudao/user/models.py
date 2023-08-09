@@ -224,7 +224,7 @@ class DownloadApply(models.Model):
     email = models.EmailField(max_length=255)
     role = models.CharField(max_length=255)
     content = models.TextField()
-    filename = models.CharField(null=True, blank=True)
+    filename = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
 
     def __str__(self):
