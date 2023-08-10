@@ -162,6 +162,34 @@ class CoralData(models.Model):
     class Meta:
         db_table = 'CoralData'
 
+class CoralCommData(models.Model):
+    dataID = models.CharField(max_length=50)
+    eventID = models.CharField(max_length=50)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    time = models.DateField()
+    locationID = models.CharField(max_length=50)
+    verbatimLocality = models.CharField(max_length=50)
+    locality = models.CharField(max_length=50)
+    verbatimDepth = models.CharField(max_length=50)
+    decimalLatitude = models.DecimalField(max_digits=10, decimal_places=8)
+    decimalLongitude = models.DecimalField(max_digits=10, decimal_places=8)
+    replicate = models.CharField(max_length=255)
+    Benthic_group = models.CharField(max_length=255)
+    Benthic_subgroup = models.CharField(max_length=255)
+    coverInPercentage = models.FloatField()
+    Field_codes_on_CPCe = models.CharField(max_length=255)
+    samplingProtocol = models.CharField(max_length=255)
+    sampleSizeValue = models.IntegerField()
+    sampleSizeUnit = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'CoralCommData'
+
 class PlantData(models.Model):
     dataID = models.CharField(max_length=50)
     eventID = models.CharField(max_length=50)

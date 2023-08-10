@@ -90,11 +90,19 @@ data['time'] = pd.to_datetime(data['time'], format="%Y-%m-%d")
 data['time'] = data['time'].dt.strftime("%Y-%m-%d")
 data.to_csv('water_post_process.csv', index=False, encoding='utf-8')
 """
-
+"""
 input_file = './habitat/habitat.csv'
 data = pd.read_csv(input_file, encoding='utf-8')
 #data = data.rename(columns={'class': 'class_name'})
 data.insert(0, "id", range(1, len(data) + 1))
 data['time'] = pd.to_datetime(data['time'], format="%Y-%m-%d")
 data['time'] = data['time'].dt.strftime("%Y-%m-%d")
-data.to_csv('habitat_post_process.csv', index=False, encoding='utf-8')
+data.to_csv('habitat_post_process.csv', index=False, encoding='utf-8')"""
+
+input_file = './coralcomm/coralcomm.csv'
+data = pd.read_csv(input_file, encoding='utf-8')
+#data = data.rename(columns={'class': 'class_name'})
+data.insert(0, "id", range(1, len(data) + 1))
+data['time'] = pd.to_datetime(data['time'], format="%Y-%m-%d")
+data['time'] = data['time'].dt.strftime("%Y-%m-%d")
+data.to_csv('coralcomm_post_process.csv', index=False, encoding='utf-8')
