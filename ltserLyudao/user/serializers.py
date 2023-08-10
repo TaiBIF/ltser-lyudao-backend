@@ -240,10 +240,11 @@ class NewsDetailSerializer(serializers.ModelSerializer):
         # 獲取 user 的 email
         return obj.user.email
 
-    def get_cover(self, obj):  # Add this method
-        if obj.cover_image:
+    def get_cover(self, obj):
+        if obj.cover_image and obj.cover_image.image and hasattr(obj.cover_image.image, 'url'):
             return obj.cover_image.image.url
-        return None
+        return []
+
 
 class AboutSerializer(serializers.ModelSerializer):
     class Meta:
