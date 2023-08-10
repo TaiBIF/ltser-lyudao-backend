@@ -2,7 +2,7 @@ from django.urls import path
 from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperatureTimeRangeView, \
     GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, \
     GetFishDetailView, GetZoobenthosDetailView, GetTableFieldsView, GetDataListView, GetWeatherChartAPIView, \
-    DownloadHomePageAPIView, GetTableSitesAPIView, GetTableRawDataAPIView
+    DownloadHomePageAPIView, GetTableSitesAPIView, GetTableRawDataAPIView, DownloadRawAPIView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('data/<str:table>/sites/', GetTableSitesAPIView.as_view(), name='get_table_sites'),
     path('data/<str:table>/series/', GetTableRawDataAPIView.as_view(), name='get_table_series'),
     path('data/weather/chart/', GetWeatherChartAPIView.as_view(), name='get_weather_chart'),
-    path('download/site/', DownloadHomePageAPIView.as_view(), name='download_homepage_site')
+    path('download/site/', DownloadHomePageAPIView.as_view(), name='download_homepage_site'),
+    path('download/<str:table>/raws/', DownloadRawAPIView.as_view(), name='download_raw_api'),
 ]
