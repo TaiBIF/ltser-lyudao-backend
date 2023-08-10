@@ -59,6 +59,23 @@ class WeatherData(models.Model):
     class Meta:
         db_table = 'WeatherData'
 
+class HabitatData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateField()
+    season = models.CharField(max_length=255)
+    river = models.CharField(max_length=255)
+    locationID = models.CharField(max_length=255)
+    factor = models.CharField(max_length=255)
+    score = models.IntegerField()
+    samplingProtocol = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'HabitatData'
+
 class BaseSeaTemperatureData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
