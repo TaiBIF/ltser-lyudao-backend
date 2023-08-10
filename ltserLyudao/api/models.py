@@ -266,7 +266,7 @@ class BirdNetSoundYZH2023(BaseBirdNetSoundData):
 class FishData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
-    time =  models.DateTimeField()
+    time =  models.DateField()
     season = models.CharField(max_length=255)
     year = models.IntegerField()
     region = models.CharField(max_length=255)
