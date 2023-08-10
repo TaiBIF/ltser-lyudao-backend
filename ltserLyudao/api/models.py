@@ -1,5 +1,38 @@
 from django.db import models
 
+class WaterData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    resourceName = models.CharField(max_length=255)
+    time = models.DateField()
+    locationID = models.CharField(max_length=255)
+    locality = models.CharField(max_length=255)
+    verbatimDepth = models.FloatField()
+    waterTemperature = models.FloatField()
+    DO = models.FloatField(null=True, blank=True)
+    conductivity = models.FloatField()
+    salinity = models.FloatField()
+    turbidity = models.FloatField()
+    SS = models.FloatField()
+    NH3_H = models.FloatField()
+    NO2_H = models.FloatField()
+    NO3_H = models.FloatField()
+    PO4_P = models.FloatField()
+    TBC = models.FloatField()
+    vibrio = models.FloatField(null=True, blank=True)
+    COD = models.FloatField(null=True, blank=True)
+    MBAS = models.FloatField(null=True, blank=True)
+    TOC = models.FloatField(null=True, blank=True)
+    lipid = models.FloatField(null=True, blank=True)
+    BOD5 = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'WaterData'
+
+
 class WeatherData(models.Model):
     dataID = models.CharField(max_length=255)
     resourceName = models.CharField(max_length=255)
