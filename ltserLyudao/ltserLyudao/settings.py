@@ -35,7 +35,6 @@ AUTH_USER_MODEL = 'user.MyUser'
 
 # Application definition
 
-SITE_ID = 1
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -47,6 +46,7 @@ INSTALLED_APPS = [
     'user',
     'api',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'rest_framework_simplejwt',
     'drf_yasg',
@@ -54,22 +54,34 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
 ]
 
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'
+
+
+SOCIALACCOUNT_QUERY_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET= True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True
+
 SOCIALACCOUNT_PROVIDERS = {
-    "google":{
-        "SCOPE":[
-            "profile",
-            "email"
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
         ],
-        "AUTH_PARAMS": {"access_type": "online"}
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
     }
 }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
@@ -225,3 +237,8 @@ if not DEBUG:
     SESSION_COOKIE_SECURE = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
