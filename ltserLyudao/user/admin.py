@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
-    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord, DownloadApply
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment,DownloadRecord, DownloadApply
 class MyUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
 

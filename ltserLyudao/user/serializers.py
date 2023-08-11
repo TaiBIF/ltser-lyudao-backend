@@ -10,6 +10,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.utils import timezone
+import os
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -254,6 +255,7 @@ class AboutSerializer(serializers.ModelSerializer):
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
     aboutId = serializers.IntegerField(source='about.id')
+    file = serializers.SerializerMethodField()
 
     class Meta:
         model = AboutAttachment
@@ -267,6 +269,11 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
         instance = AboutAttachment(**validated_data)
         instance.save()
         return instance
+
+    def get_file(self, obj):
+        if obj.file and bool(obj.file.name):  # 确保文件字段存在且有名字
+            return obj.file.url
+        return []
 
     def get_aboutId(self, obj):
         return obj.about.id

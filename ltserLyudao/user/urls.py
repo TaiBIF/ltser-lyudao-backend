@@ -3,7 +3,8 @@ from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIV
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
     PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, \
-    ContactAllAPIView, AboutAttachmentAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleLoginAPIView, CustomGoogleLoginView
+    AboutAttachmentAPIView, ContactAllAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleLoginAPIView, \
+    CustomGoogleLoginView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
