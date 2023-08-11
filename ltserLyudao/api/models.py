@@ -292,6 +292,29 @@ class FishData(models.Model):
     class Meta:
         db_table = 'FishData'
 
+class FishingData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateTimeField()
+    locationID = models.CharField(max_length=255)
+    verbatimLocality = models.CharField(max_length=255)
+    is_local_villager = models.CharField(max_length=255)
+    purpose = models.CharField(max_length=255, null=True, blank=True)
+    preferable_site = models.CharField(max_length=255, null=True, blank=True)
+    catchment_individuals_per_month = models.CharField(max_length=255, null=True, blank=True)
+    fishing_feq = models.CharField(max_length=255, null=True, blank=True)
+    fishing_method  = models.CharField(max_length=255, null=True, blank=True)
+    bait = models.CharField(max_length=255, null=True, blank=True)
+    fish_species = models.CharField(max_length=255, null=True, blank=True)
+    feel_size_decrease = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'FishingData'
+
+
 class ZoobenthosData(models.Model):
     dataID = models.CharField(max_length=100)
     eventID = models.CharField(max_length=100)
