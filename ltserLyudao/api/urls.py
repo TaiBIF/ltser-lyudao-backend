@@ -22,4 +22,5 @@ urlpatterns = [
     path('data/weather/chart/', GetWeatherChartAPIView.as_view(), name='get_weather_chart'),
     path('download/site/', DownloadHomePageAPIView.as_view(), name='download_homepage_site'),
     path('download/<str:table>/raws/', DownloadRawAPIView.as_view(), name='download_raw_api'),
+    path('download/<str:table>/raws/species/', DownloadRawAPIView.as_view(), name='download_raw_species_api'),
 ]
