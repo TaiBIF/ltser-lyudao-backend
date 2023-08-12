@@ -385,3 +385,17 @@ class TerreSoundIndexLH2023(BaseTerreSoundIndexData):
 class TerreSoundIndexYZH2023(BaseTerreSoundIndexData):
     class Meta:
         db_table = 'TerreSoundIndexYZH2023'
+
+class OceanSoundIndexData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateTimeField()
+    kHz0_24 = models.FloatField()
+    lower_200Hz = models.FloatField()
+    Hz200_1500 = models.FloatField()
+    higher_1500Hz = models.FloatField()
+
+    def __str__(self):
+        return self.dataID
+    class Meta:
+        db_table = 'OceanSoundIndex'
