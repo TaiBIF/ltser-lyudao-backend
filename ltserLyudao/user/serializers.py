@@ -255,7 +255,6 @@ class AboutSerializer(serializers.ModelSerializer):
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
     aboutId = serializers.IntegerField(source='about.id')
-    file = serializers.SerializerMethodField()
 
     class Meta:
         model = AboutAttachment
@@ -269,11 +268,6 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
         instance = AboutAttachment(**validated_data)
         instance.save()
         return instance
-
-    def get_file(self, obj):
-        if obj.file and bool(obj.file.name):  # 确保文件字段存在且有名字
-            return obj.file.url
-        return []
 
     def get_aboutId(self, obj):
         return obj.about.id
