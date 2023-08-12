@@ -259,6 +259,14 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = AboutAttachment
         fields = ['id', 'aboutId', 'name', 'content', 'file', 'image']
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # 如果 'file' 是 None, 改为 []
+        if representation['file'] is None:
+            representation['file'] = []
+
+        return representation
 
     def create(self, validated_data):
         about_data = validated_data.pop('about', {})
