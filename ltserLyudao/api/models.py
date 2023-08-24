@@ -385,3 +385,54 @@ class TerreSoundIndexLH2023(BaseTerreSoundIndexData):
 class TerreSoundIndexYZH2023(BaseTerreSoundIndexData):
     class Meta:
         db_table = 'TerreSoundIndexYZH2023'
+
+class OceanSoundIndexData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateTimeField()
+    kHz0_24 = models.FloatField()
+    lower_200Hz = models.FloatField()
+    Hz200_1500 = models.FloatField()
+    higher_1500Hz = models.FloatField()
+
+    def __str__(self):
+        return self.dataID
+    class Meta:
+        db_table = 'OceanSoundIndex'
+
+class BaseBioSoundData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    classid = models.IntegerField()
+    scientificName = models.CharField(max_length=255)
+    taxonRank = models.CharField(max_length=255)
+    vernacularName = models.CharField(max_length=255)
+    soundclass = models.CharField(max_length=255)
+    time_begin = models.IntegerField()
+    time_end = models.IntegerField()
+    confidence = models.FloatField()
+    associatedMedia = models.CharField(max_length=255)
+    freq_low = models.IntegerField()
+    freq_high = models.IntegerField()
+    time = models.DateTimeField()
+
+    def __str__(self):
+        return self.dataID
+    class Meta:
+        abstract = True
+
+class BioSoundYZH2023(BaseBioSoundData):
+    class Meta:
+        db_table = 'BioSoundYZH2023'
+
+class BioSoundLH2023(BaseBioSoundData):
+    class Meta:
+        db_table = 'BioSoundLH2023'
+
+class BioSoundGST2023(BaseBioSoundData):
+    class Meta:
+        db_table = 'BioSoundGST2023'
+
+class BioSoundBS2023(BaseBioSoundData):
+    class Meta:
+        db_table = 'BioSoundBS2023'

@@ -107,8 +107,26 @@ data['time'] = pd.to_datetime(data['time'], format="%Y-%m-%d")
 data['time'] = data['time'].dt.strftime("%Y-%m-%d")
 data.to_csv('coralcomm_post_process.csv', index=False, encoding='utf-8')"""
 
-input_file = "./recreational fishery/RecreationalMay31.csv"
+"""input_file = "./recreational fishery/RecreationalMay31.csv"
 data = pd.read_csv(input_file, encoding='utf-8')
 data['time'] = pd.to_datetime(data['time'])
 data['time'] = data['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
-data.to_csv('RecreationalMay31_post_process.csv', index=False, encoding='utf-8')
+data.to_csv('RecreationalMay31_post_process.csv', index=False, encoding='utf-8')"""
+
+# input_file = "./ocean-sound-index/Green_Island_2022_Jul_Oct_20M.csv"
+# data = pd.read_csv(input_file, encoding='utf-8')
+# data['time'] = pd.to_datetime(data['time'])
+# data['time'] = data['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
+# data.to_csv('Green_post_process.csv', index=False, encoding='utf-8')
+
+folder_path = 'biosound'
+
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(folder_path, file_name)
+        df = pd.read_csv(file_path)
+        df.replace(['', pd.NA, np.nan], np.nan, inplace=True)
+        #df.insert(0, "id", range(1, len(df) + 1))
+        df['time'] = pd.to_datetime(df['time'])
+        df['time'] = df['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
+        df.to_csv(f"{file_name}_post_process.csv", index=False)
