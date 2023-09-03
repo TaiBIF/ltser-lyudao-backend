@@ -280,6 +280,19 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
     def get_aboutId(self, obj):
         return obj.about.id
 
+
+    def update(self, instance, validated_data):
+        about_data = validated_data.pop('about', None)
+        if about_data:
+            about_id = about_data.get('id')
+            if about_id:
+                instance.about = About.objects.get(pk=about_id)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+
 class AboutDetailSerializer(serializers.ModelSerializer):
     attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
     class Meta:

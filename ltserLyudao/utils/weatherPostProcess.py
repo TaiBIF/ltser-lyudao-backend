@@ -119,7 +119,7 @@ data.to_csv('RecreationalMay31_post_process.csv', index=False, encoding='utf-8')
 # data['time'] = data['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
 # data.to_csv('Green_post_process.csv', index=False, encoding='utf-8')
 
-folder_path = 'biosound'
+folder_path = 'Bio'
 
 for file_name in os.listdir(folder_path):
     if file_name.endswith('.csv'):
