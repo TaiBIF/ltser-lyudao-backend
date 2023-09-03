@@ -3,8 +3,7 @@ from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIV
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
     PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, \
-    AboutAttachmentAPIView, ContactAllAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleLoginAPIView, \
-    CustomGoogleLoginView
+    AboutAttachmentAPIView, ContactAllAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleAuthAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -12,8 +11,7 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-    #path('accounts/google/login/', CustomGoogleLoginView.as_view(), name='google_login'),
-    #path('auth/google-login/', GoogleLoginAPIView.as_view(), name='google_login'),
+    path('auth/google/', GoogleAuthAPIView.as_view(), name='google-auth'),
     path('auth/signUp/', RegisterAPIView.as_view(), name='signUp'),
     path('auth/email-verify/', VerifyEmailAPIView.as_view(), name='email-verify'),
     path('auth/resend-email-verify/', ResendEmailVerifyAPIView.as_view(), name='resend-email-verify'),
