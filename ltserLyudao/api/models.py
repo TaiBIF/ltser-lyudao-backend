@@ -194,7 +194,7 @@ class PlantData(models.Model):
     dataID = models.CharField(max_length=50)
     eventID = models.CharField(max_length=50)
     time = models.DateTimeField()
-    locationID = models.IntegerField()
+    locationID = models.CharField(max_length=50)
     habitat = models.CharField(max_length=50)
     samplingProtocol = models.CharField(max_length=50)
     sampleSizeValue = models.IntegerField()
