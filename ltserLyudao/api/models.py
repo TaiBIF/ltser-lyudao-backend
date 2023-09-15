@@ -436,3 +436,61 @@ class BioSoundGST2023(BaseBioSoundData):
 class BioSoundBS2023(BaseBioSoundData):
     class Meta:
         db_table = 'BioSoundBS2023'
+
+class AquaticfaunaData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateField()
+    season = models.CharField(max_length=50)
+    Year = models.IntegerField()
+    Month = models.IntegerField()
+    river = models.CharField(max_length=255)
+    locationID = models.CharField(max_length=50)
+    surveyObjectID = models.CharField(max_length=255)
+    surveyObject = models.CharField(max_length=255)
+    Phylum = models.CharField(max_length=255)
+    phylum_c = models.CharField(max_length=255)
+    class_field = models.CharField(max_length=255, db_column='class')
+    class_c = models.CharField(max_length=255)
+    Family = models.CharField(max_length=255, null=True, blank=True)
+    family_c = models.CharField(max_length=255, null=True, blank=True)
+    scientificName = models.CharField(max_length=255)
+    vernacularName = models.CharField(max_length=255)
+    taxonRank = models.CharField(max_length=100)
+    individualCount = models.IntegerField()
+    samplingProtocol = models.CharField(max_length=255)
+    Abundance = models.FloatField()
+    AbundanceUnit = models.CharField(max_length=100)
+    informationWithheld = models.CharField(blank=True, null=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'AquaticfaunaData'
+
+class StreamData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    time = models.DateField()
+    locationID = models.CharField(max_length=50)
+    locality = models.CharField(max_length=255)
+    waterTemperature = models.FloatField()
+    pH = models.FloatField()
+    DO = models.FloatField()
+    conductivity = models.FloatField()
+    salinity = models.FloatField()
+    SS = models.FloatField()
+    NH3_H = models.FloatField()
+    NO2_H = models.FloatField()
+    NO3_H = models.FloatField()
+    PO4_P = models.FloatField()
+    BOD5 = models.FloatField()
+    RPI_Score = models.FloatField()
+    RPI_Level = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'StreamData'
