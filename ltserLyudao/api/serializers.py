@@ -92,4 +92,14 @@ class ZoobenthosDataSerializer(serializers.Serializer):
 
     seasonal = SeasonalSerializer(many=True)
 
+class AquaticfaunaDataSerializer(serializers.Serializer):
+    site = serializers.CharField()
+    year = serializers.CharField()
+
+    class SeasonalSerializer(serializers.Serializer):
+        season = serializers.CharField()
+        count = serializers.IntegerField()
+
+    seasonal = SeasonalSerializer(many=True)
+
 
