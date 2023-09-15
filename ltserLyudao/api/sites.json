@@ -1,5 +1,70 @@
 [
     {
+        "site": "DMO",
+        "years": [
+            {
+                "year": "2022",
+                "items": []
+            },
+            {
+                "year": "2023",
+                "items": ["aquaticfauna"]
+            }
+        ]
+    },
+    {
+        "site": "DM",
+        "years": [
+            {
+                "year": "2022",
+                "items": []
+            },
+            {
+                "year": "2023",
+                "items": ["aquaticfauna"]
+            }
+        ]
+    },
+    {
+        "site": "YZHFW1",
+        "years": [
+            {
+                "year": "2022",
+                "items": []
+            },
+            {
+                "year": "2023",
+                "items": ["aquaticfauna"]
+            }
+        ]
+    },
+    {
+        "site": "YZHFW2",
+        "years": [
+            {
+                "year": "2022",
+                "items": []
+            },
+            {
+                "year": "2023",
+                "items": ["aquaticfauna"]
+            }
+        ]
+    },
+    {
+        "site": "DMD",
+        "years": [
+            {
+                "year": "2022",
+                "items": []
+            },
+            {
+                "year": "2023",
+                "items": ["aquaticfauna"]
+            }
+        ]
+    },
+    {
         "site": "A1",
         "years": [
             {
