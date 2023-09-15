@@ -119,6 +119,7 @@ data.to_csv('RecreationalMay31_post_process.csv', index=False, encoding='utf-8')
 # data['time'] = data['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
 # data.to_csv('Green_post_process.csv', index=False, encoding='utf-8')
 
+"""
 folder_path = 'Bio'
 
 for file_name in os.listdir(folder_path):
@@ -130,3 +131,28 @@ for file_name in os.listdir(folder_path):
         df['time'] = pd.to_datetime(df['time'])
         df['time'] = df['time'].dt.strftime("%Y-%m-%d %H:%M:%S")
         df.to_csv(f"{file_name}_post_process.csv", index=False)
+        
+"""
+"""
+folder_path = 'aquaticfauna'
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(folder_path, file_name)
+        df = pd.read_csv(file_path)
+        df.rename(columns={'eventDate': 'time'}, inplace=True)
+        df.replace(['', pd.NA, np.nan], np.nan, inplace=True)
+        df['time'] = pd.to_datetime(df['time'])
+        df['time'] = df['time'].dt.strftime("%Y-%m-%d")
+        df.to_csv(f"{file_name}_post_process.csv", encoding='utf-8', index=False)
+"""
+
+folder_path = 'stream'
+for file_name in os.listdir(folder_path):
+    if file_name.endswith('.csv'):
+        file_path = os.path.join(folder_path, file_name)
+        df = pd.read_csv(file_path)
+        df.rename(columns={'eventDate': 'time'}, inplace=True)
+        df.replace(['', pd.NA, np.nan], np.nan, inplace=True)
+        df['time'] = pd.to_datetime(df['time'])
+        df['time'] = df['time'].dt.strftime("%Y-%m-%d")
+        df.to_csv(f"{file_name}_post_process.csv", encoding='utf-8', index=False)
