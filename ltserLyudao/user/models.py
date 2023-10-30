@@ -69,8 +69,11 @@ class Contact(models.Model):
 
     type = models.CharField(max_length=10, choices=TYPE_CHOICES)
     name = models.CharField(max_length=50, blank=False, null=False)
+    name_en = models.CharField(max_length=50, blank=False, null=True)
     unit = models.CharField(max_length=50, blank=False, null=False)
+    unit_en = models.CharField(max_length=50, blank=False, null=True)
     content = models.CharField(max_length=50, blank=False, null=False)
+    content_en = models.CharField(max_length=50, blank=False, null=True)
     contact = models.CharField(max_length=50, blank=False, null=False)
     image = models.ImageField(upload_to='images', blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
@@ -183,7 +186,9 @@ class About(models.Model):
 
     type = models.CharField(max_length=200, choices=TYPE_CHOICES)
     name = models.CharField(max_length=200)
+    name_en = models.CharField(max_length=200, null=True, blank=True)
     content = models.TextField()
+    content_en = models.CharField(max_length=200, null=True, blank=True)
     image = models.ImageField(upload_to="aboutImage")
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
@@ -197,7 +202,9 @@ class About(models.Model):
 class AboutAttachment(models.Model):
     about = models.ForeignKey(About, on_delete=models.CASCADE, related_name='aboutAttachments')
     name = models.CharField(max_length=200)
+    name_en = models.CharField(max_length=200, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    content_en = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to='aboutAttachments', null=True, blank=True)
     image = models.ImageField(upload_to='aboutAttachments', null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
