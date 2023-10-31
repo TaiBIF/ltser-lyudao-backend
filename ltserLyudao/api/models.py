@@ -494,3 +494,14 @@ class StreamData(models.Model):
 
     class Meta:
         db_table = 'StreamData'
+
+class LocationTableInfo(models.Model):
+    location_id = models.CharField(max_length=10, unique=True)
+    name_en = models.CharField(max_length=100)
+    name_zh = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.location_id
+
+    class Meta:
+        db_table = 'LocationTableInfo'
