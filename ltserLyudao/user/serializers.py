@@ -261,8 +261,11 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
         fields = ['id', 'aboutId', 'name', 'name_en', 'content', 'content_en', 'file', 'image']
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        language = self.context.get('request').headers.get('Ltser-User-Language', 'zh-tw')
+        if language == 'en':
+            representation['name'] = representation.pop('name_en')
+            representation['content'] = representation.pop('content_en')
 
-        # 如果 'file' 是 None, 改为 []
         if representation['file'] is None:
             representation['file'] = []
 
@@ -298,6 +301,15 @@ class AboutDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
         fields = ['id', 'type', 'name', 'name_en', 'content', 'content_en', 'image',  'attachments']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        language = self.context.get('request').headers.get('Ltser-User-Language', 'zh-tw')
+        if language == 'en':
+            representation['name'] = representation.pop('name_en')
+            representation['content'] = representation.pop('content_en')
+        return representation
+
 
 class AboutPostPatchSerializer(serializers.ModelSerializer):
     class Meta:
