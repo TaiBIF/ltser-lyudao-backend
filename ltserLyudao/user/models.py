@@ -188,7 +188,7 @@ class About(models.Model):
     name = models.CharField(max_length=200)
     name_en = models.CharField(max_length=200, null=True, blank=True)
     content = models.TextField()
-    content_en = models.CharField(max_length=200, null=True, blank=True)
+    content_en = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="aboutImage")
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
