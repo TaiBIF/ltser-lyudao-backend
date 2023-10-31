@@ -266,6 +266,8 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
             representation['name'] = representation.pop('name_en')
             representation['content'] = representation.pop('content_en')
 
+        representation['image'] = instance.image.name
+
         if representation['file'] is None:
             representation['file'] = []
 
@@ -308,6 +310,8 @@ class AboutDetailSerializer(serializers.ModelSerializer):
         if language == 'en':
             representation['name'] = representation.pop('name_en')
             representation['content'] = representation.pop('content_en')
+
+        representation['image'] = instance.image.name
         return representation
 
 
