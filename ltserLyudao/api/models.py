@@ -461,7 +461,7 @@ class AquaticfaunaData(models.Model):
     samplingProtocol = models.CharField(max_length=255)
     abundance = models.FloatField()
     abundanceUnit = models.CharField(max_length=100)
-    informationWithheld = models.CharField(blank=True, null=True)
+    informationWithheld = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.dataID

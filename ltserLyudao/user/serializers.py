@@ -144,7 +144,7 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = ['id', 'type', 'name', 'unit', 'content', 'contact', 'image']
+        fields = ['id', 'type', 'name', 'name_en', 'unit', 'unit_en', 'content', 'content_en', 'contact', 'image']
 
     def create(self, validated_data):
         contact = Contact.objects.create(**validated_data)
@@ -250,7 +250,7 @@ class NewsDetailSerializer(serializers.ModelSerializer):
 class AboutSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
-        fields = ['id', 'type', 'name', 'image']
+        fields = ['id', 'type', 'name', 'name_en', 'content', 'content_en', 'image']
 
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
@@ -258,7 +258,7 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AboutAttachment
-        fields = ['id', 'aboutId', 'name', 'content', 'file', 'image']
+        fields = ['id', 'aboutId', 'name', 'name_en', 'content', 'content_en', 'file', 'image']
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
@@ -297,12 +297,12 @@ class AboutDetailSerializer(serializers.ModelSerializer):
     attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
     class Meta:
         model = About
-        fields = ['id', 'type', 'name', 'content', 'image',  'attachments']
+        fields = ['id', 'type', 'name', 'name_en', 'content', 'content_en', 'image',  'attachments']
 
 class AboutPostPatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = About
-        fields = ['type', 'name', 'content', 'image']
+        fields = ['type', 'name', 'name_en', 'content', 'content_en', 'image']
 
 
 class DownloadRecordSerializer(serializers.ModelSerializer):
