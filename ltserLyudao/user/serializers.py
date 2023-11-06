@@ -11,6 +11,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.utils import timezone
 import os
+from django.conf import settings
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
@@ -300,9 +301,15 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
 
 class AboutDetailSerializer(serializers.ModelSerializer):
     attachments = AboutAttachmentSerializer(source='aboutAttachments', many=True, read_only=True)
+    image = serializers.SerializerMethodField()
     class Meta:
         model = About
         fields = ['id', 'type', 'name', 'name_en', 'content', 'content_en', 'image',  'attachments']
+
+    def get_image(self, obj):
+        if obj.image:
+            return os.path.join(settings.MEDIA_URL, obj.image.name)
+        return None
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -311,7 +318,6 @@ class AboutDetailSerializer(serializers.ModelSerializer):
             representation['name'] = representation.pop('name_en')
             representation['content'] = representation.pop('content_en')
 
-        representation['image'] = instance.image.name
         return representation
 
 
