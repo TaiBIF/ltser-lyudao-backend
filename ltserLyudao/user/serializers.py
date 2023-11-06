@@ -256,18 +256,29 @@ class AboutSerializer(serializers.ModelSerializer):
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
     aboutId = serializers.IntegerField(source='about.id')
+    image = serializers.SerializerMethodField()
+    file = serializers.SerializerMethodField()
 
     class Meta:
         model = AboutAttachment
         fields = ['id', 'aboutId', 'name', 'name_en', 'content', 'content_en', 'file', 'image']
+
+    def get_image(self, obj):
+        if obj.image:
+            return os.path.join(settings.MEDIA_URL, obj.image.name)
+        return None
+
+    def get_file(self, obj):
+        if obj.file:
+            return os.path.join(settings.MEDIA_URL, obj.file.name)
+        return None
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         language = self.context.get('request').headers.get('Ltser-User-Language', 'zh-tw')
         if language == 'en':
             representation['name'] = representation.pop('name_en')
             representation['content'] = representation.pop('content_en')
-
-        representation['image'] = instance.image.name
 
         if representation['file'] is None:
             representation['file'] = []
