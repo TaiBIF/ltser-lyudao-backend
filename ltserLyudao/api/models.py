@@ -505,3 +505,32 @@ class LocationTableInfo(models.Model):
 
     class Meta:
         db_table = 'LocationTableInfo'
+
+
+class BaseDataField(models.Model):
+    field_name = models.CharField(max_length=100)
+    field_type = models.CharField(max_length=100)
+    title_zh_tw = models.CharField(max_length=255)
+    title_en = models.CharField(max_length=255)
+    content_zh_tw = models.TextField(null=True, blank=True)
+    content_en = models.TextField(null=True, blank=True)
+    show = models.BooleanField(default=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.field_name
+
+class CoralCommDataField(BaseDataField):
+
+    class Meta:
+        db_table = 'CoralCommDataField'
+
+class WaterDataField(BaseDataField):
+    class Meta:
+        db_table = 'WaterDataField'
+
+class WeatherDataField(BaseDataField):
+    class Meta:
+        db_table = 'WeatherDataField'
