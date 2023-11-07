@@ -550,3 +550,10 @@ class FishDataField(BaseDataField):
     class Meta:
         db_table = 'FishDataField'
 
+class ZoobenthosDataField(BaseDataField):
+    class Meta:
+        db_table = 'ZoobenthosDataField'
+
+class PlantDataField(BaseDataField):
+    class Meta:
+        db_table = 'PlantDataField'
