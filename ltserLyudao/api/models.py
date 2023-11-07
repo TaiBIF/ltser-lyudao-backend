@@ -9,7 +9,6 @@ class WaterData(models.Model):
     locality = models.CharField(max_length=255)
     verbatimDepth = models.FloatField()
     waterTemperature = models.FloatField()
-    DO = models.FloatField(null=True, blank=True)
     conductivity = models.FloatField()
     salinity = models.FloatField()
     turbidity = models.FloatField()
@@ -23,7 +22,7 @@ class WaterData(models.Model):
     COD = models.FloatField(null=True, blank=True)
     MBAS = models.FloatField(null=True, blank=True)
     TOC = models.FloatField(null=True, blank=True)
-    lipid = models.FloatField(null=True, blank=True)
+    Lipid = models.FloatField(null=True, blank=True)
     BOD5 = models.FloatField(null=True, blank=True)
 
     def __str__(self):
