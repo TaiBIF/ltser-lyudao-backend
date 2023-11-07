@@ -533,3 +533,16 @@ class WaterDataField(BaseDataField):
 class WeatherDataField(BaseDataField):
     class Meta:
         db_table = 'WeatherDataField'
+
+class HabitatDataField(BaseDataField):
+    class Meta:
+        db_table = 'HabitatDataField'
+
+class SeaTemperatureDataField(BaseDataField):
+    class Meta:
+        db_table = 'SeaTemperatureDataField'
+
+class CoralDataField(BaseDataField):
+    class Meta:
+        db_table = 'CoralDataField'
+
