@@ -546,3 +546,7 @@ class CoralDataField(BaseDataField):
     class Meta:
         db_table = 'CoralDataField'
 
+class FishDataField(BaseDataField):
+    class Meta:
+        db_table = 'FishDataField'
+
