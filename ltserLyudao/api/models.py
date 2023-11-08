@@ -557,3 +557,11 @@ class ZoobenthosDataField(BaseDataField):
 class PlantDataField(BaseDataField):
     class Meta:
         db_table = 'PlantDataField'
+
+class BirdNetSoundDataField(BaseDataField):
+    class Meta:
+        db_table = 'BirdNetSoundDataField'
+
+class FishingDataField(BaseDataField):
+    class Meta:
+        db_table = 'FishingDataField'
