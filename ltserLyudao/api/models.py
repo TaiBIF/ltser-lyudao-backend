@@ -565,3 +565,23 @@ class BirdNetSoundDataField(BaseDataField):
 class FishingDataField(BaseDataField):
     class Meta:
         db_table = 'FishingDataField'
+
+class OceanSoundIndexDataField(BaseDataField):
+    class Meta:
+        db_table = 'OceanSoundIndexDataField'
+
+class BioSoundDataField(BaseDataField):
+    class Meta:
+        db_table = 'BioSoundDataField'
+
+class TerreSoundIndexDataField(BaseDataField):
+    class Meta:
+        db_table = 'TerreSoundIndexDataField'
+
+class AquaticfaunaDataField(BaseDataField):
+    class Meta:
+        db_table = 'AquaticfaunaDataField'
+
+class StreamDataField(BaseDataField):
+    class Meta:
+        db_table = 'StreamDataField'
