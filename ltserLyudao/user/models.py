@@ -182,6 +182,7 @@ class About(models.Model):
         ('ecologicalObservation', '生態觀測'),
         ('environmentalObservation', '環境觀測'),
         ('socialObservation', '社會觀測'),
+        ('projectIntroduction', '計畫介紹')
     ]
 
     type = models.CharField(max_length=200, choices=TYPE_CHOICES)
@@ -189,7 +190,7 @@ class About(models.Model):
     name_en = models.CharField(max_length=200, null=True, blank=True)
     content = models.TextField()
     content_en = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to="aboutImage")
+    image = models.ImageField(upload_to="aboutImage", null=True, blank=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
