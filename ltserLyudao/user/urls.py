@@ -36,5 +36,5 @@ urlpatterns = [
     path('users/about-attachment/', AboutAttachmentAPIView.as_view(), name='about-attachment'),
     path('users/download-record/', DownloadRecordAPIView.as_view(), name='download-record'),
     path('users/download-apply/', DownloadApplyAPIView.as_view(), name='download-apply'),
-    path('member-info/', MemberInformationAPIView.as_view(), name='member-info'),
+    path('users/member-info/', MemberInformationAPIView.as_view(), name='member-info'),
 ]
