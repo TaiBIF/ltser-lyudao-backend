@@ -355,3 +355,16 @@ class DownloadApplySerializer(serializers.ModelSerializer):
 
     def get_time(self, obj):
         return (obj.created_at + timezone.timedelta(hours=8)).strftime('%Y-%m-%d')
+
+class MyUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyUser
+        fields = ['id', 'first_name', 'last_name', 'role', 'email']
+        read_only_fields = ('id', 'email')
+
+    def update(self, instance, validated_data):
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.role = validated_data.get('role', instance.role)
+        instance.save()
+        return instance
