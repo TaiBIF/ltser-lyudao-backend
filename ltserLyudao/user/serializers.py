@@ -163,7 +163,7 @@ class LiteratureSerializer(serializers.ModelSerializer):
 class QATagSerializer(serializers.ModelSerializer):
     class Meta:
         model = QATag
-        fields = ['id', 'title', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'title_en', 'created_at', 'updated_at']
 
 class QuestionAnswerSerializer(serializers.ModelSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
@@ -173,7 +173,7 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = QuestionAnswer
-        fields = ['id', 'type_id', 'question', 'answer', 'created_at', 'updated_at']
+        fields = ['id', 'type_id', 'question', 'question_en', 'answer', 'answer_en', 'created_at', 'updated_at']
 
     def create(self, validated_data):
         type_instance = validated_data.pop('type')

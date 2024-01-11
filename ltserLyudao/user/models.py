@@ -95,6 +95,7 @@ class Literature(models.Model):
 
 class QATag(models.Model):
     title = models.CharField(max_length=50, blank=False, null=False)
+    title_en = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
     def __str__(self):
@@ -105,7 +106,9 @@ class QATag(models.Model):
 class QuestionAnswer(models.Model):
     type = models.ForeignKey(QATag, on_delete=models.CASCADE)
     question = models.CharField(max_length=1000, blank=False, null=False)
+    question_en = models.CharField(max_length=1000, blank=True, null=True)
     answer = models.TextField()
+    answer_en = models.TextField(blank=True, null=True)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
 
