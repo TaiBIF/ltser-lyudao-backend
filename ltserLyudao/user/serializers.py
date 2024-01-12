@@ -164,6 +164,13 @@ class QATagSerializer(serializers.ModelSerializer):
     class Meta:
         model = QATag
         fields = ['id', 'title', 'title_en', 'created_at', 'updated_at']
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        language = self.context.get('request').headers.get('Ltser-User-Language', 'zh-tw')
+        if language == 'en':
+            representation['title'] = representation.pop('title_en')
+
+        return representation
 
 class QuestionAnswerSerializer(serializers.ModelSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
@@ -184,6 +191,14 @@ class QuestionAnswerSerializer(serializers.ModelSerializer):
         type_instance = validated_data.pop('type')
         validated_data['type'] = type_instance
         return super().update(instance, validated_data)
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        language = self.context.get('request').headers.get('Ltser-User-Language', 'zh-tw')
+        if language == 'en':
+            representation['question'] = representation.pop('question_en')
+            representation['answer'] = representation.pop('answer_en')
+
+        return representation
 
 class FormLinkAttachmentSerializer(serializers.ModelSerializer):
     class Meta:
