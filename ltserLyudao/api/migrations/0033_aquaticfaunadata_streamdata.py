@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('samplingProtocol', models.CharField(max_length=255)),
                 ('Abundance', models.FloatField()),
                 ('AbundanceUnit', models.CharField(max_length=100)),
-                ('informationWithheld', models.CharField(blank=True, null=True)),
+                ('informationWithheld', models.CharField(max_length=100, blank=True, null=True)),
             ],
             options={
                 'db_table': 'AquaticfaunaData',
