@@ -1,43 +1,23 @@
-ARG PYTHON_VERSION=3.10
+FROM python:3.8
 
-FROM python:${PYTHON_VERSION}-slim-buster AS builder
+WORKDIR /app
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+COPY requirements.txt .
 
-RUN apt-get update \
-  # dependencies for building Python packages
-  && apt-get install -y build-essential \
-  # tools
-  && apt-get install -y curl \
-  # psycopg2 dependencies
-  # && apt-get install -y libpq-dev \
-  # Translations dependencies
-  #&& apt-get install -y gettext \
-  # cleaning up unused files
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
+COPY . .
 
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gunicorn
 
-# timezone to Asia/Taipei
-RUN ln -sf /usr/share/zoneinfo/Asia/Taipei /etc/localtime
-RUN echo "Asia/Taipei" > /etc/timezone
-ENV TZ=Asia/Taipei
+RUN python manage.py collectstatic --noinput
 
-WORKDIR /code
+ADD https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh /usr/wait-for-it.sh
 
-# Package
-COPY requirements requirements
-RUN pip install --upgrade pip
-RUN pip install --no-cache --user -r requirements/base.txt
+RUN chmod +x /usr/wait-for-it.sh
 
+EXPOSE 8000
 
-COPY ./scripts/entrypoint /srv/entrypoint
-RUN sed -i 's/\r$//g' /srv/entrypoint
-RUN chmod +x /srv/entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-COPY ./scripts/start /srv/start
-RUN sed -i 's/\r$//g' /srv/start
-RUN chmod +x /srv/start
-
-ENTRYPOINT ["/srv/entrypoint"]
+ENTRYPOINT ["entrypoint.sh"]
