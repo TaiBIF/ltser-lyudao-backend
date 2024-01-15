@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: ltser-lyudao-backend-docker
     ports:
-      - "7080:8200"
+      - "8000:8000"
     env_file:
       - .env
     depends_on:

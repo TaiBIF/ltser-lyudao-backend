@@ -5,4 +5,4 @@
 python manage.py makemigrations
 python manage.py migrate
 
-exec gunicorn ltserLyudao.wsgi:application --bind 0.0.0.0:8200
+exec gunicorn ltserLyudao.wsgi:application --bind 0.0.0.0:8000

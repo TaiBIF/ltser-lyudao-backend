@@ -16,7 +16,7 @@ ADD https://github.com/vishnubob/wait-for-it/raw/master/wait-for-it.sh /usr/wait
 
 RUN chmod +x /usr/wait-for-it.sh
 
-EXPOSE 8200
+EXPOSE 8000
 
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
