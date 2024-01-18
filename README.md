@@ -22,9 +22,13 @@ sudo docker compose build
 sudo docker compose up
 ```
 
-Django 預設使用port 8000
+Notice:
 
-如果需要在開發端安裝管理資料庫的網頁界面(adminer.php)，就可以把`compose.override.yml`裡的adminer拿掉註解。
+- Django 預設使用port 8000
+- 如果需要在開發端安裝管理資料庫的網頁界面(adminer.php)，就可以把`compose.override.yml`裡的adminer拿掉註解。
+- 會自動產生一個`ltser-lyudao-volumes`目錄，放置跟docker volumes的對應，之後static活pgdata的檔案也可以設定在這邊比較方便備份
+
+
 
 ## Deployment部署
 
