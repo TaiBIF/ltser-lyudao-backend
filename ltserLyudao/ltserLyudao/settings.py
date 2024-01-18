@@ -175,7 +175,7 @@ DATABASES = {
         'NAME': os.environ.get('DOCKER_NAME'),
         'USER': os.environ.get('DOCKER_USER'),
         'PASSWORD': os.environ.get('DOCKER_PASSWORD'),
-        'HOST': os.environ.get('DOCKER_HOST'),
+        'HOST': os.environ.get('DOCKER_POSTGRES_HOST'),
         'PORT': os.environ.get('DB_PORT'),
     }
 }
