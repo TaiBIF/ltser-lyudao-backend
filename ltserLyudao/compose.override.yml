@@ -4,6 +4,7 @@ services:
   app:
     ports:
       - 8000:8000
+    restart: always
 
   #adminer:
   #  image: adminer

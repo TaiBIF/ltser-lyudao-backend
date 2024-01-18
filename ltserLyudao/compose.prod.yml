@@ -20,6 +20,7 @@ services:
       - ../ltser-lyudao-volumes/frontend:/frontend
       - ../ltser-lyudao-volumes/certbot/conf:/etc/letsencrypt
       - ../ltser-lyudao-volumes/certbot/www:/var/www/certbot
+      - ../ltser-lyudao-volumes/static:/app/static
   certbot:
     image: certbot/certbot
     volumes:

@@ -8,6 +8,8 @@ services:
     image: ltser-lyudao-backend-docker
     volumes:
       - .:/app
+      - ../ltser-lyudao-volumes/static:/app/static
+      - ../ltser-lyudao-volumes/frontend:/frontend
     environment:
       - WEB_ENV=${WEB_ENV}
   db:
