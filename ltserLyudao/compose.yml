@@ -9,6 +9,7 @@ services:
     volumes:
       - .:/app
       - ../ltser-lyudao-volumes/static:/app/static
+      - ../ltser-lyudao-volumes/media:/app/media
       - ../ltser-lyudao-volumes/frontend:/frontend
     environment:
       - WEB_ENV=${WEB_ENV}

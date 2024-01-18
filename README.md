@@ -61,3 +61,7 @@ sudo docker volume rm postgres_data
 ```
 sudo docker compose -f compose.yml -f compse.prod.yml exec db bash
 ```
+
+## Notice
+
+- django後端的static url跟前端的static url會衝突，剛好目前沒用到django的static，所以目前nginx是設定`/stati/admin`才會指向volumes的static folder。
