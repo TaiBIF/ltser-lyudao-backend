@@ -64,3 +64,6 @@ Thumbs.db
 /ltserLyudao/utils/biosound/
 /ltserLyudao/utils/Bio/
 /ltserLyudao/utils/recreational fishery/
+
+ltserLyudao/initdb/*.gz
+ltser-lyudao-volumes/
