@@ -172,10 +172,10 @@ WSGI_APPLICATION = 'ltserLyudao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
+        'NAME': os.environ.get('DOCKER_NAME'),
+        'USER': os.environ.get('DOCKER_USER'),
+        'PASSWORD': os.environ.get('DOCKER_PASSWORD'),
+        'HOST': os.environ.get('DOCKER_HOST'),
         'PORT': os.environ.get('DB_PORT'),
     }
 }
