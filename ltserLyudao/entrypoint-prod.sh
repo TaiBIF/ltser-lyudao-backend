@@ -8,9 +8,4 @@ set -o nounset
 python manage.py migrate
 python manage.py collectstatic --no-input
 
-#exec gunicorn ltserLyudao.wsgi:application --bind 0.0.0.0:8000
-#gunicorn ltserLyudao.wsgi:application --bind 0.0.0.0:8000
-
-python manage.py runserver 0.0.0.0:8000
-
-fi
+gunicorn --bind 0.0.0.0:8001 ltserLyudao.wsgi:application

@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  app:
+    ports:
+      - 8000:8000
+
+  #adminer:
+  #  image: adminer
+  #  restart: no
+  #  depends_on:
+  #    - postgres
+  #  ports:
+  #    - 8080:8080
