@@ -40,6 +40,8 @@ Notice:
 sudo docker compose -f compose.yml -f compose.prod.yml up -d
 ```
 
+
+還沒設定自動部署(branch有更動的話會自動部署到EC2)，目前都是手動到AWS EC2 去更新跟重新 docker restart，之後可以考慮使用bitbucket的pipeline。
 ### 前端程式
 
 已透過Nginx把`/`的連線導到`frontend`目錄，所以前端執行`yarn build`後的build目錄就直接複製到`ltser-lyudao-volumes/frontend`目錄即可。
@@ -49,6 +51,13 @@ sudo docker compose -f compose.yml -f compose.prod.yml up -d
 增加一個`ltserLyudao/initdb`目錄，可以把dump出來的xxx.sql.gz檔放在這個目錄裡，如果資料庫是空的就會自動import這個匯出檔。
 
 如果要清空資料庫，可以執行：
+
 ```
 sudo docker volume rm postgres_data
+```
+
+正式站沒有對外開DB port (5432)，所以如果要從csv匯入postgres的話就要到正式站進去docker環境去處理
+
+```
+sudo docker compose -f compose.yml -f compse.prod.yml exec db bash
 ```
