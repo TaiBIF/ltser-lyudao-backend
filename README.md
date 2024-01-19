@@ -29,6 +29,25 @@ Notice:
 - 會自動產生一個`ltser-lyudao-volumes`目錄，放置跟docker volumes的對應，之後static活pgdata的檔案也可以設定在這邊比較方便備份
 
 
+#### Database Schema Migration
+
+改了Database Schema (通常是models.py)，需要做migration。
+
+Docker compose跑起來後，執行以下：
+
+```
+sudo docker compose exec app bash
+```
+
+進入Django docker的環境，然後執行
+
+```
+python manage.py makemigrations
+```
+
+產生migration檔案後，就可以`exit`退出，回到開發主機環境。
+
+重新啟動，執行`docker compose down`，`docker compose up`，entrypoint.sh會自動跑`migrate`。
 
 ## Deployment部署
 
