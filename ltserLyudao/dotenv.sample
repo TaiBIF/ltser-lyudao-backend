@@ -1,0 +1,14 @@
+SECRET_KEY=no-secret
+DB_NAME=db-name
+DB_USER=db-user
+DB_PASSWORD=db-passwd
+DB_HOST=ip#Deprecated
+#DOCKER_HOST=db # v1's setting
+DB_PORT=db-port
+DOCKER_NAME=docker-db-name
+DOCKER_USER=docker-db-user
+DOCKER_POSTGRES_HOST=docker-db-host
+DOCKER_PASSWORD=docker-db-passwd
+EMAIL_HOST_PASSWORD=email-hast-passwd
+DEBUG=on
+ALLOWED_HOSTS=127.0.0.1,site1.domain.org,site2.domain.org
