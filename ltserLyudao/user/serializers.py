@@ -271,8 +271,8 @@ class AboutSerializer(serializers.ModelSerializer):
 
 class AboutAttachmentSerializer(serializers.ModelSerializer):
     aboutId = serializers.IntegerField(source='about.id')
-    image = serializers.SerializerMethodField()
-    file = serializers.SerializerMethodField()
+    image = serializers.ImageField(max_length=None, use_url=True, required=True)
+    file = serializers.FileField(max_length=None, use_url=True, required=True)
 
     class Meta:
         model = AboutAttachment
