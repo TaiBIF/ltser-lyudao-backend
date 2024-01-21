@@ -295,8 +295,8 @@ class AboutAttachmentSerializer(serializers.ModelSerializer):
             representation['name'] = representation.pop('name_en')
             representation['content'] = representation.pop('content_en')
 
-        if representation['file'] is None:
-            representation['file'] = []
+        representation['image'] = self.get_image(instance)
+        representation['file'] = self.get_file(instance)
 
         return representation
 
