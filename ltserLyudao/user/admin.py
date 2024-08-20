@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import MyUser, Contact, Literature, QATag, QuestionAnswer, FormLink, FormLinkAttachment, News, NewsTag, \
     NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment,DownloadRecord, DownloadApply
 class MyUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'get_email', 'get_name', 'get_verified', 'get_last_login')
+    list_display = ('id', 'get_email', 'get_name', 'get_groups', 'get_verified', 'get_last_login')
 
     def get_email(self, obj):
         return obj.email
@@ -15,11 +15,15 @@ class MyUserAdmin(admin.ModelAdmin):
 
     def get_last_login(self, obj):
         return obj.last_login
+    
+    def get_groups(self, obj):
+        return ", ".join([group.name for group in obj.groups.all()])
 
     get_email.short_description = 'EMAIL ADDRESS'
     get_verified.short_description = 'VERIFIED STATUS'
     get_name.short_description = 'NAME'
     get_last_login.short_description = 'LAST LOGIN'
+    get_groups.short_description = 'GROUPS'
 
 class ContactAdmin(admin.ModelAdmin):
     list_display = ('id', 'type', 'name', 'unit', 'content', 'contact')
