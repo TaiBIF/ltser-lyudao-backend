@@ -494,6 +494,99 @@ class StreamData(models.Model):
     class Meta:
         db_table = 'StreamData'
 
+class OtolithData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    family = models.CharField(max_length=50)
+    genus = models.CharField(max_length=50)
+    scientificName = models.CharField(max_length=50)
+    taxonRank = models.CharField(max_length=50)
+    geologicalAge = models.CharField(max_length=50)
+    locationID = models.CharField(max_length=50)
+    locality = models.CharField(max_length=255)
+    time = models.DateTimeField()
+    samplingProtocol = models.CharField(max_length=255)
+    typeStatus = models.CharField(max_length=50)
+    recordNumber = models.CharField(max_length=255)
+    recordedBy = models.CharField(max_length=50)
+    identifiedBy = models.CharField(max_length=50)
+    individualCount = models.IntegerField()
+    verbatimDepth = models.FloatField()
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'OtolithData'
+
+class CoralDivData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    time = models.DateTimeField()
+    locationID = models.CharField(max_length=50)
+    verbatimLocality = models.CharField(max_length=50)
+    locality = models.CharField(max_length=255)
+    decimalLatitude = models.FloatField()
+    decimalLongitude = models.FloatField()
+    verbatimDepth = models.FloatField()
+    samplingProtocol = models.CharField(max_length=255)
+    sampleSizeValue = models.FloatField()
+    sampleSizeUnit = models.CharField(max_length=50)
+    kingdom = models.CharField(max_length=50)
+    phylum = models.CharField(max_length=100)
+    class_name = models.CharField(max_length=100)  # 使用 class_name 作為欄位名稱
+    family = models.CharField(max_length=100, null=True)
+    genus = models.CharField(max_length=50)
+    specificEpithet = models.CharField(max_length=50)
+    occurrenceStatus = models.CharField(max_length=50)
+    scientificName = models.CharField(max_length=50)
+    taxonRank = models.CharField(max_length=50)
+    abundance = models.FloatField()
+    recordedBy = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'CoralDivData'
+
+class CoralBleachData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    year = models.IntegerField()
+    month = models.IntegerField()
+    day = models.IntegerField()
+    time = models.DateTimeField()
+    locationID = models.CharField(max_length=50)
+    verbatimLocality = models.CharField(max_length=50)
+    locality = models.CharField(max_length=255)
+    verbatimDepth = models.FloatField()
+    decimalLatitude = models.FloatField()
+    decimalLongitude = models.FloatField()
+    replicate = models.IntegerField()
+    scientificName = models.CharField(max_length=50)
+    taxonRank = models.CharField(max_length=50)
+    family = models.CharField(max_length=100, null=True)
+    GrowthForm = models.CharField(max_length=50)
+    measurementType = models.CharField(max_length=50)
+    measurementValue = models.FloatField()
+    measurementUnit = models.CharField(max_length=50)
+    individualCount = models.IntegerField()
+    recordedBy = models.CharField(max_length=50)
+    identifiedBy = models.CharField(max_length=50)
+    samplingProtocol = models.CharField(max_length=50)
+    sampleSizeValue = models.FloatField()
+    sampleSizeUnit = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'CoralBleachData'
+
 class LocationTableInfo(models.Model):
     location_id = models.CharField(max_length=10, unique=True)
     name_en = models.CharField(max_length=100)
@@ -585,3 +678,15 @@ class AquaticfaunaDataField(BaseDataField):
 class StreamDataField(BaseDataField):
     class Meta:
         db_table = 'StreamDataField'
+
+class OtolithDataField(BaseDataField):
+    class Meta:
+        db_table = 'OtolithDataField'
+
+class CoralDivDataField(BaseDataField):
+    class Meta:
+        db_table = 'CoralDivDataField'
+
+class CoralBleachDataField(BaseDataField):
+    class Meta:
+        db_table = 'CoralBleachDataField'
