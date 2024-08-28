@@ -2,7 +2,8 @@ from django.urls import path
 from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperatureTimeRangeView, \
     GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, \
     GetFishDetailView, GetZoobenthosDetailView, GetTableFieldsView, GetDataRawAPIView, GetWeatherChartAPIView, \
-    DownloadHomePageAPIView, GetTableSitesAPIView, GetTableSeriesAPIView, DownloadRawAPIView, GetAllDetailsAPIView
+    DownloadHomePageAPIView, GetTableSitesAPIView, GetTableSeriesAPIView, DownloadRawAPIView, GetAllDetailsAPIView, \
+    SurveymapDropdownDataView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('download/<str:table>/raws/', DownloadRawAPIView.as_view(), name='download_raw_api'),
     path('download/<str:table>/raws/species/', DownloadRawAPIView.as_view(), name='download_raw_species_api'),
     path('data/all/detail/', GetAllDetailsAPIView.as_view(), name='get_all_details'),
+    path('data/surveymap/option/', SurveymapDropdownDataView.as_view(), name='get_surveymap_option'),
 ]
