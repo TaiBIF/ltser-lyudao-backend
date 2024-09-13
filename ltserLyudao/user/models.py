@@ -88,6 +88,7 @@ class Literature(models.Model):
     name = models.CharField(max_length=500, blank=False, null=False)
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateField(auto_now=True)
+    year = models.IntegerField(null=True, blank=False)
 
     class Meta:
         db_table = 'Literature'

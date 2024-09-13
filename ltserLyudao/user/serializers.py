@@ -154,7 +154,7 @@ class ContactSerializer(serializers.ModelSerializer):
 class LiteratureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Literature
-        fields = ['id', 'name', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'created_at', 'updated_at', 'year']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def create(self, validated_data):
