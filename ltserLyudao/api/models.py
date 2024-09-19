@@ -690,3 +690,34 @@ class CoralDivDataField(BaseDataField):
 class CoralBleachDataField(BaseDataField):
     class Meta:
         db_table = 'CoralBleachDataField'
+
+class MemorabiliaContent(models.Model):
+    image = models.ImageField(upload_to='social_observation__images/')
+    description = models.TextField()
+
+    class Meta:
+        db_table = 'memorabilia_content'
+
+class LandUsage(models.Model):
+    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    description = models.TextField(null=True, blank=True, default=None)
+    content = models.TextField(null=True, blank=True, default=None)
+
+    class Meta:
+        db_table = 'land_usage'
+
+class OceanUsage(models.Model):
+    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    description = models.TextField(null=True, blank=True, default=None)
+    content = models.TextField(null=True, blank=True, default=None)
+
+    class Meta:
+        db_table = 'ocean_usage'
+
+class TemporalVariation(models.Model):
+    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    description = models.TextField(null=True, blank=True, default=None)
+    content = models.TextField(null=True, blank=True, default=None)
+
+    class Meta:
+        db_table = 'temporal_variation'

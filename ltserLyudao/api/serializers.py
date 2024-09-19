@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WeatherData
+from .models import WeatherData, MemorabiliaContent, LandUsage, OceanUsage, TemporalVariation
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -101,5 +101,25 @@ class AquaticfaunaDataSerializer(serializers.Serializer):
         count = serializers.IntegerField()
 
     seasonal = SeasonalSerializer(many=True)
+
+class MemorabiliaContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MemorabiliaContent
+        fields = ['image', 'description']
+
+class LandUsageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LandUsage
+        fields = ['image', 'description', 'content']
+
+class OceanUsageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OceanUsage
+        fields = ['image', 'description', 'content']
+
+class TemporalVariationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemporalVariation
+        fields = ['image', 'description', 'content']
 
 

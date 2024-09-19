@@ -3,7 +3,7 @@ from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperat
     GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, \
     GetFishDetailView, GetZoobenthosDetailView, GetTableFieldsView, GetDataRawAPIView, GetWeatherChartAPIView, \
     DownloadHomePageAPIView, GetTableSitesAPIView, GetTableSeriesAPIView, DownloadRawAPIView, GetAllDetailsAPIView, \
-    SurveymapDropdownDataView
+    SurveymapDropdownDataView, MemorabiliaContentAPIView, LandUsageAPIView, OceanUsageAPIView, TemporalVariationAPIView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -26,4 +26,8 @@ urlpatterns = [
     path('download/<str:table>/raws/species/', DownloadRawAPIView.as_view(), name='download_raw_species_api'),
     path('data/all/detail/', GetAllDetailsAPIView.as_view(), name='get_all_details'),
     path('data/surveymap/option/', SurveymapDropdownDataView.as_view(), name='get_surveymap_option'),
+    path('social_observation/memorabilia', MemorabiliaContentAPIView.as_view(), name='get_memorabilia'),
+    path('social_observation/land_usage', LandUsageAPIView.as_view(), name='get_land_usage'),
+    path('social_observation/ocean_usage', OceanUsageAPIView.as_view(), name='get_ocean_usage'),
+    path('social_observation/temporal_variation', TemporalVariationAPIView.as_view(), name='get_temporal_variation')
 ]
