@@ -220,6 +220,30 @@ class PlantData(models.Model):
     class Meta:
         db_table = 'PlantData'
 
+class BirdNetSoundData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255, null=True, blank=True)
+    locationID = models.CharField(max_length=10, null=True, blank=True)
+    species_list = models.CharField(max_length=255, null=True, blank=True)  # Use None for no species
+    scientificName = models.CharField(max_length=255, null=True, blank=True)
+    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    vernacularName = models.CharField(max_length=255, null=True, blank=True)
+    model = models.CharField(max_length=255, null=True, blank=True)
+    time_begin = models.IntegerField(null=True, blank=True)
+    time_end = models.IntegerField(null=True, blank=True)
+    confidence = models.FloatField(null=True, blank=True)
+    associatedMedia = models.CharField(max_length=255, null=True, blank=True)
+    week = models.IntegerField(null=True, blank=True)
+    overlap = models.IntegerField(null=True, blank=True)
+    sensitivity = models.IntegerField(null=True, blank=True)
+    min_conf = models.FloatField(null=True, blank=True)
+    time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = 'BirdNetSoundData'
 
 class BaseBirdNetSoundData(models.Model):
     dataID = models.CharField(max_length=255)
