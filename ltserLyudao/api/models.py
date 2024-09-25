@@ -433,17 +433,40 @@ class TerreSoundIndexYZH2023(BaseTerreSoundIndexData):
 
 class OceanSoundIndexData(models.Model):
     dataID = models.CharField(max_length=255)
-    eventID = models.CharField(max_length=255)
-    time = models.DateTimeField()
-    kHz0_24 = models.FloatField()
-    lower_200Hz = models.FloatField()
-    Hz200_1500 = models.FloatField()
-    higher_1500Hz = models.FloatField()
+    eventID = models.CharField(max_length=255, null=True, blank=True)
+    locationID = models.CharField(max_length=10, null=True, blank=True)
+    time = models.DateTimeField(null=True, blank=True)
+    kHz0_24 = models.FloatField(null=True, blank=True)
+    lower_200Hz = models.FloatField(null=True, blank=True)
+    Hz200_1500 = models.FloatField(null=True, blank=True)
+    higher_1500Hz = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return self.dataID
     class Meta:
         db_table = 'OceanSoundIndex'
+
+class BioSoundData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255, null=True, blank=True)
+    locationID = models.CharField(max_length=10, null=True, blank=True)
+    classid = models.IntegerField(null=True, blank=True)
+    scientificName = models.CharField(max_length=255, null=True, blank=True)
+    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    vernacularName = models.CharField(max_length=255, null=True, blank=True)
+    soundclass = models.CharField(max_length=255, null=True, blank=True)
+    time_begin = models.IntegerField(null=True, blank=True)
+    time_end = models.IntegerField(null=True, blank=True)
+    confidence = models.FloatField(null=True, blank=True)
+    associatedMedia = models.CharField(max_length=255, null=True, blank=True)
+    freq_low = models.IntegerField(null=True, blank=True)
+    freq_high = models.IntegerField(null=True, blank=True)
+    time = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.dataID
+    class Meta:
+        db_table = 'BioSoundData'
 
 class BaseBioSoundData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -484,28 +507,28 @@ class BioSoundBS2023(BaseBioSoundData):
 
 class AquaticfaunaData(models.Model):
     dataID = models.CharField(max_length=255)
-    eventID = models.CharField(max_length=255)
-    time = models.DateField()
-    season = models.CharField(max_length=50)
-    year = models.IntegerField()
-    month = models.IntegerField()
-    river = models.CharField(max_length=255)
-    locationID = models.CharField(max_length=50)
-    surveyObjectID = models.CharField(max_length=255)
-    surveyObject = models.CharField(max_length=255)
-    phylum = models.CharField(max_length=255)
-    phylum_c = models.CharField(max_length=255)
-    class_field = models.CharField(max_length=255, db_column='class')
-    class_c = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255, null=True, blank=True)
+    time = models.DateField(null=True, blank=True)
+    season = models.CharField(max_length=50, null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    month = models.IntegerField(null=True, blank=True)
+    river = models.CharField(max_length=255, null=True, blank=True)
+    locationID = models.CharField(max_length=50, null=True, blank=True)
+    surveyObjectID = models.CharField(max_length=255, null=True, blank=True)
+    surveyObject = models.CharField(max_length=255, null=True, blank=True)
+    phylum = models.CharField(max_length=255, null=True, blank=True)
+    phylum_c = models.CharField(max_length=255, null=True, blank=True)
+    class_field = models.CharField(max_length=255, db_column='class', null=True, blank=True)
+    class_c = models.CharField(max_length=255, null=True, blank=True)
     family = models.CharField(max_length=255, null=True, blank=True)
     family_c = models.CharField(max_length=255, null=True, blank=True)
-    scientificName = models.CharField(max_length=255)
-    vernacularName = models.CharField(max_length=255)
-    taxonRank = models.CharField(max_length=100)
-    individualCount = models.IntegerField()
-    samplingProtocol = models.CharField(max_length=255)
-    abundance = models.FloatField()
-    abundanceUnit = models.CharField(max_length=100)
+    scientificName = models.CharField(max_length=255, null=True, blank=True)
+    vernacularName = models.CharField(max_length=255, null=True, blank=True)
+    taxonRank = models.CharField(max_length=100, null=True, blank=True)
+    individualCount = models.IntegerField(null=True, blank=True)
+    samplingProtocol = models.CharField(max_length=255, null=True, blank=True)
+    abundance = models.FloatField(null=True, blank=True)
+    abundanceUnit = models.CharField(max_length=100, null=True, blank=True)
     informationWithheld = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
