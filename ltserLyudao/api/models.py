@@ -440,6 +440,7 @@ class OceanSoundIndexData(models.Model):
     lower_200Hz = models.FloatField(null=True, blank=True)
     Hz200_1500 = models.FloatField(null=True, blank=True)
     higher_1500Hz = models.FloatField(null=True, blank=True)
+    verbatimDepth = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return self.dataID
