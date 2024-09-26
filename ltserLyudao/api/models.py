@@ -445,7 +445,7 @@ class OceanSoundIndexData(models.Model):
     def __str__(self):
         return self.dataID
     class Meta:
-        db_table = 'OceanSoundIndex'
+        db_table = 'OceanSoundIndexData'
 
 class BioSoundData(models.Model):
     dataID = models.CharField(max_length=255)
