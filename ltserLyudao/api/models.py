@@ -91,6 +91,10 @@ class BaseSeaTemperatureData(models.Model):
     class Meta:
         abstract = True
 
+class SeaTemperatureData(BaseSeaTemperatureData):
+    class Meta:
+        db_table = 'SeaTemperatureData'
+
 class SeaTemperatureCK2023(BaseSeaTemperatureData):
     class Meta:
         db_table = 'SeaTemperatureCK2023'
