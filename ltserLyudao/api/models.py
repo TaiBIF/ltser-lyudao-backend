@@ -795,3 +795,15 @@ class TemporalVariation(models.Model):
 
     class Meta:
         db_table = 'temporal_variation'
+
+class SocialInterview(models.Model):
+    dataID = models.CharField(max_length=255)
+    time = models.DateField()
+    text = models.TextField(null=True, blank=True, default=None)
+    CAP_issue = models.CharField(max_length=255)
+    local_issue = models.CharField(max_length=255)
+    tag = models.CharField(max_length=255)
+    participant_type = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'social_interview'

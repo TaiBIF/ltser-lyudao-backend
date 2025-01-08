@@ -3,7 +3,8 @@ from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperat
     GetSeaTemperatureDetailView, GetCoralDetailView, GetPlantDetailView, GetBirdNetSoundDetailView, \
     GetFishDetailView, GetZoobenthosDetailView, GetTableFieldsView, GetDataRawAPIView, GetWeatherChartAPIView, \
     DownloadHomePageAPIView, GetTableSitesAPIView, GetTableSeriesAPIView, DownloadRawAPIView, GetAllDetailsAPIView, \
-    SurveymapDropdownDataView, MemorabiliaContentAPIView, LandUsageAPIView, OceanUsageAPIView, TemporalVariationAPIView
+    SurveymapDropdownDataView, MemorabiliaContentAPIView, LandUsageAPIView, OceanUsageAPIView, TemporalVariationAPIView, \
+    SocialInterviewAPIView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -29,5 +30,6 @@ urlpatterns = [
     path('social_observation/memorabilia', MemorabiliaContentAPIView.as_view(), name='get_memorabilia'),
     path('social_observation/land_usage', LandUsageAPIView.as_view(), name='get_land_usage'),
     path('social_observation/ocean_usage', OceanUsageAPIView.as_view(), name='get_ocean_usage'),
-    path('social_observation/temporal_variation', TemporalVariationAPIView.as_view(), name='get_temporal_variation')
+    path('social_observation/temporal_variation', TemporalVariationAPIView.as_view(), name='get_temporal_variation'),
+    path('social_observation/social_interview', SocialInterviewAPIView.as_view(), name='get_social_interview'),
 ]

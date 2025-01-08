@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WeatherData, MemorabiliaContent, LandUsage, OceanUsage, TemporalVariation
+from .models import WeatherData, MemorabiliaContent, LandUsage, OceanUsage, TemporalVariation, SocialInterview
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -121,5 +121,17 @@ class TemporalVariationSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemporalVariation
         fields = ['image', 'description', 'content']
+
+class SocialInterviewSerializer(serializers.ModelSerializer):
+    tag = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SocialInterview
+        fields = ['id', 'dataID', 'time', 'text', 'CAP_issue', 'local_issue', 'tag', 'participant_type']
+
+    def get_tag(self, obj):
+        # 將 tag 欄位轉換為列表
+        return [tag for tag in obj.tag.split(';') if tag.strip()] if obj.tag else []
+
 
 
