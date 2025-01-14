@@ -1,5 +1,6 @@
 from datetime import datetime
 import pytz
+import re
 
 def validate_integer(value, field_name, record):
     """
@@ -18,30 +19,39 @@ def validate_integer(value, field_name, record):
 def validate_date(value, field_name, record):
     """
     檢查並嘗試將值轉換為 YYYY-MM-DD 格式。如果值為 None 或 'NA'，返回 None。
-    先嘗試 ISO 格式 (YYYY-MM-DD)，如果失敗，則嘗試其他常見格式。
+    - 如果缺少日的格式：YYYY-MM（補該月第一天）
+    - 其他：先嘗試 ISO 格式 (YYYY-MM-DD)，如果失敗，則嘗試其他常見格式。
     """
     if value is None or value == 'NA':
         return None  # 設為 None，以便存儲為 NULL
-    else:
-        # 先嘗試 ISO 格式
+    
+    # 補上該月的第一天
+    if re.match(r'^\d{4}-\d{2}$', value):
         try:
-            time = datetime.fromisoformat(value).date()
+            time = datetime.strptime(f'{value}-01', '%Y-%m-%d').date()
             return time
         except ValueError:
-            pass  # ISO 格式解析失敗，繼續嘗試其他格式
+            return None
+    
+    # 先嘗試 ISO 格式
+    try:
+        time = datetime.fromisoformat(value).date()
+        return time
+    except ValueError:
+        pass  # ISO 格式解析失敗，繼續嘗試其他格式
 
-        # 如果 ISO 格式失敗，嘗試自定義格式
-        date_formats = ['%Y-%m-%d', '%Y/%m/%d', '%Y-%m-%dT%H:%M:%S']  # 支援的日期格式
-        for date_format in date_formats:
-            try:
-                time = datetime.strptime(value, date_format).date()
-                return time
-            except ValueError:
-                continue  # 嘗試下一個日期格式
+    # 如果 ISO 格式失敗，嘗試自定義格式
+    date_formats = ['%Y-%m-%d', '%Y/%m/%d', '%Y-%m-%dT%H:%M:%S'] # 支援的日期格式
+    for date_format in date_formats:
+        try:
+            time = datetime.strptime(value, date_format).date()
+            return time
+        except ValueError:
+            continue  # 嘗試下一個日期格式
 
-        # 如果無法匹配任何格式，打印錯誤並返回 None
-        print(f'    - ERROR: Invalid date for {field_name}: {value} in record with dataID: {record.get("dataID")}')
-        return None
+    # 如果無法匹配任何格式，打印錯誤並返回 None
+    print(f'    - ERROR: Invalid date for {field_name}: {value} in record with dataID: {record.get("dataID")}')
+    return None
 
 def validate_decimal(value, field_name, record):
     """

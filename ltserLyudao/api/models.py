@@ -798,12 +798,19 @@ class TemporalVariation(models.Model):
 
 class SocialInterview(models.Model):
     dataID = models.CharField(max_length=255)
-    time = models.DateField()
+    time = models.TextField()
     text = models.TextField(null=True, blank=True, default=None)
-    CAP_issue = models.CharField(max_length=255)
-    local_issue = models.CharField(max_length=255)
-    tag = models.CharField(max_length=255)
-    participant_type = models.CharField(max_length=255)
+    CAP_issue = models.CharField(max_length=255, null=True, blank=True)
+    local_issue = models.CharField(max_length=255, null=True, blank=True)
+    tag = models.CharField(max_length=255, null=True, blank=True)
+    participant_type = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'social_interview'
+
+class SocialInterviewCapIssues(models.Model):
+    cap_issue = models.CharField(max_length=255, null=True, blank=True)
+    cap_issue_mandarin = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        db_table = 'social_interview_cap_issues'
