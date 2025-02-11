@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import WeatherData, MemorabiliaContent, LandUsage, OceanUsage, TemporalVariation, SocialInterview
+from .models import WeatherData, MemorabiliaContent, LandUsage, OceanUsage, TemporalVariation, SocialInterview, SocialInterviewCapIssues
 from django.utils.translation import gettext
 from rest_framework.validators import UniqueValidator
 from drf_yasg.openapi import Schema, TYPE_STRING
@@ -124,14 +124,40 @@ class TemporalVariationSerializer(serializers.ModelSerializer):
 
 class SocialInterviewSerializer(serializers.ModelSerializer):
     tag = serializers.SerializerMethodField()
+    short_text = serializers.SerializerMethodField() 
+    cap_issue_detail = serializers.SerializerMethodField()
 
     class Meta:
         model = SocialInterview
-        fields = ['id', 'dataID', 'time', 'text', 'CAP_issue', 'local_issue', 'tag', 'participant_type']
+        fields = ['id', 'dataID', 'time', 'text', 'cap_issue_detail', 'CAP_issue', 'local_issue', 'tag', 'participant_type', 'short_text']
 
     def get_tag(self, obj):
         # 將 tag 欄位轉換為列表
         return [tag for tag in obj.tag.split(';') if tag.strip()] if obj.tag else []
+    
+    def get_short_text(self, obj):
+        # 返回前 50 個字並加上 '...'
+        if obj.text:
+            return obj.text[:80] + '⋯⋯' if len(obj.text) > 80 else obj.text
+        return ''
+    
+    def get_cap_issue_detail(self, obj):
+        # 將議題列表資料中的 CAP 議題轉成字典，分別儲存原始議題名稱和轉譯後議題名稱
+        if not obj.CAP_issue:
+            return []
+
+        cap_issue_mapping = {
+            item.cap_issue: item.cap_issue_mandarin
+            for item in SocialInterviewCapIssues.objects.all()
+        }
+
+        cap_issues_list = obj.CAP_issue.split(';')
+
+        return [
+            {'raw_issue': issue.split('.', 1)[1].strip(), 'mapped_issue': cap_issue_mapping.get(issue.split('.', 1)[1].strip())}
+            for issue in cap_issues_list
+        ]
+
 
 
 
