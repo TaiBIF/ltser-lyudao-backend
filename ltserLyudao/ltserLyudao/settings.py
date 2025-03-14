@@ -263,11 +263,14 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 CACHES = {
-    'default': {
+    'redis': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/1',  
+        'LOCATION': 'redis://redis:6379/',  
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
+
+# Use the Redis cache as the default cache
+CACHES['default'] = CACHES['redis']
