@@ -4,7 +4,7 @@ from .views import GetWeatherTimeRangeView, GetWeatherDetailView, GetSeaTemperat
     GetFishDetailView, GetZoobenthosDetailView, GetTableFieldsView, GetDataRawAPIView, GetWeatherChartAPIView, \
     DownloadHomePageAPIView, GetTableSitesAPIView, GetTableSeriesAPIView, DownloadRawAPIView, GetAllDetailsAPIView, \
     SurveymapDropdownDataView, MemorabiliaContentAPIView, LandUsageAPIView, OceanUsageAPIView, TemporalVariationAPIView, \
-    SocialInterviewAPIView
+    SocialInterviewAPIView, SocialEconomyPopulationAPIView
 
 urlpatterns = [
     path('data/time-range/', GetWeatherTimeRangeView.as_view(), name='get_weather_time_range'),
@@ -32,4 +32,5 @@ urlpatterns = [
     path('social_observation/ocean_usage', OceanUsageAPIView.as_view(), name='get_ocean_usage'),
     path('social_observation/temporal_variation', TemporalVariationAPIView.as_view(), name='get_temporal_variation'),
     path('social_observation/social_interview', SocialInterviewAPIView.as_view(), name='get_social_interview'),
+    path('social_economy/population', SocialEconomyPopulationAPIView.as_view(), name='get_social_exconomy_population'),
 ]

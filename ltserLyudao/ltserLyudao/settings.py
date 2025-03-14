@@ -35,6 +35,9 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(',')
 
 AUTH_USER_MODEL = 'user.MyUser'
 
+SEGISWS_API_ID = os.environ.get('SEGISWS_API_ID')
+SEGISWS_API_KEY = os.environ.get('SEGISWS_API_KEY')
+
 # Application definition
 
 
