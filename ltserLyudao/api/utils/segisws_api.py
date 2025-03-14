@@ -143,7 +143,7 @@ def get_latest_time_list(level, query_type="summary"):
                 year, month = map(int, date_parts)
                 time_dict[year] = max(time_dict.get(year, 0), month)
 
-    if query_type == "monthly":
+    if query_type == "dynamics":
         return [f"{year}Y{quarter}S" for year, quarter in sorted(time_dict.items())]
     else:
         return [f"{year}Y{str(month).zfill(2)}M" for year, month in sorted(time_dict.items())]
