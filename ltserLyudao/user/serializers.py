@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Contact, Literature, MyUser, QATag, QuestionAnswer, FormLink, FormLinkAttachment, NewsTag, News, \
-    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord, DownloadApply
+    NewsImage, NewsAttachment, NewsCoverImage, About, AboutAttachment, DownloadRecord, DownloadApply, SocialEconomyVisitors
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.validators import RegexValidator
@@ -383,3 +383,20 @@ class MyUserSerializer(serializers.ModelSerializer):
         instance.role = validated_data.get('role', instance.role)
         instance.save()
         return instance
+    
+class SocialEconomyVisitorsSerializer(serializers.ModelSerializer):
+    created_by_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SocialEconomyVisitors
+        fields = ['id', 'year', 'visitors', 'created_by_name', 'created_at', 'updated_at',]
+        read_only_fields = ['id', 'created_by_name', 'created_at', 'updated_at']
+
+    # def create(self, validated_data):
+    #     return SocialEconomyVisitors.objects.create(**validated_data)
+    
+    def get_created_by_name(self, obj):
+        if obj.created_by:
+            return f'{obj.created_by.last_name}{obj.created_by.first_name}'
+        return None
+

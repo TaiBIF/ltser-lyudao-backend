@@ -51,6 +51,19 @@ THEME_MAPPING = {
     "pyramid": {
          "meta_code": "3A1FA_A1C5",
          "columns": "*"
+    },
+    "industry": {
+        "meta_code": "3A75ED_A9C2",
+        "columns": "INFO_TIME,{id_field},C_CNT,C1_C_CNT,C1_D_CNT,C1_E_CNT,C1_F_CNT,C1_G_CNT,C1_H_CNT,C1_I_CNT,\
+        C1_J_CNT,C1_K_CNT,C1_L_CNT,C1_M_CNT,C1_N_CNT,C1_O_CNT,C1_P_CNT,C1_Q_CNT,C1_R_CNT,C1_S_CNT"
+    },
+    "fishing": {
+        "meta_code": "37654DA_A8B26",
+        "columns": "INFO_TIME,{id_field},COL_1,COL_8"
+    },
+    "livestock": {
+        "meta_code": "37654DA_A8B55",
+        "columns": "INFO_TIME,{id_field},COL_1,COL_3,COL_4,COL_5,COL_7"
     }
 }
 
@@ -93,8 +106,9 @@ def get_latest_time_list(level, query_type="summary"):
     獲取最新的資料時間清單
 
     參數:
-        level: "village" 表示村里, "town" 表示鄉鎮
-        query_type: "summary" 表示人口統計, "index" 表示人口指標, "dynamics" 表示人口消長, "pyramid"表示人口結構
+        level: "village" 表示村里, "town" 表示鄉鎮, "county" 表示縣市
+        query_type: "summary" 表示人口統計, "index" 表示人口指標, "dynamics" 表示人口消長, "pyramid" 表示人口結構,
+        "industry" 表示工商家數, "fishing" 表示漁戶統計, "livestock" 表示牲畜統計
     
     回傳:
         最新時間列表（格式為 113Y12M 或 113Y4S）
@@ -125,6 +139,7 @@ def get_latest_time_list(level, query_type="summary"):
         return []
 
     date_list = [item["INFO_TIME"] for item in json_data["DateList"]]
+    print(date_list)
 
     time_dict = {}
     for date in date_list:
@@ -138,6 +153,8 @@ def get_latest_time_list(level, query_type="summary"):
                 year = int(date_parts[0])
                 quarter = 1  # 預設為第一季度
             time_dict[year] = max(time_dict.get(year, 0), quarter)
+        elif query_type in ["fishing", "livestock"]: # 漁業、牲畜統計只用年份
+            continue
         else:
             if len(date_parts) == 2:
                 year, month = map(int, date_parts)
@@ -145,6 +162,8 @@ def get_latest_time_list(level, query_type="summary"):
 
     if query_type == "dynamics":
         return [f"{year}Y{quarter}S" for year, quarter in sorted(time_dict.items())]
+    elif query_type in ["fishing", "livestock"]:
+        return sorted(date_list, key=lambda date: int(date.replace('Y', '')))
     else:
         return [f"{year}Y{str(month).zfill(2)}M" for year, month in sorted(time_dict.items())]
 
@@ -153,7 +172,7 @@ def get_population_data(level, latest_dates, query_type="summary"):
     查詢人口統計數據或人口統計指標
     
     參數:
-        level: "village" 表示村里, "town" 表示鄉鎮
+        level: "county" 表示縣市
         latest_dates: 需要查詢的最新時間列表
         query_type: "summary" 表示人口統計, "index" 表示人口指標, "dynamics" 表示人口消長, "pyramid"表示人口結構
     """
@@ -166,6 +185,49 @@ def get_population_data(level, latest_dates, query_type="summary"):
 
     if query_type not in THEME_MAPPING:
         raise ValueError("query_type 必須是 'summary','index','dynamics' 或 'pyramid'")
+
+    selected_columns = THEME_MAPPING[query_type]['columns'].format(id_field=api_info["id_field"])
+
+    body = f"""
+    <{api_info['api_name']} xmlns="http://tempuri.org/">
+        <oAPPId>{API_CONFIG["oAPPId"]}</oAPPId>
+        <oAPIKey>{API_CONFIG["oAPIKey"]}</oAPIKey>
+        <oSTUnitCode>{api_info["unit_code"]}</oSTUnitCode>
+        <oMetaDatCode>{THEME_MAPPING[query_type]['meta_code']}</oMetaDatCode>
+        <oSelectColumns>{selected_columns}</oSelectColumns>
+        <oFilterSTTimes>{','.join(latest_dates)}</oFilterSTTimes>
+        <oFilterCountys>{QUERY_PARAMS["oFilterCountys"]}</oFilterCountys>
+        <oFilterTowns>{QUERY_PARAMS["oFilterTowns"]}</oFilterTowns>
+        {api_info["filter_village"]}
+        <oResultDataType>{API_CONFIG["oResultDataType"]}</oResultDataType>
+    </{api_info['api_name']}>
+    """
+
+    response_text = send_soap_request(api_info["api_name"], body)
+    if not response_text:
+        return []
+
+    json_data = parse_soap_response(response_text, f"{api_info['api_name']}Result")
+    return json_data.get("RowDataList", [])
+
+def get_industry_data(latest_dates, query_type="summary"):
+    """
+    查詢人口統計數據或人口統計指標
+    
+    參數:
+        latest_dates: 需要查詢的最新時間列表
+        query_type: "summary" 表示工商家數, "fishing" 表示漁戶統計, "livestock" 表示牲畜統計
+    """
+
+    if not latest_dates:
+        print("無可用的資料時間")
+        return []
+
+    level = 'town'
+    api_info = API_MAPPING[level]
+
+    if query_type not in THEME_MAPPING:
+        raise ValueError("query_type 必須是 'summary'")
 
     selected_columns = THEME_MAPPING[query_type]['columns'].format(id_field=api_info["id_field"])
 

@@ -35,6 +35,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_regular_user = models.BooleanField(default=True, null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
+    is_social_project_staff = models.BooleanField(default=False)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     role = models.CharField(max_length=255, blank=True, null=True)
@@ -245,4 +246,14 @@ class DownloadApply(models.Model):
         return f"{self.email}"
     class Meta:
         db_table = 'DownloadApply'
+
+class SocialEconomyVisitors(models.Model):
+    year = models.IntegerField(null=True, blank=False)
+    visitors = models.IntegerField(null=False, blank=False)
+    created_by = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+
+    class Meta:
+        db_table = 'SocialEconomyVisitors'
 

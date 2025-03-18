@@ -3,7 +3,8 @@ from .views import ContactAPIView, LiteratureAPIView, RegisterAPIView, QATagAPIV
     FormLinkAPIVIew, FormLinkDownloadAPIview, NewsTagAPIView, NewsAPIView, VerifyEmailAPIView, \
     ResendEmailVerifyAPIView, LoginAPIView, UpdateUserPasswordAPIView, RequestPasswordResetEmailAPIView, \
     PasswordTokenCheckAPIView, SetNewPasswordAPIView, UserIdentityAPIView, AboutAPIView, AboutOutlineAPIView, \
-    AboutAttachmentAPIView, ContactAllAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleAuthAPIView, MemberInformationAPIView
+    AboutAttachmentAPIView, ContactAllAPIView, DownloadRecordAPIView, DownloadApplyAPIView, GoogleAuthAPIView, \
+    MemberInformationAPIView, SocialEconomyVisitorsAPIView
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -38,4 +39,5 @@ urlpatterns = [
     path('users/download-apply/', DownloadApplyAPIView.as_view(), name='download-apply'),
     path('users/member-info/', MemberInformationAPIView.as_view(), name='member-info'),
     #path('member-info/', MemberAPIView.as_view(), name='member')
+    path('users/social_economy_visitors/', SocialEconomyVisitorsAPIView.as_view(), name='visitors'),
 ]
