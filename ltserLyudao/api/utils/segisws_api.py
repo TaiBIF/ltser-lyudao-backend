@@ -139,7 +139,6 @@ def get_latest_time_list(level, query_type="summary"):
         return []
 
     date_list = [item["INFO_TIME"] for item in json_data["DateList"]]
-    print(date_list)
 
     time_dict = {}
     for date in date_list:
