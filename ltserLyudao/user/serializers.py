@@ -15,7 +15,7 @@ from django.conf import settings
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         required=True,
-        validators=[UniqueValidator(queryset=MyUser.objects.all())]
+        validators=[UniqueValidator(queryset=MyUser.objects.all(), message="此 Email 已被註冊，請使用其他 Email 或直接登入")]
     )
     password = serializers.CharField(write_only=True, required=True,
                                      validators=[RegexValidator(regex=r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\!\@\#\$\%\^\&\*\(\)\-\_\+\=\{\}\[\]\:\;\.\,]{8,}$'
