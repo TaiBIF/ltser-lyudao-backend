@@ -1,17 +1,17 @@
 import requests
 from datetime import datetime
-from api.utils.validate import validate_integer, validate_date
-from api.models import FishData
+from api.utils.validate import validate_integer, validate_date, validate_decimal
+from api.models import CoralData
 from django.db import connection
 
 current_date = datetime.now().isoformat()
 print("-" * 60)
 print(f"Execution date: {current_date}")
-print("Database: FishData")
+print("Database: CoralData")
 
 # Step 1: Fetch metadata from API
 metadata_url = (
-    "https://data.depositar.io/api/3/action/package_show?id=ltser-lyudao-fishdiv"
+    "https://data.depositar.io/api/3/action/package_show?id=ltser-lyudao-coraljuv"
 )
 response = requests.get(metadata_url)
 resource_list = []
@@ -38,7 +38,7 @@ else:
 
 # Step 2: Truncate table
 try:
-    table_name = FishData._meta.db_table
+    table_name = CoralData._meta.db_table
     with connection.cursor() as cursor:
         cursor.execute(f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY CASCADE;')
     print("Action: Successfully truncated table")
@@ -73,48 +73,57 @@ if resource_list:
                 data_list = []
                 for record in records:
                     time = validate_date(record.get("eventDate"), "eventDate", record)
+                    year = validate_integer(record.get("year"), "year", record)
+                    month = validate_integer(record.get("month"), "month", record)
+                    day = validate_integer(record.get("day"), "day", record)
                     replicate = validate_integer(
                         record.get("replicate"), "replicate", record
-                    )
-                    bodyLength = validate_integer(
-                        record.get("bodyLength"), "bodyLength", record
                     )
                     sampleSizeValue = validate_integer(
                         record.get("sampleSizeValue"), "sampleSizeValue", record
                     )
-                    individualCount = validate_integer(
-                        record.get("individualCount"), "individualCount", record
+
+                    decimalLatitude = validate_decimal(
+                        record.get("decimalLatitude"), "decimalLatitude", record
+                    )
+                    decimalLongitude = validate_decimal(
+                        record.get("decimalLongitude"), "decimalLongitude", record
                     )
 
                     data_list.append(
-                        FishData(
+                        CoralData(
                             dataID=record.get("dataID"),
                             eventID=record.get("eventID"),
+                            year=year,
+                            month=month,
+                            day=day,
                             time=time,
-                            season=record.get("season"),
-                            year=record.get("year"),
-                            region=record.get("region"),
                             locationID=record.get("locationID"),
+                            verbatimLocality=record.get("verbatimLocality"),
                             locality=record.get("locality"),
                             verbatimDepth=record.get("verbatimDepth"),
+                            decimalLatitude=decimalLatitude,
+                            decimalLongitude=decimalLongitude,
                             replicate=replicate,
-                            sampleSizeValue=sampleSizeValue,
-                            sampleSizeUnit=record.get("sampleSizeUnit"),
-                            fieldNotes=record.get("fieldNotes"),
-                            recordedBy=record.get("recordedBy"),
-                            family=record.get("family"),
-                            scientificName=record.get("ScientificName"),
+                            scientificName=record.get("scientificName"),
                             taxonRank=record.get("taxonRank"),
-                            bodyLength=bodyLength,
-                            samplingProtocol=record.get("samplingProtocol"),
-                            individualCount=individualCount,
+                            family=record.get("family"),
+                            identificationRemarks=record.get("identificationRemarks"),
+                            measurementType=record.get("measurementType"),
+                            measurementValue=record.get("measurementValue"),
+                            measurementUnit=record.get("measurementUnit"),
+                            individualCount=record.get("individualCount"),
+                            recordedBy=record.get("recordedBy"),
                             identifiedBy=record.get("identifiedBy"),
+                            samplingProtocol=record.get("samplingProtocol"),
+                            sampleSizeValue=record.get("sampleSizeValue"),
+                            sampleSizeUnit=record.get("sampleSizeUnit"),
                         )
                     )
 
                 # Batch insert into database
                 try:
-                    FishData.objects.bulk_create(data_list)
+                    CoralData.objects.bulk_create(data_list)
                 except Exception as e:
                     print(
                         f"ERROR: Failed to insert records for resource {resource}. Exception: {e}"

@@ -158,7 +158,7 @@ class CoralData(models.Model):
     locality = models.CharField(max_length=50)
     verbatimDepth = models.CharField(max_length=50)
     decimalLatitude = models.DecimalField(max_digits=10, decimal_places=8)
-    decimalLongitude = models.DecimalField(max_digits=10, decimal_places=8)
+    decimalLongitude = models.DecimalField(max_digits=11, decimal_places=8)
     replicate = models.IntegerField()
     scientificName = models.CharField(max_length=50)
     taxonRank = models.CharField(max_length=50)
