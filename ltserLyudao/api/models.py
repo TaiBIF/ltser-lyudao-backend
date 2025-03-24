@@ -1,4 +1,6 @@
 from django.db import models
+import uuid
+
 
 class WaterData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -29,7 +31,7 @@ class WaterData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'WaterData'
+        db_table = "WaterData"
 
 
 class WeatherData(models.Model):
@@ -56,7 +58,8 @@ class WeatherData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'WeatherData'
+        db_table = "WeatherData"
+
 
 class HabitatData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -73,7 +76,8 @@ class HabitatData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'HabitatData'
+        db_table = "HabitatData"
+
 
 class BaseSeaTemperatureData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -91,45 +95,56 @@ class BaseSeaTemperatureData(models.Model):
     class Meta:
         abstract = True
 
+
 class SeaTemperatureData(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureData'
+        db_table = "SeaTemperatureData"
+
 
 class SeaTemperatureCK2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureCK2023'
+        db_table = "SeaTemperatureCK2023"
+
 
 class SeaTemperatureDBS2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureDBS2023'
+        db_table = "SeaTemperatureDBS2023"
+
 
 class SeaTemperatureGG2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureGG2023'
+        db_table = "SeaTemperatureGG2023"
+
 
 class SeaTemperatureGW2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureGW2023'
+        db_table = "SeaTemperatureGW2023"
+
 
 class SeaTemperatureNL2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureNL2023'
+        db_table = "SeaTemperatureNL2023"
+
 
 class SeaTemperatureSL2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureSL2023'
+        db_table = "SeaTemperatureSL2023"
+
 
 class SeaTemperatureWQG2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureWQG2023'
+        db_table = "SeaTemperatureWQG2023"
+
 
 class SeaTemperatureYZH2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureYZH2023'
+        db_table = "SeaTemperatureYZH2023"
+
 
 class SeaTemperatureZP2023(BaseSeaTemperatureData):
     class Meta:
-        db_table = 'SeaTemperatureZP2023'
+        db_table = "SeaTemperatureZP2023"
+
 
 class CoralData(models.Model):
     dataID = models.CharField(max_length=50)
@@ -163,7 +178,8 @@ class CoralData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'CoralData'
+        db_table = "CoralData"
+
 
 class CoralCommData(models.Model):
     dataID = models.CharField(max_length=50)
@@ -176,8 +192,12 @@ class CoralCommData(models.Model):
     verbatimLocality = models.CharField(max_length=50, null=True, blank=True)
     locality = models.CharField(max_length=50, null=True, blank=True)
     verbatimDepth = models.CharField(max_length=50, null=True, blank=True)
-    decimalLatitude = models.DecimalField(max_digits=10, decimal_places=8, null=True, blank=True)
-    decimalLongitude = models.DecimalField(max_digits=11, decimal_places=8, null=True, blank=True)
+    decimalLatitude = models.DecimalField(
+        max_digits=10, decimal_places=8, null=True, blank=True
+    )
+    decimalLongitude = models.DecimalField(
+        max_digits=11, decimal_places=8, null=True, blank=True
+    )
     replicate = models.CharField(max_length=255, null=True, blank=True)
     Benthic_group = models.CharField(max_length=255, null=True, blank=True)
     Benthic_subgroup = models.CharField(max_length=255, null=True, blank=True)
@@ -191,7 +211,8 @@ class CoralCommData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'CoralCommData'
+        db_table = "CoralCommData"
+
 
 class PlantData(models.Model):
     dataID = models.CharField(max_length=100)
@@ -222,13 +243,16 @@ class PlantData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'PlantData'
+        db_table = "PlantData"
+
 
 class BirdNetSoundData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255, null=True, blank=True)
     locationID = models.CharField(max_length=10, null=True, blank=True)
-    species_list = models.CharField(max_length=255, null=True, blank=True)  # Use None for no species
+    species_list = models.CharField(
+        max_length=255, null=True, blank=True
+    )  # Use None for no species
     scientificName = models.CharField(max_length=255, null=True, blank=True)
     taxonRank = models.CharField(max_length=255, null=True, blank=True)
     vernacularName = models.CharField(max_length=255, null=True, blank=True)
@@ -247,12 +271,15 @@ class BirdNetSoundData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'BirdNetSoundData'
+        db_table = "BirdNetSoundData"
+
 
 class BaseBirdNetSoundData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255)
-    species_list = models.CharField(max_length=255, null=True, blank=True)  # Use None for no species
+    species_list = models.CharField(
+        max_length=255, null=True, blank=True
+    )  # Use None for no species
     scientificName = models.CharField(max_length=255)
     taxonRank = models.CharField(max_length=255)
     vernacularName = models.CharField(max_length=255)
@@ -273,27 +300,31 @@ class BaseBirdNetSoundData(models.Model):
     class Meta:
         abstract = True
 
+
 class BirdNetSoundBS2023(BaseBirdNetSoundData):
     class Meta:
-        db_table = 'BirdNetSoundBS2023'
+        db_table = "BirdNetSoundBS2023"
+
 
 class BirdNetSoundGST2023(BaseBirdNetSoundData):
     class Meta:
-        db_table = 'BirdNetSoundGST2023'
+        db_table = "BirdNetSoundGST2023"
+
 
 class BirdNetSoundLH2023(BaseBirdNetSoundData):
     class Meta:
-        db_table = 'BirdNetSoundLH2023'
+        db_table = "BirdNetSoundLH2023"
+
 
 class BirdNetSoundYZH2023(BaseBirdNetSoundData):
     class Meta:
-        db_table = 'BirdNetSoundYZH2023'
+        db_table = "BirdNetSoundYZH2023"
 
 
 class FishData(models.Model):
     dataID = models.CharField(max_length=255)
     eventID = models.CharField(max_length=255, null=True, blank=True)
-    time =  models.DateField(null=True, blank=True)
+    time = models.DateField(null=True, blank=True)
     season = models.CharField(max_length=255, null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)
     region = models.CharField(max_length=255, null=True, blank=True)
@@ -317,7 +348,8 @@ class FishData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'FishData'
+        db_table = "FishData"
+
 
 class FishingData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -328,9 +360,11 @@ class FishingData(models.Model):
     is_local_villager = models.CharField(max_length=255)
     purpose = models.CharField(max_length=255, null=True, blank=True)
     preferable_site = models.CharField(max_length=255, null=True, blank=True)
-    catchment_individuals_per_month = models.CharField(max_length=255, null=True, blank=True)
+    catchment_individuals_per_month = models.CharField(
+        max_length=255, null=True, blank=True
+    )
     fishing_feq = models.CharField(max_length=255, null=True, blank=True)
-    fishing_method  = models.CharField(max_length=255, null=True, blank=True)
+    fishing_method = models.CharField(max_length=255, null=True, blank=True)
     bait = models.CharField(max_length=255, null=True, blank=True)
     fish_species = models.CharField(max_length=2550, null=True, blank=True)
     feel_size_decrease = models.CharField(max_length=255, null=True, blank=True)
@@ -339,7 +373,7 @@ class FishingData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'FishingData'
+        db_table = "FishingData"
 
 
 class ZoobenthosData(models.Model):
@@ -356,9 +390,11 @@ class ZoobenthosData(models.Model):
     surveyObject = models.CharField(max_length=100, null=True, blank=True)
     phylum = models.CharField(max_length=100, null=True, blank=True)
     phylum_c = models.CharField(max_length=100, null=True, blank=True)
-    class_name = models.CharField(max_length=100, null=True, blank=True)  # 使用 class_name 作為欄位名稱
+    class_name = models.CharField(
+        max_length=100, null=True, blank=True
+    )  # 使用 class_name 作為欄位名稱
     class_c = models.CharField(max_length=100, null=True, blank=True)
-    family = models.CharField(max_length=100,  null=True, blank=True)
+    family = models.CharField(max_length=100, null=True, blank=True)
     family_c = models.CharField(max_length=100, null=True, blank=True)
     scientificName = models.CharField(max_length=100, null=True, blank=True)
     vernacularName = models.CharField(max_length=100, null=True, blank=True)
@@ -372,7 +408,8 @@ class ZoobenthosData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'ZoobenthosData'
+        db_table = "ZoobenthosData"
+
 
 class TerreSoundIndexData(models.Model):
     dataID = models.CharField(max_length=200)
@@ -393,8 +430,10 @@ class TerreSoundIndexData(models.Model):
 
     def __str__(self):
         return self.dataID
+
     class Meta:
-        db_table = 'TerreSoundIndexData'
+        db_table = "TerreSoundIndexData"
+
 
 class BaseTerreSoundIndexData(models.Model):
     id = models.AutoField(primary_key=True)
@@ -415,25 +454,30 @@ class BaseTerreSoundIndexData(models.Model):
 
     def __str__(self):
         return self.dataID
+
     class Meta:
         abstract = True
 
 
 class TerreSoundIndexBS2023(BaseTerreSoundIndexData):
     class Meta:
-        db_table = 'TerreSoundIndexBS2023'
+        db_table = "TerreSoundIndexBS2023"
+
 
 class TerreSoundIndexGST2023(BaseTerreSoundIndexData):
     class Meta:
-        db_table = 'TerreSoundIndexGST2023'
+        db_table = "TerreSoundIndexGST2023"
+
 
 class TerreSoundIndexLH2023(BaseTerreSoundIndexData):
     class Meta:
-        db_table = 'TerreSoundIndexLH2023'
+        db_table = "TerreSoundIndexLH2023"
+
 
 class TerreSoundIndexYZH2023(BaseTerreSoundIndexData):
     class Meta:
-        db_table = 'TerreSoundIndexYZH2023'
+        db_table = "TerreSoundIndexYZH2023"
+
 
 class OceanSoundIndexData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -448,8 +492,10 @@ class OceanSoundIndexData(models.Model):
 
     def __str__(self):
         return self.dataID
+
     class Meta:
-        db_table = 'OceanSoundIndexData'
+        db_table = "OceanSoundIndexData"
+
 
 class BioSoundData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -470,8 +516,10 @@ class BioSoundData(models.Model):
 
     def __str__(self):
         return self.dataID
+
     class Meta:
-        db_table = 'BioSoundData'
+        db_table = "BioSoundData"
+
 
 class BaseBioSoundData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -491,24 +539,30 @@ class BaseBioSoundData(models.Model):
 
     def __str__(self):
         return self.dataID
+
     class Meta:
         abstract = True
 
+
 class BioSoundYZH2023(BaseBioSoundData):
     class Meta:
-        db_table = 'BioSoundYZH2023'
+        db_table = "BioSoundYZH2023"
+
 
 class BioSoundLH2023(BaseBioSoundData):
     class Meta:
-        db_table = 'BioSoundLH2023'
+        db_table = "BioSoundLH2023"
+
 
 class BioSoundGST2023(BaseBioSoundData):
     class Meta:
-        db_table = 'BioSoundGST2023'
+        db_table = "BioSoundGST2023"
+
 
 class BioSoundBS2023(BaseBioSoundData):
     class Meta:
-        db_table = 'BioSoundBS2023'
+        db_table = "BioSoundBS2023"
+
 
 class AquaticfaunaData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -523,7 +577,9 @@ class AquaticfaunaData(models.Model):
     surveyObject = models.CharField(max_length=255, null=True, blank=True)
     phylum = models.CharField(max_length=255, null=True, blank=True)
     phylum_c = models.CharField(max_length=255, null=True, blank=True)
-    class_field = models.CharField(max_length=255, db_column='class', null=True, blank=True)
+    class_field = models.CharField(
+        max_length=255, db_column="class", null=True, blank=True
+    )
     class_c = models.CharField(max_length=255, null=True, blank=True)
     family = models.CharField(max_length=255, null=True, blank=True)
     family_c = models.CharField(max_length=255, null=True, blank=True)
@@ -540,7 +596,8 @@ class AquaticfaunaData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'AquaticfaunaData'
+        db_table = "AquaticfaunaData"
+
 
 class StreamData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -566,7 +623,8 @@ class StreamData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'StreamData'
+        db_table = "StreamData"
+
 
 class OtolithData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -591,7 +649,8 @@ class OtolithData(models.Model):
         return self.dataID
 
     class Meta:
-        db_table = 'OtolithData'
+        db_table = "OtolithData"
+
 
 class CoralDivData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -620,12 +679,13 @@ class CoralDivData(models.Model):
     taxonRank = models.CharField(max_length=50)
     abundance = models.FloatField()
     recordedBy = models.CharField(max_length=50)
-    
+
     def __str__(self):
         return self.dataID
 
     class Meta:
-        db_table = 'CoralDivData'
+        db_table = "CoralDivData"
+
 
 class CoralBleachData(models.Model):
     dataID = models.CharField(max_length=255)
@@ -654,12 +714,13 @@ class CoralBleachData(models.Model):
     samplingProtocol = models.CharField(max_length=50)
     sampleSizeValue = models.FloatField()
     sampleSizeUnit = models.CharField(max_length=50)
-    
+
     def __str__(self):
         return self.dataID
 
     class Meta:
-        db_table = 'CoralBleachData'
+        db_table = "CoralBleachData"
+
 
 class LocationTableInfo(models.Model):
     location_id = models.CharField(max_length=10, unique=True)
@@ -670,7 +731,7 @@ class LocationTableInfo(models.Model):
         return self.location_id
 
     class Meta:
-        db_table = 'LocationTableInfo'
+        db_table = "LocationTableInfo"
 
 
 class BaseDataField(models.Model):
@@ -688,113 +749,143 @@ class BaseDataField(models.Model):
     def __str__(self):
         return self.field_name
 
+
 class CoralCommDataField(BaseDataField):
 
     class Meta:
-        db_table = 'CoralCommDataField'
+        db_table = "CoralCommDataField"
+
 
 class WaterDataField(BaseDataField):
     class Meta:
-        db_table = 'WaterDataField'
+        db_table = "WaterDataField"
+
 
 class WeatherDataField(BaseDataField):
     class Meta:
-        db_table = 'WeatherDataField'
+        db_table = "WeatherDataField"
+
 
 class HabitatDataField(BaseDataField):
     class Meta:
-        db_table = 'HabitatDataField'
+        db_table = "HabitatDataField"
+
 
 class SeaTemperatureDataField(BaseDataField):
     class Meta:
-        db_table = 'SeaTemperatureDataField'
+        db_table = "SeaTemperatureDataField"
+
 
 class CoralDataField(BaseDataField):
     class Meta:
-        db_table = 'CoralDataField'
+        db_table = "CoralDataField"
+
 
 class FishDataField(BaseDataField):
     class Meta:
-        db_table = 'FishDataField'
+        db_table = "FishDataField"
+
 
 class ZoobenthosDataField(BaseDataField):
     class Meta:
-        db_table = 'ZoobenthosDataField'
+        db_table = "ZoobenthosDataField"
+
 
 class PlantDataField(BaseDataField):
     class Meta:
-        db_table = 'PlantDataField'
+        db_table = "PlantDataField"
+
 
 class BirdNetSoundDataField(BaseDataField):
     class Meta:
-        db_table = 'BirdNetSoundDataField'
+        db_table = "BirdNetSoundDataField"
+
 
 class FishingDataField(BaseDataField):
     class Meta:
-        db_table = 'FishingDataField'
+        db_table = "FishingDataField"
+
 
 class OceanSoundIndexDataField(BaseDataField):
     class Meta:
-        db_table = 'OceanSoundIndexDataField'
+        db_table = "OceanSoundIndexDataField"
+
 
 class BioSoundDataField(BaseDataField):
     class Meta:
-        db_table = 'BioSoundDataField'
+        db_table = "BioSoundDataField"
+
 
 class TerreSoundIndexDataField(BaseDataField):
     class Meta:
-        db_table = 'TerreSoundIndexDataField'
+        db_table = "TerreSoundIndexDataField"
+
 
 class AquaticfaunaDataField(BaseDataField):
     class Meta:
-        db_table = 'AquaticfaunaDataField'
+        db_table = "AquaticfaunaDataField"
+
 
 class StreamDataField(BaseDataField):
     class Meta:
-        db_table = 'StreamDataField'
+        db_table = "StreamDataField"
+
 
 class OtolithDataField(BaseDataField):
     class Meta:
-        db_table = 'OtolithDataField'
+        db_table = "OtolithDataField"
+
 
 class CoralDivDataField(BaseDataField):
     class Meta:
-        db_table = 'CoralDivDataField'
+        db_table = "CoralDivDataField"
+
 
 class CoralBleachDataField(BaseDataField):
     class Meta:
-        db_table = 'CoralBleachDataField'
+        db_table = "CoralBleachDataField"
+
 
 class MemorabiliaContent(models.Model):
-    image = models.ImageField(upload_to='social_observation__images/')
+    image = models.ImageField(upload_to="social_observation__images/")
     description = models.TextField()
 
     class Meta:
-        db_table = 'memorabilia_content'
+        db_table = "memorabilia_content"
+
 
 class LandUsage(models.Model):
-    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    image = models.ImageField(
+        upload_to="social_observation__images/", null=True, blank=True, default=None
+    )
     description = models.TextField(null=True, blank=True, default=None)
     content = models.TextField(null=True, blank=True, default=None)
 
     class Meta:
-        db_table = 'land_usage'
+        db_table = "land_usage"
+
 
 class OceanUsage(models.Model):
-    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    image = models.ImageField(
+        upload_to="social_observation__images/", null=True, blank=True, default=None
+    )
     description = models.TextField(null=True, blank=True, default=None)
     content = models.TextField(null=True, blank=True, default=None)
 
     class Meta:
-        db_table = 'ocean_usage'
+        db_table = "ocean_usage"
+
 
 class TemporalVariation(models.Model):
-    image = models.ImageField(upload_to='social_observation__images/', null=True, blank=True, default=None)
+    image = models.ImageField(
+        upload_to="social_observation__images/", null=True, blank=True, default=None
+    )
     description = models.TextField(null=True, blank=True, default=None)
     content = models.TextField(null=True, blank=True, default=None)
 
     class Meta:
-        db_table = 'temporal_variation'
+        db_table = "temporal_variation"
+
 
 class SocialInterview(models.Model):
     dataID = models.CharField(max_length=255)
@@ -806,11 +897,28 @@ class SocialInterview(models.Model):
     participant_type = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        db_table = 'social_interview'
+        db_table = "social_interview"
+
 
 class SocialInterviewCapIssues(models.Model):
     cap_issue = models.CharField(max_length=255, null=True, blank=True)
     cap_issue_mandarin = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
-        db_table = 'social_interview_cap_issues'
+        db_table = "social_interview_cap_issues"
+
+
+class DatasetSummary(models.Model):
+    datasetID = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    datasetName = models.CharField(max_length=255, null=True, blank=True)
+    datasetStartDate = models.DateField(null=True, blank=True)
+    datasetEndDate = models.DateField(null=True, blank=True)
+    occurrenceCount = models.IntegerField(null=True, blank=True)
+    resourceContacts = models.CharField(max_length=255, null=True, blank=True)
+    datasetLicense = models.CharField(max_length=255, null=True, blank=True)
+    created = models.DateField(null=True, blank=True)
+    modified = models.DateField(null=True, blank=True)
+    datasetURL = models.URLField(max_length=500, null=True, blank=True)
+
+    class Meta:
+        db_table = "dataset_summary"
