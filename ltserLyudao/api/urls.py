@@ -27,6 +27,8 @@ from .views import (
     SocialEconomyIndustryAPIView,
     OccurrenceAPIView,
     DatasetSummaryAPIView,
+    GetThirdPartyTableFieldsView,
+    GetThirdPartyDataRawAPIView,
 )
 
 urlpatterns = [
@@ -119,6 +121,16 @@ urlpatterns = [
         "social_economy/industry",
         SocialEconomyIndustryAPIView.as_view(),
         name="get_social_economy_industry",
+    ),
+    path(
+        "data/third-party/<str:table>/fields/",
+        GetThirdPartyTableFieldsView.as_view(),
+        name="get_third_party_table_fields",
+    ),
+    path(
+        "data/third-party/<str:table>/raws/",
+        GetThirdPartyDataRawAPIView.as_view(),
+        name="get_third_party_table_raws",
     ),
     # 外部 API
     path("occurrence", OccurrenceAPIView.as_view(), name="get_occurrence"),

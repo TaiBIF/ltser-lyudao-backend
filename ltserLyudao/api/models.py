@@ -846,6 +846,11 @@ class CoralBleachDataField(BaseDataField):
         db_table = "CoralBleachDataField"
 
 
+class TBIADataField(BaseDataField):
+    class Meta:
+        db_table = "TBIADataField"
+
+
 class MemorabiliaContent(models.Model):
     image = models.ImageField(upload_to="social_observation__images/")
     description = models.TextField()
