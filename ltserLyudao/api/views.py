@@ -812,7 +812,8 @@ class GetDataRawAPIView(APIView):
         query_params = request.query_params.dict()
         page_size = query_params.pop("page_size", 10)
         page = query_params.pop("page", 1)
-        query_params.pop("cursor")  # 刪除不需要的參數
+        if "cursor" in query_params:
+            query_params.pop("cursor")  # 刪除不需要的參數
 
         # 額外處理日期、日期時間的查詢，避免進入迴圈造成重複或錯誤
         time_param = query_params.pop("time", None)
