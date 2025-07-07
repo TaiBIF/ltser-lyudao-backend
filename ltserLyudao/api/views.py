@@ -1349,7 +1349,13 @@ class GetTableSeriesAPIView(APIView):
                     .annotate(score=Sum("score"))
                     .order_by("time")
                 )
-            elif table in ["water", "weather", "sea-temperature", "stream"]:
+            elif table in [
+                "water",
+                "weather",
+                "sea-temperature",
+                "stream",
+                "terre-sound-index",
+            ]:
                 data = queryset.order_by("time").values(*field_names)
             elif table == "ocean-sound-index":
                 data = (
