@@ -29,6 +29,8 @@ from .views import (
     DatasetSummaryAPIView,
     GetThirdPartyTableFieldsView,
     GetThirdPartyDataRawAPIView,
+    GetBuoyMixedChartAPIView,
+    GetBuoyRealtimeDataAPIView,
 )
 
 urlpatterns = [
@@ -131,6 +133,16 @@ urlpatterns = [
         "data/third-party/<str:table>/raws/",
         GetThirdPartyDataRawAPIView.as_view(),
         name="get_third_party_table_raws",
+    ),
+    path(
+        "data/buoy-historical/chart/",
+        GetBuoyMixedChartAPIView.as_view(),
+        name="get_buoy_historical__chart",
+    ),
+    path(
+        "data/buoy-realtime/",
+        GetBuoyRealtimeDataAPIView.as_view(),
+        name="get_bupy_realtime_raws",
     ),
     # 外部 API
     path("occurrence", OccurrenceAPIView.as_view(), name="get_occurrence"),

@@ -22,7 +22,22 @@ from .serializers import (
     DatasetSummarySerializer,
 )
 from rest_framework import status
-from django.db.models import Sum, Avg, Q, Count, Func, F
+from django.db.models import (
+    Sum,
+    Avg,
+    Q,
+    Count,
+    Func,
+    F,
+    Case,
+    When,
+    CharField,
+    Min,
+    Max,
+    F,
+    ExpressionWrapper,
+    FloatField,
+)
 from django.db.models import Value as V
 from django.apps import apps
 from django.core.paginator import Paginator
@@ -31,11 +46,6 @@ from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.http import FileResponse
 from django.core.exceptions import ValidationError
-import json
-import io
-import zipfile
-import os
-import csv
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from user.models import DownloadRecord, DownloadApply
 from django.db.models import Sum
@@ -44,12 +54,28 @@ from django.core.exceptions import ObjectDoesNotExist
 from .conf.default_site_data import DEFAULT_SITE_DATA
 from collections import defaultdict, OrderedDict
 from django.core.cache import cache
-import re
 from api.utils.segisws_api import *
+from api.utils.wqdata_api import *
 from user.models import SocialEconomyVisitors
 from user.serializers import SocialEconomyVisitorsSerializer
-import requests
 from urllib.parse import urlparse, parse_qs
+from api.utils.convert_date_time import (
+    combine_local_to_utc,
+    convert_time_only_to_utc_time,
+)
+from api.utils.calculate_rose_chart import convert_to_direction_bin, pick_bin_key
+from django.db.models.functions import ExtractMonth, Round
+from collections import defaultdict
+
+import json
+import io
+import zipfile
+import os
+import csv
+import pytz
+import requests
+import re
+import numpy as np
 
 
 class SurveymapDropdownDataView(APIView):
@@ -698,6 +724,8 @@ class GetTableFieldsView(APIView):
         "otolith": OtolithData,
         "coral-div": CoralDivData,
         "coral-bleach": CoralBleachData,
+        "buoy-historical": BuoyData,
+        "buoy-realtime": BuoyData,
     }
 
     FIELD_INFO_MODELS = {
@@ -720,6 +748,8 @@ class GetTableFieldsView(APIView):
         "otolith": OtolithDataField,
         "coral-div": CoralDivDataField,
         "coral-bleach": CoralBleachDataField,
+        "buoy-historical": BuoyHistoricalDataField,
+        "buoy-realtime": BuoyRealtimeDataField,
     }
 
     def get(self, request, table):
@@ -741,7 +771,12 @@ class GetTableFieldsView(APIView):
 
         fields = []
 
-        for field_info in field_info_model.objects.all():
+        orm = (
+            field_info_model.objects.all().order_by("id")
+            if field_info_model == BuoyHistoricalDataField
+            else field_info_model.objects.all()
+        )
+        for field_info in orm:
             title = (
                 field_info.title_zh_tw if language == "zh-tw" else field_info.title_en
             )
@@ -798,11 +833,17 @@ class GetDataRawAPIView(APIView):
         "otolith": "OtolithData",
         "coral-div": "CoralDivData",
         "coral-bleach": "CoralBleachData",
+        "buoy-historical": "BuoyData",
     }
 
     @staticmethod
     def get_field_names_without_id(model):
-        return [field.name for field in model._meta.fields if field.name != "id"]
+        field_names = [field.name for field in model._meta.fields if field.name != "id"]
+
+        if model.__name__ == "BuoyData":
+            field_names = [name for name in field_names if name != "time"]
+
+        return field_names
 
     def get(self, request, table, *args, **kwargs):
         model_name = self.TABLE_MODELS.get(table)
@@ -819,6 +860,12 @@ class GetDataRawAPIView(APIView):
         time_param = query_params.pop("time", None)
         end_time_param = query_params.pop("end_time", None)
 
+        # 額外針對 start_date, end_date, start_time, end_time_only 進行處理
+        start_date = query_params.pop("start_date", None)
+        end_date = query_params.pop("end_date", None)
+        start_time = query_params.pop("start_time", None)
+        end_time = query_params.pop("end_time_only", None)
+
         model = apps.get_model("api", model_name)
         query = Q()
         for key, value in query_params.items():
@@ -827,37 +874,74 @@ class GetDataRawAPIView(APIView):
             else:
                 query &= Q(**{f"{key}": value})
 
-        field_type = model._meta.get_field("time")
-        if isinstance(
-            field_type, models.DateTimeField
-        ):  # 如果是 DateTimeField 欄位，使用__date過濾器來根據日期查詢
-            if time_param and end_time_param:
-                # 查詢 time_param 和 end_time_param 之間的結果
-                query &= Q(**{f"time__date__range": [time_param, end_time_param]})
-            elif time_param:
-                # 查詢 time_param 以後的所有結果
-                query &= Q(**{f"time__date__gte": time_param})
-            elif end_time_param:
-                # 查詢 end_time_param 以前的所有結果
-                query &= Q(**{f"time__date__lte": end_time_param})
-        elif isinstance(field_type, models.DateField):
-            if time_param and end_time_param:
-                # 查詢 time_param 和 end_time_param 之間的結果
-                query &= Q(**{f"time__range": [time_param, end_time_param]})
-            elif time_param:
-                # 查詢 time_param 以後的所有結果
-                query &= Q(**{f"time__gte": time_param})
-            elif end_time_param:
-                # 查詢 end_time_param 以前的所有結果
-                query &= Q(**{f"time__lte": end_time_param})
+        if model.__name__ == "BuoyData":
+            tw_tz = pytz.timezone("Asia/Taipei")
+            datetime_start = None
+            datetime_end = None
+
+            try:
+                # 日期以及時間查詢
+                if start_date:
+                    datetime_start = combine_local_to_utc(
+                        start_date, start_time, tw_tz, is_end=False
+                    )
+                if end_date:
+                    datetime_end = combine_local_to_utc(
+                        end_date, end_time, tw_tz, is_end=True
+                    )
+
+                if datetime_start and datetime_end:
+                    query &= Q(time__range=(datetime_start, datetime_end))
+                elif datetime_start:
+                    query &= Q(time__gte=datetime_start)
+                elif datetime_end:
+                    query &= Q(time__lte=datetime_end)
+
+                # 若無日期條件，僅時間區段查詢
+                elif start_time or end_time:
+                    if start_time:
+                        t_start = convert_time_only_to_utc_time(start_time, tw_tz)
+                        query &= Q(time__time__gte=t_start)
+                    if end_time:
+                        t_end = convert_time_only_to_utc_time(end_time, tw_tz)
+                        query &= Q(time__time__lte=t_end)
+
+            except ValueError as e:
+                raise ValueError(f"Invalid date or time format: {e}")
+        else:
+            field_type = model._meta.get_field("time")
+            if isinstance(
+                field_type, models.DateTimeField
+            ):  # 如果是 DateTimeField 欄位，使用__date過濾器來根據日期查詢
+                if time_param and end_time_param:
+                    # 查詢 time_param 和 end_time_param 之間的結果
+                    query &= Q(**{f"time__date__range": [time_param, end_time_param]})
+                elif time_param:
+                    # 查詢 time_param 以後的所有結果
+                    query &= Q(**{f"time__date__gte": time_param})
+                elif end_time_param:
+                    # 查詢 end_time_param 以前的所有結果
+                    query &= Q(**{f"time__date__lte": end_time_param})
+            elif isinstance(field_type, models.DateField):
+                if time_param and end_time_param:
+                    # 查詢 time_param 和 end_time_param 之間的結果
+                    query &= Q(**{f"time__range": [time_param, end_time_param]})
+                elif time_param:
+                    # 查詢 time_param 以後的所有結果
+                    query &= Q(**{f"time__gte": time_param})
+                elif end_time_param:
+                    # 查詢 end_time_param 以前的所有結果
+                    query &= Q(**{f"time__lte": end_time_param})
 
         # 在查詢之前就先限制回傳的資料筆數
         offset = (int(page) - 1) * int(page_size)
         limit = int(page_size)
         fields_without_id = GetDataRawAPIView.get_field_names_without_id(model)
-        filtered_data = model.objects.filter(query).values(*fields_without_id)[
-            offset : offset + limit
-        ]
+        filtered_data = (
+            model.objects.filter(query)
+            .order_by("dataID")
+            .values(*fields_without_id)[offset : offset + limit]
+        )
         total_records = model.objects.filter(query).count()
 
         if (
@@ -1042,6 +1126,9 @@ class GetTableSitesAPIView(APIView):
         "bio-sound": BioSoundData,
         "sea-temperature": SeaTemperatureData,
         "otolith": OtolithData,
+        "buoy-historical": BuoyData,
+        "buoy-realtime": BuoyData,
+        "coral-div": CoralDivData,
     }
 
     def get(self, request, table):
@@ -1307,6 +1394,28 @@ class GetTableSeriesAPIView(APIView):
                 },
             ],
         },
+        "buoy-historical": {
+            "model": "BuoyData",
+            "fields": [
+                {"name": "time", "title": {"zh-tw": "time", "en": "time"}},
+                {
+                    "name": "exo_temperature",
+                    "title": {"zh-tw": "海溫", "en": "EXO Temperature"},
+                },
+                {
+                    "name": "sp_cond",
+                    "title": {"zh-tw": "比導電度", "en": "Sp Cond"},
+                },
+                {
+                    "name": "ph",
+                    "title": {"zh-tw": "酸鹼值", "en": "pH"},
+                },
+                {
+                    "name": "odo",
+                    "title": {"zh-tw": "溶氧量", "en": "ODO"},
+                },
+            ],
+        },
     }
 
     def get(self, request, table):
@@ -1355,6 +1464,7 @@ class GetTableSeriesAPIView(APIView):
                 "sea-temperature",
                 "stream",
                 "terre-sound-index",
+                "buoy-historical",
             ]:
                 data = queryset.order_by("time").values(*field_names)
             elif table == "ocean-sound-index":
@@ -2290,3 +2400,248 @@ class GetThirdPartyDataRawAPIView(APIView):
             return Response(
                 {"error": "API response error"}, status=response.status_code
             )
+
+
+class GetBuoyMixedChartAPIView(APIView):
+    ROSE_TYPE_MAP = {
+        "wind": [
+            "wmo_average_wind_direction",
+            "wmo_average_wind_speed",
+        ],
+        "current2.8": ["current_direction_1", "current_speed_1"],
+        "current7.8": ["current_direction_2", "current_speed_2"],
+        "current12.8": ["current_direction_3", "current_speed_3"],
+        "current17.8": ["current_direction_4", "current_speed_4"],
+        "current22.8": ["current_direction_5", "current_speed_5"],
+        "current27.8": ["current_direction_6", "current_speed_6"],
+        "current32.8": ["current_direction_7", "current_speed_7"],
+        "current37.8": ["current_direction_8", "current_speed_8"],
+        "current42.8": ["current_direction_9", "current_speed_9"],
+        "current47.8": ["current_direction_10", "current_speed_10"],
+    }
+
+    def get(self, request):
+        year = request.query_params.get("year")
+        location = request.query_params.get("locationID")
+        rose_type = request.query_params.get("type")
+
+        rose_config_list = self.ROSE_TYPE_MAP.get(rose_type)
+
+        if not year or not location:
+            return Response(
+                {"error": "Missing year or locationID parameter"}, status=400
+            )
+
+        if not rose_config_list:
+            return Response({"error": "Type got wrong parameter"}, status=400)
+
+        try:
+            year = int(year)
+        except ValueError:
+            return Response({"error": "Invalid year format"}, status=400)
+
+        qs = BuoyData.objects.filter(eventDate__year=year, locationID=location)
+
+        # 每月的平均海溫與總降雨量
+        temp_precip_qs = (
+            qs.annotate(month=ExtractMonth("eventDate"))
+            .values("month")
+            .annotate(
+                avg_exo_temperature=Round(Avg("exo_temperature"), precision=1),
+                raw_precipitation=Sum("precipitation_intensity"),
+            )
+            .annotate(
+                precipitation=Round(
+                    ExpressionWrapper(
+                        F("raw_precipitation") / 6.0,
+                        output_field=FloatField(),
+                    ),
+                    precision=1,
+                )
+            )
+            .order_by("month")
+        )
+
+        # 初始化完整的 12 個月份列表
+        temperature_series = [None] * 12
+        precipitation_series = [None] * 12
+
+        # 填入對應的月份資料
+        for entry in temp_precip_qs:
+            month_index = entry["month"] - 1
+            temperature_series[month_index] = entry["avg_exo_temperature"]
+            precipitation_series[month_index] = entry["precipitation"]
+
+        # 整理成 echarts series 的格式
+        temp_precip_series = [
+            {
+                "name": "降雨量",
+                "type": "bar",
+                "yAxisIndex": 0,
+                "itemStyle": {"color": "#5470C6"},
+                "tooltip": {"valueFormatter": "{value} ml"},
+                "data": precipitation_series,
+            },
+            {
+                "name": "月均溫",
+                "type": "line",
+                "yAxisIndex": 1,
+                "itemStyle": {"color": "#EE6666"},
+                "tooltip": {"valueFormatter": "{value} °C"},
+                "data": temperature_series,
+            },
+        ]
+
+        # 計算風、海流玫瑰圖
+        # 根據最大、最小流速動態分成五個等級
+        agg = qs.aggregate(
+            min_speed=Min(rose_config_list[1]), max_speed=Max(rose_config_list[1])
+        )
+
+        # 如果沒有值預設為 0 避免錯誤
+        min_speed = agg["min_speed"] or 0.0
+        max_speed = agg["max_speed"] or 0.0
+
+        num_bins = 5
+        # 產生 6 個值
+        bin_edges = np.linspace(min_speed, max_speed, num_bins + 1)
+        # 兩兩配對，建立 5個等距區間
+        bin_ranges = [
+            (round(bin_edges[i], 1), round(bin_edges[i + 1], 1))
+            for i in range(num_bins)
+        ]
+
+        # 逐一區間建立 When 清單
+        speed_cases = []
+        for idx, (start, end) in enumerate(bin_ranges):
+            label = f"{start}-{end}"
+
+            # 判斷是否為最後一個區間
+            if idx == len(bin_ranges) - 1:
+                condition = {
+                    f"{rose_config_list[1]}__gte": start,
+                    f"{rose_config_list[1]}__lte": end,  # 包含最大值
+                }
+            else:
+                condition = {
+                    f"{rose_config_list[1]}__gte": start,
+                    f"{rose_config_list[1]}__lt": end,
+                }
+
+            speed_cases.append(
+                When(
+                    **condition,
+                    then=V(label),
+                )
+            )
+
+        # 把以上 When 清單包進 Case 中
+        speed_bin_expr = Case(
+            *speed_cases,
+            default=V("Outlier"),
+            output_field=CharField(),
+        )
+
+        # 統計個流向、流速區間的資料筆數
+        grouped = (
+            qs.annotate(
+                direction=convert_to_direction_bin(rose_config_list[0]),
+                speed_bin=speed_bin_expr,
+            )
+            .values("direction", "speed_bin")
+            .annotate(count=Count("id"))
+        )
+
+        # 統計每個流向與流速區間的筆數，以各區間流速為 key，流向與資料筆數為 value
+        range_direction_map = {}
+        all_ranges = set()
+
+        direction_order = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+
+        for item in grouped:
+            direction = item["direction"]
+            bin_label = item["speed_bin"]
+            count = item["count"]
+
+            # 過濾無效值
+            if direction not in direction_order or bin_label == "Outlier":
+                continue
+
+            all_ranges.add(bin_label)
+
+            if bin_label not in range_direction_map:
+                range_direction_map[bin_label] = {d: 0 for d in direction_order}
+
+            range_direction_map[bin_label][direction] = count
+
+        sorted_ranges = sorted(all_ranges, key=pick_bin_key)
+
+        # 整理成 echarts series 的格式
+        rose_series = []
+        for bin_range in sorted_ranges:
+            rose_series.append(
+                {
+                    "type": "bar",
+                    "coordinateSystem": "polar",
+                    "name": f"{bin_range} m/s",
+                    "stack": "current",
+                    "emphasis": {"focus": "series"},
+                    "data": [
+                        range_direction_map[bin_range][d] for d in direction_order
+                    ],
+                }
+            )
+
+        result = {
+            "temp_precip_series": temp_precip_series,
+            "rose_series": rose_series,
+        }
+
+        return Response(result)
+
+
+class GetBuoyRealtimeDataAPIView(APIView):
+    def get(self, request):
+        location_id = request.query_params.get("locationID")
+
+        if not location_id:
+            return Response(
+                {"error": "Missing locationID"}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        speed_direction_records = []
+
+        api_response = get_latest_device_data(
+            QUERY_PARAMS[location_id]["site"],
+            API_CONFIG["APIKey"],
+            QUERY_PARAMS[location_id]["params"],
+        )
+        converted_dict = transform_device_data(api_response)
+        calculated_dict = calcaulate_current_speed_and_direction(converted_dict)
+
+        for key, value in calculated_dict.items():
+            try:
+                float_key = float(key)  # 只取層數的內容出來
+                record = {
+                    "layer": float_key,
+                    "speed": value["speed"],
+                    "speed_knot": value["speed_knot"],
+                    "direction_degrees": value["direction_degrees"],
+                    "direction": value["direction"],
+                }
+                speed_direction_records.append(record)
+            except ValueError:
+                continue
+
+        speed_direction_records.sort(key=lambda x: x["layer"])
+
+        return Response(
+            {
+                "currentPage": 1,
+                "recordsPerPage": 10,
+                "totalPages": 1,
+                "totalRecords": 10,
+                "records": speed_direction_records,
+                "all_records": calculated_dict,
+            }
+        )

@@ -2,6 +2,7 @@ from datetime import datetime
 from dateutil import parser
 import pytz
 import re
+from zoneinfo import ZoneInfo
 
 
 def validate_integer(value, field_name, record):
@@ -110,3 +111,40 @@ def validate_datetime(value, field_name, record):
                 f'    - ERROR: Invalid datetime for {field_name}: {value} in record with dataID: {record.get("dataID")}'
             )
             return None  # 跳過無法轉換為 datetime 的資料
+
+
+def combine_datetime(date_value, time_value, record):
+    """
+    檢查跟轉換 date 跟 time，轉換成功過後，
+    把 date 跟 time 合併成 datetime 格式，
+    格式不符合則返回 None。
+    """
+    try:
+        # 將字串轉換為 date 物件
+        if isinstance(date_value, str):
+            # 處理 ISO 格式（
+            if "T" in date_value:
+                date_value = datetime.fromisoformat(date_value).date()
+            else:
+                date_value = datetime.strptime(date_value, "%Y-%m-%d").date()
+
+        # 將字串轉換為 time 物件
+        if isinstance(time_value, str):
+            if "+" in time_value:  # 處理有時區
+                time_value = datetime.fromisoformat(f"2000-01-01T{time_value}").time()
+            else:
+                time_value = datetime.strptime(time_value, "%H:%M:%S").time()
+
+        # 去掉 tzinfo
+        if time_value.tzinfo:
+            time_value = time_value.replace(tzinfo=None)
+
+        dt = datetime.combine(date_value, time_value)
+        dt = dt.replace(tzinfo=ZoneInfo("Asia/Taipei"))
+
+        return dt
+    except ValueError:
+        print(
+            f'    - ERROR: Invalid datetime for combined_datetime: {date_value}, {time_value} in record with dataID: {record.get("dataID")}'
+        )
+        return None

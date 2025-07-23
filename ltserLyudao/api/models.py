@@ -1,5 +1,7 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
+import datetime
 
 
 class WaterData(models.Model):
@@ -851,6 +853,16 @@ class TBIADataField(BaseDataField):
         db_table = "TBIADataField"
 
 
+class BuoyHistoricalDataField(BaseDataField):
+    class Meta:
+        db_table = "BuoyHistoricalDataField"
+
+
+class BuoyRealtimeDataField(BaseDataField):
+    class Meta:
+        db_table = "BuoyRealtimeDataField"
+
+
 class MemorabiliaContent(models.Model):
     image = models.ImageField(upload_to="social_observation__images/")
     description = models.TextField()
@@ -927,3 +939,98 @@ class DatasetSummary(models.Model):
 
     class Meta:
         db_table = "dataset_summary"
+
+
+class BuoyData(models.Model):
+    dataID = models.CharField(max_length=255)
+    eventID = models.CharField(max_length=255)
+    eventDate = models.DateField(null=True, blank=True)
+    eventTime = models.TimeField(null=True, blank=True)
+    locationID = models.CharField(max_length=50)
+    underwater_par = models.FloatField(null=True, blank=True)
+    terrestrial_par = models.FloatField(null=True, blank=True)
+    exo_temperature = models.FloatField(null=True, blank=True)
+    sp_cond = models.FloatField(null=True, blank=True)
+    salinity = models.FloatField(null=True, blank=True)
+    ph = models.FloatField(null=True, blank=True)
+    odo_sat = models.FloatField(null=True, blank=True)
+    odo = models.FloatField(null=True, blank=True)
+    aquadopp_temperature = models.FloatField(null=True, blank=True)
+    corrected_wind_direction = models.FloatField(null=True, blank=True)
+    corrected_wind_speed = models.FloatField(null=True, blank=True)
+    air_temperature = models.FloatField(null=True, blank=True)
+    relative_humidity = models.FloatField(null=True, blank=True)
+    barometric_pressure = models.FloatField(null=True, blank=True)
+    precipitation_intensity = models.FloatField(null=True, blank=True)
+    precipitation_total = models.FloatField(null=True, blank=True)
+    wmo_average_wind_direction = models.FloatField(null=True, blank=True)
+    wmo_average_wind_speed = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],
+    )
+    longitude = models.FloatField(
+        null=True,
+        blank=True,
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)],
+    )
+    vel_e_cell_1 = models.FloatField(null=True, blank=True)
+    vel_n_cell_1 = models.FloatField(null=True, blank=True)
+    vel_u_cell_1 = models.FloatField(null=True, blank=True)
+    current_speed_1 = models.FloatField(null=True, blank=True)
+    current_direction_1 = models.FloatField(null=True, blank=True)
+    vel_e_cell_2 = models.FloatField(null=True, blank=True)
+    vel_n_cell_2 = models.FloatField(null=True, blank=True)
+    vel_u_cell_2 = models.FloatField(null=True, blank=True)
+    current_speed_2 = models.FloatField(null=True, blank=True)
+    current_direction_2 = models.FloatField(null=True, blank=True)
+    vel_e_cell_3 = models.FloatField(null=True, blank=True)
+    vel_n_cell_3 = models.FloatField(null=True, blank=True)
+    vel_u_cell_3 = models.FloatField(null=True, blank=True)
+    current_speed_3 = models.FloatField(null=True, blank=True)
+    current_direction_3 = models.FloatField(null=True, blank=True)
+    vel_e_cell_4 = models.FloatField(null=True, blank=True)
+    vel_n_cell_4 = models.FloatField(null=True, blank=True)
+    vel_u_cell_4 = models.FloatField(null=True, blank=True)
+    current_speed_4 = models.FloatField(null=True, blank=True)
+    current_direction_4 = models.FloatField(null=True, blank=True)
+    vel_e_cell_5 = models.FloatField(null=True, blank=True)
+    vel_n_cell_5 = models.FloatField(null=True, blank=True)
+    vel_u_cell_5 = models.FloatField(null=True, blank=True)
+    current_speed_5 = models.FloatField(null=True, blank=True)
+    current_direction_5 = models.FloatField(null=True, blank=True)
+    vel_e_cell_6 = models.FloatField(null=True, blank=True)
+    vel_n_cell_6 = models.FloatField(null=True, blank=True)
+    vel_u_cell_6 = models.FloatField(null=True, blank=True)
+    current_speed_6 = models.FloatField(null=True, blank=True)
+    current_direction_6 = models.FloatField(null=True, blank=True)
+    vel_e_cell_7 = models.FloatField(null=True, blank=True)
+    vel_n_cell_7 = models.FloatField(null=True, blank=True)
+    vel_u_cell_7 = models.FloatField(null=True, blank=True)
+    current_speed_7 = models.FloatField(null=True, blank=True)
+    current_direction_7 = models.FloatField(null=True, blank=True)
+    vel_e_cell_8 = models.FloatField(null=True, blank=True)
+    vel_n_cell_8 = models.FloatField(null=True, blank=True)
+    vel_u_cell_8 = models.FloatField(null=True, blank=True)
+    current_speed_8 = models.FloatField(null=True, blank=True)
+    current_direction_8 = models.FloatField(null=True, blank=True)
+    vel_e_cell_9 = models.FloatField(null=True, blank=True)
+    vel_n_cell_9 = models.FloatField(null=True, blank=True)
+    vel_u_cell_9 = models.FloatField(null=True, blank=True)
+    current_speed_9 = models.FloatField(null=True, blank=True)
+    current_direction_9 = models.FloatField(null=True, blank=True)
+    vel_e_cell_10 = models.FloatField(null=True, blank=True)
+    vel_n_cell_10 = models.FloatField(null=True, blank=True)
+    vel_u_cell_10 = models.FloatField(null=True, blank=True)
+    current_speed_10 = models.FloatField(null=True, blank=True)
+    current_direction_10 = models.FloatField(null=True, blank=True)
+
+    # 額外新增的欄位，為了符合已有的視圖
+    time = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return self.dataID
+
+    class Meta:
+        db_table = "BuoyData"
