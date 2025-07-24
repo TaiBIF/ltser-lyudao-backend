@@ -22,6 +22,23 @@ def validate_integer(value, field_name, record):
             return None  # 跳過無法轉換為整數的資料
 
 
+def validate_float(value, field_name, record):
+    """
+    檢查並嘗試將值轉換為浮點數。如果值為 None 或 'NA'，返回 None。
+    如果轉換失敗，打印錯誤訓息並返回 None。
+    """
+    if value is None or value == "NA":
+        return None  # 設為 None，以便存儲為 NULL
+    else:
+        try:
+            return float(value)  # 嘗試將值轉換為浮點數
+        except ValueError:
+            print(
+                f'    - ERROR: Invalid float for {field_name}: {value} in record with dataID: {record.get("dataID")}'
+            )
+            return None  # 跳過無法轉換為浮點數的資料
+
+
 def validate_date(value, field_name, record):
     """
     檢查並嘗試將值轉換為 YYYY-MM-DD 格式。如果值為 None 或 'NA'，返回 None。

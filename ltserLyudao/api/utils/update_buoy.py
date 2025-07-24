@@ -1,5 +1,5 @@
 import requests
-from api.utils.validate import validate_date, combine_datetime
+from api.utils.validate import validate_date, combine_datetime, validate_float
 from api.models import BuoyData
 from django.db import connection
 
@@ -71,6 +71,68 @@ if resource_list:
                     combined_datetime = combine_datetime(
                         record.get("eventDate"), record.get("eventTime"), record
                     )
+                    current_speed_1 = validate_float(
+                        record.get("current_speed_1"), "current_speed_1", record
+                    )
+                    converted_current_speed_1 = (
+                        current_speed_1 / 1000 if current_speed_1 is not None else None
+                    )
+                    current_speed_2 = validate_float(
+                        record.get("current_speed_2"), "current_speed_2", record
+                    )
+                    converted_current_speed_2 = (
+                        current_speed_2 / 1000 if current_speed_2 is not None else None
+                    )
+                    current_speed_3 = validate_float(
+                        record.get("current_speed_3"), "current_speed_3", record
+                    )
+                    converted_current_speed_3 = (
+                        current_speed_3 / 1000 if current_speed_3 is not None else None
+                    )
+                    current_speed_4 = validate_float(
+                        record.get("current_speed_4"), "current_speed_4", record
+                    )
+                    converted_current_speed_4 = (
+                        current_speed_4 / 1000 if current_speed_4 is not None else None
+                    )
+                    current_speed_5 = validate_float(
+                        record.get("current_speed_5"), "current_speed_5", record
+                    )
+                    converted_current_speed_5 = (
+                        current_speed_5 / 1000 if current_speed_5 is not None else None
+                    )
+                    current_speed_6 = validate_float(
+                        record.get("current_speed_6"), "current_speed_6", record
+                    )
+                    converted_current_speed_6 = (
+                        current_speed_6 / 1000 if current_speed_6 is not None else None
+                    )
+                    current_speed_7 = validate_float(
+                        record.get("current_speed_7"), "current_speed_7", record
+                    )
+                    converted_current_speed_7 = (
+                        current_speed_7 / 1000 if current_speed_7 is not None else None
+                    )
+                    current_speed_8 = validate_float(
+                        record.get("current_speed_8"), "current_speed_8", record
+                    )
+                    converted_current_speed_8 = (
+                        current_speed_8 / 1000 if current_speed_8 is not None else None
+                    )
+                    current_speed_9 = validate_float(
+                        record.get("current_speed_9"), "current_speed_9", record
+                    )
+                    converted_current_speed_9 = (
+                        current_speed_9 / 1000 if current_speed_9 is not None else None
+                    )
+                    current_speed_10 = validate_float(
+                        record.get("current_speed_10"), "current_speed_10", record
+                    )
+                    converted_current_speed_10 = (
+                        current_speed_10 / 1000
+                        if current_speed_10 is not None
+                        else None
+                    )
 
                     data_list.append(
                         BuoyData(
@@ -108,52 +170,52 @@ if resource_list:
                             vel_e_cell_1=record.get("vel_e_cell_1"),
                             vel_n_cell_1=record.get("vel_n_cell_1"),
                             vel_u_cell_1=record.get("vel_u_cell_1"),
-                            current_speed_1=record.get("current_speed_1"),
+                            current_speed_1=converted_current_speed_1,
                             current_direction_1=record.get("current_direction_1"),
                             vel_e_cell_2=record.get("vel_e_cell_2"),
                             vel_n_cell_2=record.get("vel_n_cell_2"),
                             vel_u_cell_2=record.get("vel_u_cell_2"),
-                            current_speed_2=record.get("current_speed_2"),
+                            current_speed_2=converted_current_speed_2,
                             current_direction_2=record.get("current_direction_2"),
                             vel_e_cell_3=record.get("vel_e_cell_3"),
                             vel_n_cell_3=record.get("vel_n_cell_3"),
                             vel_u_cell_3=record.get("vel_u_cell_3"),
-                            current_speed_3=record.get("current_speed_3"),
+                            current_speed_3=converted_current_speed_3,
                             current_direction_3=record.get("current_direction_3"),
                             vel_e_cell_4=record.get("vel_e_cell_4"),
                             vel_n_cell_4=record.get("vel_n_cell_4"),
                             vel_u_cell_4=record.get("vel_u_cell_4"),
-                            current_speed_4=record.get("current_speed_4"),
+                            current_speed_4=converted_current_speed_4,
                             current_direction_4=record.get("current_direction_4"),
                             vel_e_cell_5=record.get("vel_e_cell_5"),
                             vel_n_cell_5=record.get("vel_n_cell_5"),
                             vel_u_cell_5=record.get("vel_u_cell_5"),
-                            current_speed_5=record.get("current_speed_5"),
+                            current_speed_5=converted_current_speed_5,
                             current_direction_5=record.get("current_direction_5"),
                             vel_e_cell_6=record.get("vel_e_cell_6"),
                             vel_n_cell_6=record.get("vel_n_cell_6"),
                             vel_u_cell_6=record.get("vel_u_cell_6"),
-                            current_speed_6=record.get("current_speed_6"),
+                            current_speed_6=converted_current_speed_6,
                             current_direction_6=record.get("current_direction_6"),
                             vel_e_cell_7=record.get("vel_e_cell_7"),
                             vel_n_cell_7=record.get("vel_n_cell_7"),
                             vel_u_cell_7=record.get("vel_u_cell_7"),
-                            current_speed_7=record.get("current_speed_7"),
+                            current_speed_7=converted_current_speed_7,
                             current_direction_7=record.get("current_direction_7"),
                             vel_e_cell_8=record.get("vel_e_cell_8"),
                             vel_n_cell_8=record.get("vel_n_cell_8"),
                             vel_u_cell_8=record.get("vel_u_cell_8"),
-                            current_speed_8=record.get("current_speed_8"),
+                            current_speed_8=converted_current_speed_8,
                             current_direction_8=record.get("current_direction_8"),
                             vel_e_cell_9=record.get("vel_e_cell_9"),
                             vel_n_cell_9=record.get("vel_n_cell_9"),
                             vel_u_cell_9=record.get("vel_u_cell_9"),
-                            current_speed_9=record.get("current_speed_9"),
+                            current_speed_9=converted_current_speed_9,
                             current_direction_9=record.get("current_direction_9"),
                             vel_e_cell_10=record.get("vel_e_cell_10"),
                             vel_n_cell_10=record.get("vel_n_cell_10"),
                             vel_u_cell_10=record.get("vel_u_cell_10"),
-                            current_speed_10=record.get("current_speed_10"),
+                            current_speed_10=converted_current_speed_10,
                             current_direction_10=record.get("current_direction_10"),
                             time=combined_datetime,
                         )
