@@ -475,7 +475,7 @@ class LiteratureAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         if keyword:
-            literature = Literature.objects.filter(name__icontains=keyword).order_by(
+            literature = Literature.objects.filter(title__icontains=keyword).order_by(
                 "-year"
             )
         else:
