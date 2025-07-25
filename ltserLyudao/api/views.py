@@ -1181,11 +1181,6 @@ class GetTableSeriesAPIView(APIView):
             "model": "WeatherData",
             "fields": [
                 {"name": "time", "title": {"zh-tw": "time", "en": "time"}},
-                {"name": "windSpeed", "title": {"zh-tw": "風速", "en": "windSpeed"}},
-                {
-                    "name": "windDirection",
-                    "title": {"zh-tw": "風向", "en": "windDirection"},
-                },
                 {
                     "name": "precipitation",
                     "title": {"zh-tw": "雨量", "en": "precipitation"},
@@ -2418,14 +2413,37 @@ class GetBuoyMixedChartAPIView(APIView):
         "current37.8": ["current_direction_8", "current_speed_8"],
         "current42.8": ["current_direction_9", "current_speed_9"],
         "current47.8": ["current_direction_10", "current_speed_10"],
+        "weather-wind": ["windDirection", "windSpeed"],
+    }
+
+    MODEL_FIELDS_CONFIG = {
+        "buoy-historical": {
+            "model": BuoyData,
+            "temp_precip_fields": ["exo_temperature", "precipitation_intensity"],
+            "precip_unit": "ml",
+            "datetime_field": "eventDate",
+        },
+        "weather": {
+            "model": WeatherData,
+            "temp_precip_fields": ["airTemperature", "precipitation"],
+            "precip_unit": "mm",
+            "datetime_field": "time",
+        },
     }
 
     def get(self, request):
         year = request.query_params.get("year")
         location = request.query_params.get("locationID")
         rose_type = request.query_params.get("type")
+        project = request.query_params.get("url")
+
+        config = self.MODEL_FIELDS_CONFIG.get(project)
+        model = config.get("model")
 
         rose_config_list = self.ROSE_TYPE_MAP.get(rose_type)
+        temp_precip_config_list = config.get("temp_precip_fields")
+        precip_unit = config.get("precip_unit")
+        datetime_field = config.get("datetime_field")
 
         if not year or not location:
             return Response(
@@ -2440,15 +2458,16 @@ class GetBuoyMixedChartAPIView(APIView):
         except ValueError:
             return Response({"error": "Invalid year format"}, status=400)
 
-        qs = BuoyData.objects.filter(eventDate__year=year, locationID=location)
+        filter_kwargs = {f"{datetime_field}__year": year, "locationID": location}
+        qs = model.objects.filter(**filter_kwargs)
 
         # 每月的平均海溫與總降雨量
         temp_precip_qs = (
-            qs.annotate(month=ExtractMonth("eventDate"))
+            qs.annotate(month=ExtractMonth(datetime_field))
             .values("month")
             .annotate(
-                avg_exo_temperature=Round(Avg("exo_temperature"), precision=1),
-                raw_precipitation=Sum("precipitation_intensity"),
+                avg_exo_temperature=Round(Avg(temp_precip_config_list[0]), precision=1),
+                raw_precipitation=Sum(temp_precip_config_list[1]),
             )
             .annotate(
                 precipitation=Round(
@@ -2479,7 +2498,7 @@ class GetBuoyMixedChartAPIView(APIView):
                 "type": "bar",
                 "yAxisIndex": 0,
                 "itemStyle": {"color": "#5470C6"},
-                "tooltip": {"valueFormatter": "{value} ml"},
+                "tooltip": {"valueFormatter": f"{{value}} {precip_unit}"},
                 "data": precipitation_series,
             },
             {

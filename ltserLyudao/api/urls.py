@@ -135,7 +135,7 @@ urlpatterns = [
         name="get_third_party_table_raws",
     ),
     path(
-        "data/buoy-historical/chart/",
+        "data/mixed-chart/",
         GetBuoyMixedChartAPIView.as_view(),
         name="get_buoy_historical__chart",
     ),
