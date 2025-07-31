@@ -102,7 +102,7 @@ if resource_list:
 
                     data_list.append(
                         WeatherData(
-                            dataID=record.get("DataID"),
+                            dataID=record.get("dataID"),
                             resourceName=record.get("ResourceName"),
                             time=time,
                             locationID=record.get("locationID"),
