@@ -469,17 +469,29 @@ class LiteratureAPIView(APIView):
     def get(self, request):
         literature_id = request.query_params.get("id")
         keyword = request.query_params.get("keyword")
+        category = request.query_params.get("category")
+        relate = request.query_params.get("relate")
+        year = request.query_params.get("year")
         if literature_id is not None:
             literature = Literature.objects.get(id=literature_id)
             serializer = LiteratureSerializer(literature)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+        literature = Literature.objects.all()
+
         if keyword:
-            literature = Literature.objects.filter(title__icontains=keyword).order_by(
-                "-year"
-            )
-        else:
-            literature = Literature.objects.all().order_by("-year")
+            literature = literature.filter(title__icontains=keyword)
+
+        if category:
+            literature = literature.filter(category__iexact=category)
+
+        if relate:
+            literature = literature.filter(relate__iexact=relate)
+
+        if year:
+            literature = literature.filter(year=year)
+
+        literature = literature.order_by("-year")
 
         paginator = CustomPageNumberPagination()
         result_page = paginator.paginate_queryset(literature, request)

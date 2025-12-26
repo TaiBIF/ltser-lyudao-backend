@@ -100,10 +100,24 @@ class Literature(models.Model):
         ("EIA", "環評報告"),
     ]
 
+    RELATE_CHOICES = [
+        ("NATURE", "自然相關"),
+        ("SOCIAL", "社會相關"),
+        ("HYDROLOGY", "水文相關"),
+        ("LITERATURE", "文學相關"),
+        ("ENERGY", "能源建設相關"),
+    ]
+
     title = models.CharField(max_length=500, blank=False, null=False)
     year = models.IntegerField(null=False, blank=False)
     category = models.CharField(
         max_length=10, choices=CATEGORY_CHOICES, blank=False, null=False
+    )
+    relate = models.CharField(
+        max_length=20,
+        choices=RELATE_CHOICES,
+        blank=False,
+        null=False,
     )
     author = models.CharField(max_length=500, blank=True, null=True)
     unit = models.CharField(max_length=100, blank=True, null=True)

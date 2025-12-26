@@ -209,20 +209,21 @@ class ContactSerializer(serializers.ModelSerializer):
 
 class LiteratureSerializer(serializers.ModelSerializer):
     category_display = serializers.SerializerMethodField()
+    relate_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Literature
         fields = [
             "id",
             "title",
-            "created_at",
-            "updated_at",
             "year",
             "author",
             "unit",
             "url",
             "category",
             "category_display",
+            "relate",
+            "relate_display",
         ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
@@ -231,6 +232,9 @@ class LiteratureSerializer(serializers.ModelSerializer):
 
     def get_category_display(self, obj):
         return obj.get_category_display()
+
+    def get_relate_display(self, obj):
+        return obj.get_relate_display()
 
 
 class QATagSerializer(serializers.ModelSerializer):
