@@ -77,6 +77,8 @@ import requests
 import re
 import numpy as np
 
+# from api.utils.mock_wqdata import MOCK_WQDATA
+
 
 class SurveymapDropdownDataView(APIView):
     REVERSED_TABLE_MODELS = {

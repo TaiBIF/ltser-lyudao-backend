@@ -14,13 +14,13 @@ QUERY_PARAMS = {
     "GG": {
         "site": 3964,
         "params": {
-            "parameterIds": "100416,100415,100414,100418,100417,100333,100340,100335,100337,100336,100352,100353,100358,100359,100364,100365,100370,100371,100376,100377,100382,100383,100389,100394,100395,100400,100401,100406,100407"
+            "parameterIds": "100416,100415,100414,100418,100417,100333,100340,100335,100337,100336,100352,100353,100358,100359,100364,100365,100370,100371,100376,100377,100382,100383,100389,100394,100395,100400,100401,100406,100407,100438"
         },
     },
     "GW": {
         "site": 3965,
         "params": {
-            "parameterIds": "100543,100542,100541,100545,100544,100460,100467,100462,100464,100463,100479,100480,100485,100486,100491,100492,100497,100503,100504,100509,100510,100515,100516,100516,100521,100527,100528,100533,100534"
+            "parameterIds": "100543,100542,100541,100545,100544,100460,100467,100462,100464,100463,100479,100480,100485,100486,100491,100492,100497,100503,100504,100509,100510,100515,100516,100516,100521,100527,100528,100533,100534,100438"
         },
     },
 }
@@ -82,6 +82,17 @@ def degrees_to_16_wind_direction_label(degrees):
     return f"{zh_TW}（{en}）"
 
 
+def calculate_beaufort_scale(v_ms):
+    """用風速計算蒲福風級"""
+    try:
+        v = float(v_ms)
+        if v < 0:
+            return None
+        return str(int(round((v / 0.836) ** (2 / 3))))
+    except (TypeError, ValueError):
+        return None
+
+
 def transform_device_data(data_list):
     """將 API 回傳資料轉換成字典，時間轉成東八區"""
     result = {}
@@ -107,6 +118,10 @@ def transform_device_data(data_list):
         if name == "Corrected Wind Direction":
             direction_label = degrees_to_16_wind_direction_label(float(value))
             entry["direction"] = direction_label
+
+        if name == "Corrected Wind Speed":
+            b = calculate_beaufort_scale(value)
+            result["Beaufort Scale"] = {"timestamp": timestamp_local, "value": b}
 
         result[name] = entry
     return result
