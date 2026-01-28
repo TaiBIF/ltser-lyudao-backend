@@ -2,7 +2,7 @@ DEFAULT_TO = ["ltsertwlyudao@gmail.com"]
 DEFAULT_CC = ["ltsertwlyudao@gmail.com"]
 
 OBSERVATION_EMAILS = {
-    "海域水質": {"to": ["kunchang.li@gmail.com"], "cc": ["acropora.chen@gmail.com"]},
+    "海域水質": {"to": ["huckyuan@gmail.com"], "cc": ["likefh@gmail.com"]},
     "陸域植物": {
         "to": ["galanhsnu@gmail.com"],
         "cc": ["bochung@gate.sinica.edu.tw", "kunchang.li@gmail.com"],
