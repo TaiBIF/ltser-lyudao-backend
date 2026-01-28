@@ -58,7 +58,7 @@ services:
             - CELERY_RESULT_BACKEND=django-db
 
     n8n:
-        image: n8nio/n8n:2.4.5
+        image: n8nio/n8n:2.1.5
         ports:
             - "5679:5678"
         environment:
