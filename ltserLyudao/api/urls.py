@@ -31,6 +31,7 @@ from .views import (
     GetThirdPartyDataRawAPIView,
     GetBuoyMixedChartAPIView,
     GetBuoyRealtimeDataAPIView,
+    import_ckan_resource,
 )
 
 urlpatterns = [
@@ -143,6 +144,11 @@ urlpatterns = [
         "data/buoy-realtime/",
         GetBuoyRealtimeDataAPIView.as_view(),
         name="get_bupy_realtime_raws",
+    ),
+    path(
+        "import-ckan-resource/",
+        import_ckan_resource,
+        name="import-ckan-resource",
     ),
     # 外部 API
     path("occurrence", OccurrenceAPIView.as_view(), name="get_occurrence"),

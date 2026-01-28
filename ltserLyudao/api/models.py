@@ -5,12 +5,12 @@ import datetime
 
 
 class WaterData(models.Model):
-    dataID = models.CharField(max_length=255)
+    dataID = models.CharField(max_length=255, unique=True)
     eventID = models.CharField(max_length=255)
     resourceName = models.CharField(max_length=255)
     time = models.DateField()
     locationID = models.CharField(max_length=255)
-    locality = models.CharField(max_length=255)
+    locality = models.CharField(max_length=255, blank=True, null=True)
     verbatimDepth = models.FloatField(null=True, blank=True)
     waterTemperature = models.FloatField(null=True, blank=True)
     conductivity = models.FloatField(null=True, blank=True)
@@ -28,6 +28,12 @@ class WaterData(models.Model):
     TOC = models.FloatField(null=True, blank=True)
     Lipid = models.FloatField(null=True, blank=True)
     BOD5 = models.FloatField(null=True, blank=True)
+    pH = models.FloatField(blank=True, null=True)
+    DO = models.FloatField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -56,6 +62,10 @@ class WeatherData(models.Model):
     RH = models.FloatField(null=True, blank=True)
     precipitation = models.FloatField(null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -74,6 +84,10 @@ class HabitatData(models.Model):
     score = models.IntegerField()
     samplingProtocol = models.CharField(max_length=255)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -91,6 +105,10 @@ class BaseSeaTemperatureData(models.Model):
     time = models.DateTimeField()
     seaTemperature = models.FloatField(null=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -101,51 +119,6 @@ class BaseSeaTemperatureData(models.Model):
 class SeaTemperatureData(BaseSeaTemperatureData):
     class Meta:
         db_table = "SeaTemperatureData"
-
-
-class SeaTemperatureCK2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureCK2023"
-
-
-class SeaTemperatureDBS2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureDBS2023"
-
-
-class SeaTemperatureGG2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureGG2023"
-
-
-class SeaTemperatureGW2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureGW2023"
-
-
-class SeaTemperatureNL2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureNL2023"
-
-
-class SeaTemperatureSL2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureSL2023"
-
-
-class SeaTemperatureWQG2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureWQG2023"
-
-
-class SeaTemperatureYZH2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureYZH2023"
-
-
-class SeaTemperatureZP2023(BaseSeaTemperatureData):
-    class Meta:
-        db_table = "SeaTemperatureZP2023"
 
 
 class CoralData(models.Model):
@@ -175,6 +148,10 @@ class CoralData(models.Model):
     samplingProtocol = models.CharField(max_length=50)
     sampleSizeValue = models.FloatField()
     sampleSizeUnit = models.CharField(max_length=50)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -209,6 +186,10 @@ class CoralCommData(models.Model):
     sampleSizeValue = models.IntegerField(null=True, blank=True)
     sampleSizeUnit = models.CharField(max_length=50, null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -241,6 +222,10 @@ class PlantData(models.Model):
     layer = models.CharField(max_length=50, null=True, blank=True)
     measurementDeterminedDate = models.DateField(null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -250,24 +235,26 @@ class PlantData(models.Model):
 
 class BirdNetSoundData(models.Model):
     dataID = models.CharField(max_length=255)
-    eventID = models.CharField(max_length=255, null=True, blank=True)
-    locationID = models.CharField(max_length=10, null=True, blank=True)
-    species_list = models.CharField(
-        max_length=255, null=True, blank=True
-    )  # Use None for no species
-    scientificName = models.CharField(max_length=255, null=True, blank=True)
-    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    eventID = models.CharField(max_length=255)
     vernacularName = models.CharField(max_length=255, null=True, blank=True)
     model = models.CharField(max_length=255, null=True, blank=True)
     time_begin = models.IntegerField(null=True, blank=True)
     time_end = models.IntegerField(null=True, blank=True)
     confidence = models.FloatField(null=True, blank=True)
     associatedMedia = models.CharField(max_length=255, null=True, blank=True)
-    week = models.IntegerField(null=True, blank=True)
-    overlap = models.IntegerField(null=True, blank=True)
-    sensitivity = models.IntegerField(null=True, blank=True)
-    min_conf = models.FloatField(null=True, blank=True)
     time = models.DateTimeField(null=True, blank=True)
+    locationID = models.CharField(max_length=10, null=True, blank=True)
+    taxonID = models.CharField(max_length=255, null=True, blank=True)
+    scientificName = models.CharField(max_length=255)
+    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    scientificNameID = models.BigIntegerField(null=True, blank=True)
+    family = models.CharField(max_length=255, null=True, blank=True)
+    familyChinese = models.CharField(max_length=255, null=True, blank=True)
+    birdnet2_4 = models.CharField(max_length=255, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -325,12 +312,10 @@ class BirdNetSoundYZH2023(BaseBirdNetSoundData):
 
 class FishData(models.Model):
     dataID = models.CharField(max_length=255)
-    eventID = models.CharField(max_length=255, null=True, blank=True)
+    eventID = models.CharField(max_length=255)
     time = models.DateField(null=True, blank=True)
     season = models.CharField(max_length=255, null=True, blank=True)
-    year = models.IntegerField(null=True, blank=True)
-    region = models.CharField(max_length=255, null=True, blank=True)
-    locationID = models.CharField(max_length=255, null=True, blank=True)
+    locationID = models.CharField(max_length=255)
     locality = models.CharField(max_length=255, null=True, blank=True)
     verbatimDepth = models.CharField(max_length=255, null=True, blank=True)
     replicate = models.IntegerField(null=True, blank=True)
@@ -342,9 +327,13 @@ class FishData(models.Model):
     scientificName = models.CharField(max_length=255, null=True, blank=True)
     taxonRank = models.CharField(max_length=255, null=True, blank=True)
     bodyLength = models.FloatField(null=True, blank=True)
-    samplingProtocol = models.CharField(max_length=255, null=True, blank=True)
+    samplingProtocol = models.CharField(max_length=255)
     individualCount = models.IntegerField(null=True, blank=True)
     identifiedBy = models.CharField(max_length=255, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -359,7 +348,7 @@ class FishingData(models.Model):
     time = models.DateTimeField()
     locationID = models.CharField(max_length=255)
     verbatimLocality = models.CharField(max_length=255)
-    is_local_villager = models.CharField(max_length=255)
+    is_local_villager = models.BooleanField(max_length=255)
     purpose = models.CharField(max_length=255, null=True, blank=True)
     preferable_site = models.CharField(max_length=255, null=True, blank=True)
     catchment_individuals_per_month = models.CharField(
@@ -370,6 +359,10 @@ class FishingData(models.Model):
     bait = models.CharField(max_length=255, null=True, blank=True)
     fish_species = models.CharField(max_length=2550, null=True, blank=True)
     feel_size_decrease = models.CharField(max_length=255, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -406,6 +399,10 @@ class ZoobenthosData(models.Model):
     habitat = models.CharField(max_length=100, null=True, blank=True)
     informationWithheld = models.CharField(max_length=100, null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -429,6 +426,10 @@ class TerreSoundIndexData(models.Model):
     min = models.FloatField(null=True, blank=True)
     sec = models.FloatField(null=True, blank=True)
     time = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -516,6 +517,10 @@ class BioSoundData(models.Model):
     freq_high = models.IntegerField(null=True, blank=True)
     time = models.DateTimeField(null=True, blank=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -594,6 +599,10 @@ class AquaticfaunaData(models.Model):
     abundanceUnit = models.CharField(max_length=100, null=True, blank=True)
     informationWithheld = models.CharField(max_length=100, blank=True, null=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
+
     def __str__(self):
         return self.dataID
 
@@ -620,6 +629,10 @@ class StreamData(models.Model):
     BOD5 = models.FloatField(null=True, blank=True)
     RPI_Score = models.FloatField(null=True, blank=True)
     RPI_Level = models.CharField(max_length=50, null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID
@@ -1028,6 +1041,10 @@ class BuoyData(models.Model):
 
     # 額外新增的欄位，為了符合已有的視圖
     time = models.DateTimeField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    data_hash = models.CharField(max_length=64, db_index=True)
 
     def __str__(self):
         return self.dataID

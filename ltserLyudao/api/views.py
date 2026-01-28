@@ -40,7 +40,6 @@ from django.db.models import (
 )
 from django.db.models import Value as V
 from django.apps import apps
-from django.core.paginator import Paginator
 from django.db import models
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
@@ -49,10 +48,9 @@ from django.core.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from user.models import DownloadRecord, DownloadApply
 from django.db.models import Sum
-from rest_framework.fields import DateTimeField
 from django.core.exceptions import ObjectDoesNotExist
 from .conf.default_site_data import DEFAULT_SITE_DATA
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 from django.core.cache import cache
 from api.utils.segisws_api import *
 from api.utils.wqdata_api import *
@@ -66,6 +64,12 @@ from api.utils.convert_date_time import (
 from api.utils.calculate_rose_chart import convert_to_direction_bin, pick_bin_key
 from django.db.models.functions import ExtractMonth, Round
 from collections import defaultdict
+from rest_framework.decorators import api_view
+
+from api.tasks import import_ckan_and_notify, send_import_email
+from api.utils.email_recipients import get_email_targets
+from api.importing.registry import ADAPTERS
+from celery import chain
 
 import json
 import io
@@ -2666,3 +2670,70 @@ class GetBuoyRealtimeDataAPIView(APIView):
                 "all_records": calculated_dict,
             }
         )
+
+
+@api_view(["POST"])
+def import_ckan_resource(request):
+    base_url = "https://data.depositar.io/zh_Hant_TW"
+
+    resource_id = request.data.get("resource_id")
+    site = request.data.get("site")
+    observation_item = request.data.get("observation_item")
+    resource_name = request.data.get("resource_name")
+    package_name = request.data.get("package_name")
+    limit = request.data.get("limit") or 100
+
+    if not resource_id:
+        return Response(
+            {"error": "resource_id_required"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if not package_name:
+        return Response(
+            {"error": "package_name_required"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if package_name not in ADAPTERS:
+        return Response(
+            {
+                "error": "unknown_dataset",
+                "package_name": package_name,
+                "allowed": list(ADAPTERS.keys()),
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    to_list, cc_list = get_email_targets(observation_item)
+
+    sig1 = import_ckan_and_notify.s(
+        package_name=package_name,
+        resource_id=resource_id,
+        base_url=base_url,
+        site=site,
+        observation_item=observation_item,
+        resource_name=resource_name,
+        limit=limit,
+    )
+
+    # 注意：send_import_email 的第一個參數 report 會自動接到 sig1 的回傳值
+    sig2 = send_import_email.s(
+        to_emails=to_list,
+        cc_emails=cc_list,
+        observation_item=observation_item,
+        resource_name=resource_name,
+        task_id=None,
+    )
+
+    result = chain(sig1, sig2).apply_async()
+
+    return Response(
+        {
+            "task_id": result.id,  # 這是 chain 的 root id
+            "package_name": package_name,
+            "resource_id": resource_id,
+            "site": site,
+            "observation_item": observation_item,
+            "resource_name": resource_name,
+        },
+        status=status.HTTP_202_ACCEPTED,
+    )

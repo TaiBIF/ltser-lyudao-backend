@@ -1,36 +1,74 @@
-version: "3.7"
-
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: ltser-lyudao-backend-docker
-    volumes:
-      - .:/app
-      - ../ltser-lyudao-volumes/static:/app/static
-      - ../ltser-lyudao-volumes/media:/app/media
-      - ../ltser-lyudao-volumes/frontend:/frontend
-    # environment:
-    #   - WEB_ENV=${WEB_ENV}
-    depends_on:
-      - redis
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_DB: ${DOCKER_NAME}
-      POSTGRES_USER: ${DOCKER_USER}
-      POSTGRES_PASSWORD: ${DOCKER_PASSWORD}
-      #POSTGRES_HOST_AUTH_METHOD: md5
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-        - ./initdb:/docker-entrypoint-initdb.d
-        - ../ltser-lyudao-volumes/pgdata:/var/lib/postgresql/data/pgdata
-  redis:
-    image: redis:latest
-    container_name: redis
-    ports:
-      - "6379:6379"  
-    volumes:
-      - ../ltser-lyudao-volumes/redis_data:/data
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: ltser-lyudao-backend-docker
+        volumes:
+            - .:/app
+            - ../ltser-lyudao-volumes/static:/app/static
+            - ../ltser-lyudao-volumes/media:/app/media
+            - ../ltser-lyudao-volumes/frontend:/frontend
+        # environment:
+        #   - WEB_ENV=${WEB_ENV}
+        depends_on:
+            - redis
+        environment:
+            - DJANGO_SETTINGS_MODULE=ltserLyudao.settings
+            - CELERY_BROKER_URL=redis://redis:6379/0
+            - CELERY_RESULT_BACKEND=django-db
+    db:
+        image: postgres:14
+        environment:
+            POSTGRES_DB: ${DOCKER_NAME}
+            POSTGRES_USER: ${DOCKER_USER}
+            POSTGRES_PASSWORD: ${DOCKER_PASSWORD}
+            #POSTGRES_HOST_AUTH_METHOD: md5
+            PGDATA: /var/lib/postgresql/data/pgdata
+        volumes:
+            - ./initdb:/docker-entrypoint-initdb.d
+            - ../ltser-lyudao-volumes/pgdata:/var/lib/postgresql/data/pgdata
+    redis:
+        image: redis:latest
+        container_name: redis
+        ports:
+            - "6379:6379"
+        volumes:
+            - ../ltser-lyudao-volumes/redis_data:/data
 
+    celery:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: ltser-lyudao-backend-docker
+        command: celery -A ltserLyudao worker -l info
+        volumes:
+            - .:/app
+            - ../ltser-lyudao-volumes/static:/app/static
+            - ../ltser-lyudao-volumes/media:/app/media
+            - ../ltser-lyudao-volumes/frontend:/frontend
+        depends_on:
+            - redis
+            - db
+        entrypoint: ""
+        environment:
+            - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+            - DJANGO_SETTINGS_MODULE=ltserLyudao.settings
+            - CELERY_BROKER_URL=redis://redis:6379/0
+            - CELERY_RESULT_BACKEND=django-db
+
+    n8n:
+        image: n8nio/n8n:latest
+        ports:
+            - "5679:5678"
+        environment:
+            - TZ=Asia/Taipei
+            - N8N_BASIC_AUTH_ACTIVE=true
+            - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
+            - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+            - N8N_HOST=localhost
+            - N8N_PROTOCOL=http
+            - N8N_PORT=5678
+            - WEBHOOK_URL=http://localhost:5679/
+        volumes:
+            - ../ltser-lyudao-volumes/n8n_data:/home/node/.n8n
