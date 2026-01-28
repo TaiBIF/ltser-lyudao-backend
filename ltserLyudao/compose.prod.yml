@@ -34,7 +34,7 @@ services:
         environment:
             - N8N_HOST=ltsertwlyudao.org
             - N8N_PROTOCOL=https
-            - N8N_PORT=443
+            - N8N_PORT=5678
             - N8N_PATH=/n8n/
             - WEBHOOK_URL=https://ltsertwlyudao.org/n8n/
             - N8N_EDITOR_BASE_URL=https://ltsertwlyudao.org/n8n/
