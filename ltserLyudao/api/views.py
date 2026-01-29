@@ -844,8 +844,21 @@ class GetDataRawAPIView(APIView):
 
     @staticmethod
     def get_field_names_without_id(model):
-        field_names = [field.name for field in model._meta.fields if field.name != "id"]
+        # 統一要排除的欄位
+        exclude_fields = {
+            "id",
+            "created_at",
+            "updated_at",
+            "data_hash",
+        }
 
+        field_names = [
+            field.name
+            for field in model._meta.fields
+            if field.name not in exclude_fields
+        ]
+
+        # BuoyData 額外不回傳 time
         if model.__name__ == "BuoyData":
             field_names = [name for name in field_names if name != "time"]
 
