@@ -68,7 +68,7 @@ from rest_framework.decorators import api_view
 
 from api.tasks import import_ckan_and_notify, send_import_email
 from api.utils.email_recipients import get_email_targets
-from api.importing.registry import ADAPTERS
+from api.importing.registry import ADAPTERS, normalize_package_name
 from celery import chain
 
 import json
@@ -2693,8 +2693,10 @@ def import_ckan_resource(request):
     site = request.data.get("site")
     observation_item = request.data.get("observation_item")
     resource_name = request.data.get("resource_name")
-    package_name = request.data.get("package_name")
+    base_package_name = request.data.get("package_name")
     limit = request.data.get("limit") or 100
+
+    package_name = normalize_package_name(base_package_name)
 
     if not resource_id:
         return Response(

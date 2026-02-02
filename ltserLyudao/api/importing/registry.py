@@ -1,3 +1,4 @@
+import re
 from api.importing.adapters.waterdata import WaterDataAdapter
 from api.importing.adapters.plantdata import PlantDataAdapter
 from api.importing.adapters.zoobenthosdata import ZoobenthosDataAdapter
@@ -14,6 +15,7 @@ from api.importing.adapters.fishing import FishingDataAdapter
 from api.importing.adapters.weather import WeatherDataAdapter
 from api.importing.adapters.seatemperature import SeaTemperatureDataAdapter
 from api.importing.adapters.birdnetsound import BirdNetSoundDataAdapter
+from api.importing.adapters.oceanindex import OceanSoundIndexDataAdapter
 
 ADAPTERS = {
     "ltser-lyudao-water": WaterDataAdapter,
@@ -32,4 +34,9 @@ ADAPTERS = {
     "ltser-lyudao-weather": WeatherDataAdapter,
     "ltser-lyudao-seatemperature": SeaTemperatureDataAdapter,
     "ltser-lyudao-birdnetsound": BirdNetSoundDataAdapter,
+    "ltser-lyudao-oceansound": OceanSoundIndexDataAdapter,
 }
+
+
+def normalize_package_name(package_name: str) -> str:
+    return re.sub(r"-\d{6}$", "", package_name)
