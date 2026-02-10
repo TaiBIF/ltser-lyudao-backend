@@ -39,7 +39,10 @@ def build_biosound_payload(record, validators):
         "associatedMedia": record.get("associatedMedia"),
         # datetime
         "time": validators["event_datetime"](
-            record.get("time"), "time", record, errors
+            record.get("measurementDeterminedDate"),
+            "measurementDeterminedDate",
+            record,
+            errors,
         ),
     }
 

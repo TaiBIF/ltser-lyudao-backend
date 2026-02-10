@@ -14,7 +14,12 @@ def build_birdnet_sound_payload(record, validators):
     )
 
     # 日期（錄音時間）
-    time = validators["event_datetime"](record.get("time"), "time", record, errors)
+    time = validators["event_datetime"](
+        record.get("measurementDeterminedDate"),
+        "measurementDeterminedDate",
+        record,
+        errors,
+    )
 
     # 數值欄位
     time_begin = validators["int"](
