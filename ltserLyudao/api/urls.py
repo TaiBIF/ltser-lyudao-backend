@@ -31,6 +31,7 @@ from .views import (
     GetThirdPartyDataRawAPIView,
     GetBuoyMixedChartAPIView,
     GetBuoyRealtimeDataAPIView,
+    SyncIptAquaticfaunaEventAPIView,
     import_ckan_resource,
 )
 
@@ -149,6 +150,11 @@ urlpatterns = [
         "import-ckan-resource/",
         import_ckan_resource,
         name="import-ckan-resource",
+    ),
+    path(
+        "internal/ipt/aquaticfauna-events/sync/",
+        SyncIptAquaticfaunaEventAPIView.as_view(),
+        name="sync-ipt-aquaticfauna-events",
     ),
     # 外部 API
     path("occurrence", OccurrenceAPIView.as_view(), name="get_occurrence"),

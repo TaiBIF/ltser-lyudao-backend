@@ -40,7 +40,7 @@ from django.db.models import (
 )
 from django.db.models import Value as V
 from django.apps import apps
-from django.db import models
+from django.db import models, transaction, connection
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.http import FileResponse
@@ -2682,6 +2682,216 @@ class GetBuoyRealtimeDataAPIView(APIView):
                 "records": speed_direction_records,
                 "all_records": calculated_dict,
             }
+        )
+
+
+class SyncIptAquaticfaunaEventAPIView(APIView):
+    DEFAULT_COUNTRY = "Taiwan"
+    DEFAULT_COUNTRY_CODE = "TW"
+    DEFAULT_COUNTY = "Taitung County"
+    DEFAULT_MUNICIPALITY = "Lyudao Township"
+    DEFAULT_GEODETIC_DATUM = "WGS84"
+    DEFAULT_PROTOCOL = "Unknown"
+    LOCALITY_FROM_LOCATION_ID = {
+        "DMO": "Dam Outlet",
+        "YZHFW1": "Youzihhu Freshwater Waterfall",
+        "YZHFW2": "Youzihhu Freshwater Waterfall",
+        "DMD": "Dam Downstream",
+        "DM": "Dam",
+        "DMU": "Dam Upstream",
+    }
+    COORDINATES_FROM_LOCATION_ID = {
+        "DM": (22.67313119, 121.5005733),
+        "DMD": (22.67337807, 121.5007636),
+        "DMO": (22.67590546, 121.5013929),
+        "DMU": (
+            22.66858039,
+            121.4977459,
+        ),
+        "YZHFW1": (22.66234022, 121.5079205),
+        "YZHFW2": (22.66240237, 121.5081323),
+    }
+    SAMPLING_PROTOCOL_MAP = {
+        "手抄網(半定量調查)": "Hand-net sampling (semi-quantitative survey)",
+        "陷阱法(至多設置一件長城籠及3個蝦籠，視現況水深而定)配合手抄網": "Trap method (up to one fyke net and three shrimp traps, depending on water depth) combined with hand-net sampling",
+    }
+
+    @staticmethod
+    def _to_bool(value, default=False):
+        if value is None:
+            return default
+        if isinstance(value, bool):
+            return value
+        return str(value).strip().lower() in {"1", "true", "t", "yes", "y", "on"}
+
+    @staticmethod
+    def _build_event_id(row):
+        if row.eventID:
+            return row.eventID
+        if row.locationID and row.time:
+            return f"AQF-{row.locationID}-{row.time.strftime('%Y%m%d')}"
+        if row.time:
+            return f"AQF-{row.time.strftime('%Y%m%d')}-{row.pk}"
+        return f"AQF-{row.pk}"
+
+    @staticmethod
+    def _event_date_str(value):
+        if value:
+            return value.strftime("%Y-%m-%d")
+        return ""
+
+    def _to_locality_en(self, location_id, fallback_value=None):
+        if location_id:
+            key = str(location_id).strip().upper()
+            if key in self.LOCALITY_FROM_LOCATION_ID:
+                return self.LOCALITY_FROM_LOCATION_ID[key]
+        return fallback_value
+
+    def _to_sampling_protocol_en(self, sampling_protocol):
+        if not sampling_protocol:
+            return self.DEFAULT_PROTOCOL
+
+        normalized = str(sampling_protocol).strip()
+        if normalized in self.SAMPLING_PROTOCOL_MAP:
+            return self.SAMPLING_PROTOCOL_MAP[normalized]
+
+        compact = normalized.replace(" ", "")
+        for raw, mapped in self.SAMPLING_PROTOCOL_MAP.items():
+            if compact == raw.replace(" ", ""):
+                return mapped
+
+        return normalized
+
+    def _to_coordinates(self, location_id):
+        if not location_id:
+            return None, None
+        key = str(location_id).strip().upper()
+        if key in self.COORDINATES_FROM_LOCATION_ID:
+            return self.COORDINATES_FROM_LOCATION_ID[key]
+        return None, None
+
+    def post(self, request):
+        dry_run = self._to_bool(request.data.get("dry_run"), default=False)
+        truncate = self._to_bool(request.data.get("truncate"), default=False)
+        limit = request.data.get("limit")
+
+        queryset = AquaticfaunaData.objects.all().order_by("id")
+        if limit is not None:
+            try:
+                limit = int(limit)
+            except (TypeError, ValueError):
+                return Response({"error": "limit must be an integer"}, status=400)
+            if limit <= 0:
+                return Response({"error": "limit must be > 0"}, status=400)
+            queryset = queryset[:limit]
+
+        grouped_events = {}
+        for row in queryset:
+            event_id = self._build_event_id(row)
+            if event_id not in grouped_events:
+                lat, lon = self._to_coordinates(row.locationID)
+                grouped_events[event_id] = {
+                    "eventDate": self._event_date_str(row.time),
+                    "samplingProtocol": self._to_sampling_protocol_en(
+                        row.samplingProtocol
+                    ),
+                    "sampleSizeValue": None,
+                    "sampleSizeUnit": None,
+                    "samplingEffort": None,
+                    "locationID": row.locationID,
+                    "country": self.DEFAULT_COUNTRY,
+                    "countryCode": self.DEFAULT_COUNTRY_CODE,
+                    "county": self.DEFAULT_COUNTY,
+                    "municipality": self.DEFAULT_MUNICIPALITY,
+                    "locality": self._to_locality_en(
+                        row.locationID, fallback_value=row.river or row.locationID
+                    ),
+                    "verbatimLocality": row.river,
+                    "decimalLatitude": lat,
+                    "decimalLongitude": lon,
+                    "geodeticDatum": self.DEFAULT_GEODETIC_DATUM,
+                }
+
+            group = grouped_events[event_id]
+            if (
+                row.samplingProtocol
+                and group["samplingProtocol"] == self.DEFAULT_PROTOCOL
+            ):
+                group["samplingProtocol"] = self._to_sampling_protocol_en(
+                    row.samplingProtocol
+                )
+            if not group["locality"]:
+                group["locality"] = self._to_locality_en(
+                    row.locationID, fallback_value=row.river or row.locationID
+                )
+            if group["decimalLatitude"] is None or group["decimalLongitude"] is None:
+                lat, lon = self._to_coordinates(row.locationID)
+                if lat is not None and lon is not None:
+                    group["decimalLatitude"] = lat
+                    group["decimalLongitude"] = lon
+            if row.river and not group["verbatimLocality"]:
+                group["verbatimLocality"] = row.river
+            if row.locationID and not group["locationID"]:
+                group["locationID"] = row.locationID
+            if not group["eventDate"] and row.time:
+                group["eventDate"] = self._event_date_str(row.time)
+
+        payloads = []
+        skipped_no_event_date = 0
+        for event_id, payload in grouped_events.items():
+            if not payload["eventDate"]:
+                skipped_no_event_date += 1
+                continue
+
+            payloads.append((event_id, payload))
+
+        existing_ids = set()
+        if not truncate:
+            existing_ids = set(
+                IptAquaticfaunaEvent.objects.values_list("eventID", flat=True)
+            )
+
+        created_count = 0
+        updated_count = 0
+
+        if dry_run:
+            for event_id, _payload in payloads:
+                if event_id in existing_ids:
+                    updated_count += 1
+                else:
+                    created_count += 1
+        else:
+            with transaction.atomic():
+                if truncate:
+                    table_name = IptAquaticfaunaEvent._meta.db_table
+                    with connection.cursor() as cursor:
+                        cursor.execute(
+                            f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY;'
+                        )
+
+                for event_id, payload in payloads:
+                    defaults = payload.copy()
+                    _, created = IptAquaticfaunaEvent.objects.update_or_create(
+                        eventID=event_id,
+                        defaults=defaults,
+                    )
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
+        return Response(
+            {
+                "dry_run": dry_run,
+                "truncate": truncate,
+                "source_records": queryset.count() if hasattr(queryset, "count") else 0,
+                "grouped_events": len(grouped_events),
+                "synced_events": len(payloads),
+                "skipped_no_event_date": skipped_no_event_date,
+                "created": created_count,
+                "updated": updated_count,
+            },
+            status=status.HTTP_200_OK,
         )
 
 

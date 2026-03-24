@@ -1055,3 +1055,41 @@ class BuoyData(models.Model):
 
     class Meta:
         db_table = "BuoyData"
+
+
+class IptEventBaseField(models.Model):
+    eventID = models.CharField(max_length=255, unique=True)
+    eventDate = models.CharField(max_length=50)
+    samplingProtocol = models.CharField(max_length=255)
+    sampleSizeValue = models.DecimalField(
+        max_digits=12, decimal_places=2, blank=True, null=True
+    )
+    sampleSizeUnit = models.CharField(max_length=255, blank=True, null=True)
+    samplingEffort = models.CharField(max_length=255, blank=True, null=True)
+
+    locationID = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    countryCode = models.CharField(max_length=2, blank=True, null=True)
+    county = models.CharField(max_length=100, blank=True, null=True)
+    municipality = models.CharField(max_length=100, blank=True, null=True)
+    locality = models.CharField(max_length=255, blank=True, null=True)
+    verbatimLocality = models.CharField(max_length=255, blank=True, null=True)
+
+    decimalLatitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
+    decimalLongitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
+    geodeticDatum = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.eventID
+
+
+class IptAquaticfaunaEvent(IptEventBaseField):
+    class Meta:
+        db_table = "ipt_aquaticfauna_event"
