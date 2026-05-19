@@ -69,6 +69,7 @@ from rest_framework.decorators import api_view
 from api.tasks import import_ckan_and_notify, send_import_email
 from api.utils.email_recipients import get_email_targets
 from api.importing.registry import ADAPTERS, normalize_package_name
+from api.permissions import HasInternalApiKey
 from celery import chain
 
 import json
@@ -2686,6 +2687,8 @@ class GetBuoyRealtimeDataAPIView(APIView):
 
 
 class SyncIptAquaticfaunaEventAPIView(APIView):
+    permission_classes = [HasInternalApiKey]
+
     DEFAULT_COUNTRY = "Taiwan"
     DEFAULT_COUNTRY_CODE = "TW"
     DEFAULT_COUNTY = "Taitung County"
@@ -2896,6 +2899,8 @@ class SyncIptAquaticfaunaEventAPIView(APIView):
 
 
 class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
+    permission_classes = [HasInternalApiKey]
+
     DEFAULT_BASIS_OF_RECORD = "HumanObservation"
 
     @staticmethod
