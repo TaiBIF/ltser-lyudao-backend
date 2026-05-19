@@ -1090,6 +1090,25 @@ class IptEventBaseField(models.Model):
         return self.eventID
 
 
+class IptOccurrenceExtensionBaseField(models.Model):
+    occurrenceID = models.CharField(max_length=255, unique=True)
+    eventID = models.CharField(max_length=255)
+    basisOfRecord = models.CharField(max_length=50)
+    scientificName = models.CharField(max_length=255)
+    individualCount = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.occurrenceID
+
+
 class IptAquaticfaunaEvent(IptEventBaseField):
     class Meta:
         db_table = "ipt_aquaticfauna_event"
+
+
+class IptAquaticfaunaOccurrenceExtension(IptOccurrenceExtensionBaseField):
+    class Meta:
+        db_table = "ipt_aquaticfauna_occurrence_extension"

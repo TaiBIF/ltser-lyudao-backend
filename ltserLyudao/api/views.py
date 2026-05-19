@@ -2895,6 +2895,105 @@ class SyncIptAquaticfaunaEventAPIView(APIView):
         )
 
 
+class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
+    DEFAULT_BASIS_OF_RECORD = "HumanObservation"
+
+    @staticmethod
+    def _to_bool(value, default=False):
+        return SyncIptAquaticfaunaEventAPIView._to_bool(value, default=default)
+
+    @staticmethod
+    def _build_event_id(row):
+        return SyncIptAquaticfaunaEventAPIView._build_event_id(row)
+
+    def post(self, request):
+        dry_run = self._to_bool(request.data.get("dry_run"), default=False)
+        truncate = self._to_bool(request.data.get("truncate"), default=False)
+        limit = request.data.get("limit")
+
+        queryset = AquaticfaunaData.objects.all().order_by("id")
+        if limit is not None:
+            try:
+                limit = int(limit)
+            except (TypeError, ValueError):
+                return Response({"error": "limit must be an integer"}, status=400)
+            if limit <= 0:
+                return Response({"error": "limit must be > 0"}, status=400)
+            queryset = queryset[:limit]
+
+        occurrence_payloads = {}
+        skipped_no_occurrence_id = 0
+        skipped_no_scientific_name = 0
+
+        for row in queryset:
+            if not row.dataID:
+                skipped_no_occurrence_id += 1
+                continue
+            if not row.scientificName:
+                skipped_no_scientific_name += 1
+                continue
+
+            occurrence_payloads[row.dataID] = {
+                "eventID": self._build_event_id(row),
+                "basisOfRecord": self.DEFAULT_BASIS_OF_RECORD,
+                "scientificName": row.scientificName,
+                "individualCount": row.individualCount,
+            }
+
+        existing_ids = set()
+        if not truncate:
+            existing_ids = set(
+                IptAquaticfaunaOccurrenceExtension.objects.values_list(
+                    "occurrenceID", flat=True
+                )
+            )
+
+        created_count = 0
+        updated_count = 0
+
+        if dry_run:
+            for occurrence_id in occurrence_payloads:
+                if occurrence_id in existing_ids:
+                    updated_count += 1
+                else:
+                    created_count += 1
+        else:
+            with transaction.atomic():
+                if truncate:
+                    table_name = IptAquaticfaunaOccurrenceExtension._meta.db_table
+                    with connection.cursor() as cursor:
+                        cursor.execute(
+                            f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY;'
+                        )
+
+                for occurrence_id, payload in occurrence_payloads.items():
+                    defaults = payload.copy()
+                    (
+                        _,
+                        created,
+                    ) = IptAquaticfaunaOccurrenceExtension.objects.update_or_create(
+                        occurrenceID=occurrence_id, defaults=defaults
+                    )
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
+        return Response(
+            {
+                "dry_run": dry_run,
+                "truncate": truncate,
+                "source_records": queryset.count() if hasattr(queryset, "count") else 0,
+                "synced_occurrences": len(occurrence_payloads),
+                "skipped_no_occurrence_id": skipped_no_occurrence_id,
+                "skipped_no_scientific_name": skipped_no_scientific_name,
+                "created": created_count,
+                "updated": updated_count,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 @api_view(["POST"])
 def import_ckan_resource(request):
     base_url = "https://data.depositar.io/zh_Hant_TW"
