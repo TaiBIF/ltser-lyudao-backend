@@ -13,6 +13,10 @@ from django.conf import settings
 
 from api.importing.importer import import_ckan_resource
 from api.importing.registry import ADAPTERS
+from api.utils.ipt_aquaticfauna_sync import (
+    sync_aquaticfauna_events,
+    sync_aquaticfauna_occurrence_extensions,
+)
 
 ERROR_PROBLEM_LABELS = {
     # 通用
@@ -29,6 +33,32 @@ ERROR_PROBLEM_LABELS = {
     # 布林
     "not_boolean": "資料非布林值（需為 True/False 或 0/1、是/否）",
 }
+
+
+def format_slack_ipt_sync_lines(report):
+    ipt_sync = report.get("ipt_sync") or {}
+    if not ipt_sync:
+        return []
+
+    if ipt_sync.get("skipped"):
+        reason = ipt_sync.get("reason", "unknown")
+        if reason == "not_aquaticfauna":
+            return []
+        return ["", "IPT sync:", f"skipped: {reason}"]
+
+    occurrence_result = ipt_sync.get("occurrence_extension") or {}
+    event_result = ipt_sync.get("event") or {}
+
+    return [
+        "",
+        "IPT sync:",
+        f"event_core.synced: {event_result.get('synced_events', 0)}",
+        f"event_core.created: {event_result.get('created', 0)}",
+        f"event_core.updated: {event_result.get('updated', 0)}",
+        f"occurrence_extension.synced: {occurrence_result.get('synced_occurrences', 0)}",
+        f"occurrence_extension.created: {occurrence_result.get('created', 0)}",
+        f"occurrence_extension.updated: {occurrence_result.get('updated', 0)}",
+    ]
 
 
 def format_slack_text(
@@ -56,13 +86,15 @@ def format_slack_text(
         f"fatal_errors: {len(fatal)}",
     ]
 
+    lines += format_slack_ipt_sync_lines(report)
+
     if fatal:
         sample = "\n".join([str(x) for x in fatal[:3]])
         lines += ["", "⚠️ Fatal sample:", sample]
 
     body = "\n".join(lines)
 
-    return f"📣 匯入驗證結果\n```{body}```"
+    return f"*[Lyudao]*\n\n匯入驗證結果\n```{body}```"
 
 
 def to_taipei_time(dt_str):
@@ -165,6 +197,7 @@ def import_ckan_and_notify(
     observation_item=None,
     resource_name=None,
     limit=100,
+    notify_slack=True,
 ):
     adapter_cls = ADAPTERS.get(package_name)
     if not adapter_cls:
@@ -180,7 +213,11 @@ def import_ckan_and_notify(
 
     report["celery_task_id"] = self.request.id
 
-    webhook = os.environ.get("SLACK_WEBHOOK_URL")
+    if notify_slack:
+        webhook = os.environ.get("SLACK_WEBHOOK_URL")
+    else:
+        webhook = None
+
     if webhook:
         try:
             text = format_slack_text(
@@ -193,6 +230,76 @@ def import_ckan_and_notify(
             requests.post(webhook, json={"text": text}, timeout=10)
         except Exception:
             pass
+
+    return report
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def send_import_slack(
+    self,
+    report,
+    *,
+    site=None,
+    observation_item=None,
+    resource_name=None,
+):
+    webhook = os.environ.get("SLACK_WEBHOOK_URL")
+    if not webhook:
+        return report
+
+    text = format_slack_text(
+        report,
+        site=site,
+        observation_item=observation_item,
+        resource_name=resource_name,
+        task_id=report.get("celery_task_id") or self.request.id,
+    )
+    requests.post(webhook, json={"text": text}, timeout=10)
+    return report
+
+
+def is_successful_import(report):
+    return (
+        not report.get("fatal_errors")
+        and (report.get("row_errors") or 0) == 0
+        and (report.get("row_warnings") or 0) == 0
+    )
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_ipt_aquaticfauna_after_success(
+    self,
+    report,
+    *,
+    observation_item=None,
+):
+    if observation_item != "溪流生物":
+        report["ipt_sync"] = {"skipped": True, "reason": "not_aquaticfauna"}
+        return report
+
+    if not is_successful_import(report):
+        report["ipt_sync"] = {"skipped": True, "reason": "import_not_successful"}
+        return report
+
+    occurrence_result = sync_aquaticfauna_occurrence_extensions()
+    event_result = sync_aquaticfauna_events()
+
+    report["ipt_sync"] = {
+        "skipped": False,
+        "celery_task_id": self.request.id,
+        "occurrence_extension": occurrence_result,
+        "event": event_result,
+    }
 
     return report
 
@@ -249,6 +356,25 @@ def send_import_email(
 
     error_section = format_error_breakdown(report)
     fatal_hint = format_fatal_hint(report)
+    ipt_sync = report.get("ipt_sync") or {}
+    ipt_sync_section = ""
+    if ipt_sync and not ipt_sync.get("skipped"):
+        occurrence_result = ipt_sync.get("occurrence_extension") or {}
+        event_result = ipt_sync.get("event") or {}
+        ipt_sync_section = (
+            "\n"
+            "──────────────────────────\n"
+            "IPT 同步結果\n"
+            "──────────────────────────\n"
+            f"Event core 同步筆數：{event_result.get('synced_events', 0)}\n"
+            f"Event core 新增/更新：{event_result.get('created', 0)} / {event_result.get('updated', 0)}\n\n"
+            f"Occurrence extension 同步筆數：{occurrence_result.get('synced_occurrences', 0)}\n"
+            f"Occurrence extension 新增/更新：{occurrence_result.get('created', 0)} / {occurrence_result.get('updated', 0)}\n"
+            "\n"
+            "後續請至 IPT 資料集管理頁面確認資料集內容。\n"
+            "進入該資料集後，可於 Source Data 區塊點擊 Save，讓 IPT 重新讀取並套用最新同步資料；\n"
+            "確認資料無誤後，再至 Publication 區塊發布新版資料集。\n"
+        )
 
     fatal_errors = report.get("fatal_errors") or []
 
@@ -305,6 +431,7 @@ def send_import_email(
         f"略過筆數：資料已存在於資料庫，且內容無異動而未進行新增或更新的筆數\n"
         f"錯誤筆數：因格式或內容錯誤而無法匯入，且未寫入資料庫的資料筆數\n"
         f"警告筆數：資料可成功匯入，但內容可能需人工確認的資料筆數\n"
+        f"{ipt_sync_section}"
         f"{fatal_hint}"
         f"{error_section}"
         f"\n"

@@ -40,7 +40,7 @@ from django.db.models import (
 )
 from django.db.models import Value as V
 from django.apps import apps
-from django.db import models, transaction, connection
+from django.db import models
 from datetime import datetime, timedelta
 from django.utils.timezone import make_aware
 from django.http import FileResponse
@@ -64,12 +64,21 @@ from api.utils.convert_date_time import (
 from api.utils.calculate_rose_chart import convert_to_direction_bin, pick_bin_key
 from django.db.models.functions import ExtractMonth, Round
 from collections import defaultdict
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 
-from api.tasks import import_ckan_and_notify, send_import_email
+from api.tasks import (
+    import_ckan_and_notify,
+    send_import_email,
+    send_import_slack,
+    sync_ipt_aquaticfauna_after_success,
+)
 from api.utils.email_recipients import get_email_targets
 from api.importing.registry import ADAPTERS, normalize_package_name
 from api.permissions import HasInternalApiKey
+from api.utils.ipt_aquaticfauna_sync import (
+    sync_aquaticfauna_events,
+    sync_aquaticfauna_occurrence_extensions,
+)
 from celery import chain
 
 import json
@@ -2778,124 +2787,14 @@ class SyncIptAquaticfaunaEventAPIView(APIView):
         truncate = self._to_bool(request.data.get("truncate"), default=False)
         limit = request.data.get("limit")
 
-        queryset = AquaticfaunaData.objects.all().order_by("id")
-        if limit is not None:
-            try:
-                limit = int(limit)
-            except (TypeError, ValueError):
-                return Response({"error": "limit must be an integer"}, status=400)
-            if limit <= 0:
-                return Response({"error": "limit must be > 0"}, status=400)
-            queryset = queryset[:limit]
-
-        grouped_events = {}
-        for row in queryset:
-            event_id = self._build_event_id(row)
-            if event_id not in grouped_events:
-                lat, lon = self._to_coordinates(row.locationID)
-                grouped_events[event_id] = {
-                    "eventDate": self._event_date_str(row.time),
-                    "samplingProtocol": self._to_sampling_protocol_en(
-                        row.samplingProtocol
-                    ),
-                    "sampleSizeValue": None,
-                    "sampleSizeUnit": None,
-                    "samplingEffort": None,
-                    "locationID": row.locationID,
-                    "country": self.DEFAULT_COUNTRY,
-                    "countryCode": self.DEFAULT_COUNTRY_CODE,
-                    "county": self.DEFAULT_COUNTY,
-                    "municipality": self.DEFAULT_MUNICIPALITY,
-                    "locality": self._to_locality_en(
-                        row.locationID, fallback_value=row.river or row.locationID
-                    ),
-                    "verbatimLocality": row.river,
-                    "decimalLatitude": lat,
-                    "decimalLongitude": lon,
-                    "geodeticDatum": self.DEFAULT_GEODETIC_DATUM,
-                }
-
-            group = grouped_events[event_id]
-            if (
-                row.samplingProtocol
-                and group["samplingProtocol"] == self.DEFAULT_PROTOCOL
-            ):
-                group["samplingProtocol"] = self._to_sampling_protocol_en(
-                    row.samplingProtocol
-                )
-            if not group["locality"]:
-                group["locality"] = self._to_locality_en(
-                    row.locationID, fallback_value=row.river or row.locationID
-                )
-            if group["decimalLatitude"] is None or group["decimalLongitude"] is None:
-                lat, lon = self._to_coordinates(row.locationID)
-                if lat is not None and lon is not None:
-                    group["decimalLatitude"] = lat
-                    group["decimalLongitude"] = lon
-            if row.river and not group["verbatimLocality"]:
-                group["verbatimLocality"] = row.river
-            if row.locationID and not group["locationID"]:
-                group["locationID"] = row.locationID
-            if not group["eventDate"] and row.time:
-                group["eventDate"] = self._event_date_str(row.time)
-
-        payloads = []
-        skipped_no_event_date = 0
-        for event_id, payload in grouped_events.items():
-            if not payload["eventDate"]:
-                skipped_no_event_date += 1
-                continue
-
-            payloads.append((event_id, payload))
-
-        existing_ids = set()
-        if not truncate:
-            existing_ids = set(
-                IptAquaticfaunaEvent.objects.values_list("eventID", flat=True)
+        try:
+            result = sync_aquaticfauna_events(
+                dry_run=dry_run, truncate=truncate, limit=limit
             )
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
 
-        created_count = 0
-        updated_count = 0
-
-        if dry_run:
-            for event_id, _payload in payloads:
-                if event_id in existing_ids:
-                    updated_count += 1
-                else:
-                    created_count += 1
-        else:
-            with transaction.atomic():
-                if truncate:
-                    table_name = IptAquaticfaunaEvent._meta.db_table
-                    with connection.cursor() as cursor:
-                        cursor.execute(
-                            f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY;'
-                        )
-
-                for event_id, payload in payloads:
-                    defaults = payload.copy()
-                    _, created = IptAquaticfaunaEvent.objects.update_or_create(
-                        eventID=event_id,
-                        defaults=defaults,
-                    )
-                    if created:
-                        created_count += 1
-                    else:
-                        updated_count += 1
-
-        return Response(
-            {
-                "dry_run": dry_run,
-                "truncate": truncate,
-                "source_records": queryset.count() if hasattr(queryset, "count") else 0,
-                "grouped_events": len(grouped_events),
-                "synced_events": len(payloads),
-                "skipped_no_event_date": skipped_no_event_date,
-                "created": created_count,
-                "updated": updated_count,
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
@@ -2916,90 +2815,18 @@ class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
         truncate = self._to_bool(request.data.get("truncate"), default=False)
         limit = request.data.get("limit")
 
-        queryset = AquaticfaunaData.objects.all().order_by("id")
-        if limit is not None:
-            try:
-                limit = int(limit)
-            except (TypeError, ValueError):
-                return Response({"error": "limit must be an integer"}, status=400)
-            if limit <= 0:
-                return Response({"error": "limit must be > 0"}, status=400)
-            queryset = queryset[:limit]
-
-        occurrence_payloads = {}
-        skipped_no_occurrence_id = 0
-        skipped_no_scientific_name = 0
-
-        for row in queryset:
-            if not row.dataID:
-                skipped_no_occurrence_id += 1
-                continue
-            if not row.scientificName:
-                skipped_no_scientific_name += 1
-                continue
-
-            occurrence_payloads[row.dataID] = {
-                "eventID": self._build_event_id(row),
-                "basisOfRecord": self.DEFAULT_BASIS_OF_RECORD,
-                "scientificName": row.scientificName,
-                "individualCount": row.individualCount,
-            }
-
-        existing_ids = set()
-        if not truncate:
-            existing_ids = set(
-                IptAquaticfaunaOccurrenceExtension.objects.values_list(
-                    "occurrenceID", flat=True
-                )
+        try:
+            result = sync_aquaticfauna_occurrence_extensions(
+                dry_run=dry_run, truncate=truncate, limit=limit
             )
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
 
-        created_count = 0
-        updated_count = 0
-
-        if dry_run:
-            for occurrence_id in occurrence_payloads:
-                if occurrence_id in existing_ids:
-                    updated_count += 1
-                else:
-                    created_count += 1
-        else:
-            with transaction.atomic():
-                if truncate:
-                    table_name = IptAquaticfaunaOccurrenceExtension._meta.db_table
-                    with connection.cursor() as cursor:
-                        cursor.execute(
-                            f'TRUNCATE TABLE "{table_name}" RESTART IDENTITY;'
-                        )
-
-                for occurrence_id, payload in occurrence_payloads.items():
-                    defaults = payload.copy()
-                    (
-                        _,
-                        created,
-                    ) = IptAquaticfaunaOccurrenceExtension.objects.update_or_create(
-                        occurrenceID=occurrence_id, defaults=defaults
-                    )
-                    if created:
-                        created_count += 1
-                    else:
-                        updated_count += 1
-
-        return Response(
-            {
-                "dry_run": dry_run,
-                "truncate": truncate,
-                "source_records": queryset.count() if hasattr(queryset, "count") else 0,
-                "synced_occurrences": len(occurrence_payloads),
-                "skipped_no_occurrence_id": skipped_no_occurrence_id,
-                "skipped_no_scientific_name": skipped_no_scientific_name,
-                "created": created_count,
-                "updated": updated_count,
-            },
-            status=status.HTTP_200_OK,
-        )
+        return Response(result, status=status.HTTP_200_OK)
 
 
 @api_view(["POST"])
+@permission_classes([HasInternalApiKey])
 def import_ckan_resource(request):
     base_url = "https://data.depositar.io/zh_Hant_TW"
 
@@ -3042,6 +2869,13 @@ def import_ckan_resource(request):
         observation_item=observation_item,
         resource_name=resource_name,
         limit=limit,
+        notify_slack=False,
+    )
+
+    sig_slack = send_import_slack.s(
+        site=site,
+        observation_item=observation_item,
+        resource_name=resource_name,
     )
 
     # 注意：send_import_email 的第一個參數 report 會自動接到 sig1 的回傳值
@@ -3053,7 +2887,13 @@ def import_ckan_resource(request):
         task_id=None,
     )
 
-    result = chain(sig1, sig2).apply_async()
+    if observation_item == "溪流生物":
+        sig_sync_ipt = sync_ipt_aquaticfauna_after_success.s(
+            observation_item=observation_item,
+        )
+        result = chain(sig1, sig_sync_ipt, sig_slack, sig2).apply_async()
+    else:
+        result = chain(sig1, sig_slack, sig2).apply_async()
 
     return Response(
         {
