@@ -18,6 +18,10 @@ from api.utils.ipt_aquaticfauna_sync import (
     sync_aquaticfauna_occurrence_extensions,
 )
 
+IPT_AQUATICFAUNA_OBSERVATION_ITEMS = {"溪流生物", "底棲動物"}
+IPT_AQUATICFAUNA_SYNC_LOCK_KEY = "ipt_aquaticfauna_sync_lock"
+IPT_AQUATICFAUNA_SYNC_LOCK_TIMEOUT = 60 * 30
+
 ERROR_PROBLEM_LABELS = {
     # 通用
     "required": "必填欄位缺值（不可為空白）",
@@ -283,7 +287,7 @@ def sync_ipt_aquaticfauna_after_success(
     *,
     observation_item=None,
 ):
-    if observation_item != "溪流生物":
+    if observation_item not in IPT_AQUATICFAUNA_OBSERVATION_ITEMS:
         report["ipt_sync"] = {"skipped": True, "reason": "not_aquaticfauna"}
         return report
 
@@ -291,15 +295,30 @@ def sync_ipt_aquaticfauna_after_success(
         report["ipt_sync"] = {"skipped": True, "reason": "import_not_successful"}
         return report
 
-    occurrence_result = sync_aquaticfauna_occurrence_extensions()
-    event_result = sync_aquaticfauna_events()
+    lock_acquired = cache.add(
+        IPT_AQUATICFAUNA_SYNC_LOCK_KEY,
+        self.request.id,
+        timeout=IPT_AQUATICFAUNA_SYNC_LOCK_TIMEOUT,
+    )
+    if not lock_acquired:
+        report["ipt_sync"] = {
+            "skipped": True,
+            "reason": "sync_already_running",
+        }
+        return report
 
-    report["ipt_sync"] = {
-        "skipped": False,
-        "celery_task_id": self.request.id,
-        "occurrence_extension": occurrence_result,
-        "event": event_result,
-    }
+    try:
+        occurrence_result = sync_aquaticfauna_occurrence_extensions()
+        event_result = sync_aquaticfauna_events()
+
+        report["ipt_sync"] = {
+            "skipped": False,
+            "celery_task_id": self.request.id,
+            "occurrence_extension": occurrence_result,
+            "event": event_result,
+        }
+    finally:
+        cache.delete(IPT_AQUATICFAUNA_SYNC_LOCK_KEY)
 
     return report
 

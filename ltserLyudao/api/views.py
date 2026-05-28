@@ -67,6 +67,7 @@ from collections import defaultdict
 from rest_framework.decorators import api_view, permission_classes
 
 from api.tasks import (
+    IPT_AQUATICFAUNA_OBSERVATION_ITEMS,
     import_ckan_and_notify,
     send_import_email,
     send_import_slack,
@@ -2887,7 +2888,7 @@ def import_ckan_resource(request):
         task_id=None,
     )
 
-    if observation_item == "溪流生物":
+    if observation_item in IPT_AQUATICFAUNA_OBSERVATION_ITEMS:
         sig_sync_ipt = sync_ipt_aquaticfauna_after_success.s(
             observation_item=observation_item,
         )

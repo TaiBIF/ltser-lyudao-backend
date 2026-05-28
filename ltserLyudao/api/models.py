@@ -1096,6 +1096,12 @@ class IptOccurrenceExtensionBaseField(models.Model):
     basisOfRecord = models.CharField(max_length=50)
     scientificName = models.CharField(max_length=255)
     individualCount = models.IntegerField(null=True, blank=True)
+    decimalLatitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
+    decimalLongitude = models.DecimalField(
+        max_digits=9, decimal_places=6, blank=True, null=True
+    )
 
     class Meta:
         abstract = True
@@ -1110,5 +1116,16 @@ class IptAquaticfaunaEvent(IptEventBaseField):
 
 
 class IptAquaticfaunaOccurrenceExtension(IptOccurrenceExtensionBaseField):
+    kingdom = models.CharField(max_length=255, default="Animalia")
+    phylum = models.CharField(max_length=255, null=True, blank=True)
+    class_field = models.CharField(
+        max_length=255, db_column="class", null=True, blank=True
+    )
+    order = models.CharField(max_length=255, null=True, blank=True)
+    family = models.CharField(max_length=255, null=True, blank=True)
+    genus = models.CharField(max_length=255, null=True, blank=True)
+    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    parentNameUsageID = models.CharField(max_length=255, null=True, blank=True)
+
     class Meta:
         db_table = "ipt_aquaticfauna_occurrence_extension"
