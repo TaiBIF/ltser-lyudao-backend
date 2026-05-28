@@ -401,6 +401,7 @@ def sync_aquaticfauna_occurrence_extensions(dry_run=False, truncate=False, limit
             "basisOfRecord": DEFAULT_BASIS_OF_RECORD,
             "scientificName": row.scientificName,
             "individualCount": row.individualCount,
+            "eventDate": event_date_str(row.time),
             "decimalLatitude": lat,
             "decimalLongitude": lon,
             "kingdom": taxon.get("kingdom") or DEFAULT_KINGDOM,

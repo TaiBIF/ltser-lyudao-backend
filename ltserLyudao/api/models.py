@@ -1102,6 +1102,7 @@ class IptOccurrenceExtensionBaseField(models.Model):
     decimalLongitude = models.DecimalField(
         max_digits=9, decimal_places=6, blank=True, null=True
     )
+    eventDate = models.CharField(max_length=50)
 
     class Meta:
         abstract = True
