@@ -110,12 +110,15 @@ def import_ckan_resource(resource_id, base_url, limit, adapter):
 
                 h = adapter.compute_hash(p)
 
-                if k not in existing_map:
+                existing = existing_map.get(k)
+
+                if existing is None:
                     obj = adapter.make_instance(p)
                     obj.data_hash = h
                     to_create.append(obj)
-                elif existing_map.get(k) != h:
+                elif existing["data_hash"] != h:
                     obj = adapter.make_instance(p)
+                    obj.pk = existing["id"]
                     obj.data_hash = h
                     to_update.append(obj)
                 else:

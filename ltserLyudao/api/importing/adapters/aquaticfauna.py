@@ -65,12 +65,12 @@ class AquaticfaunaDataAdapter:
     def fetch_existing_hash_map(self, keys):
         if not keys:
             return {}
-        # 如果你已修正 bulk_update 需要 pk 的問題，建議改回傳 pk+hash
-        return dict(
-            AquaticfaunaData.objects.filter(dataID__in=keys).values_list(
-                "dataID", "data_hash"
-            )
-        )
+        return {
+            data_id: {"id": pk, "data_hash": data_hash}
+            for data_id, pk, data_hash in AquaticfaunaData.objects.filter(
+                dataID__in=keys
+            ).values_list("dataID", "id", "data_hash")
+        }
 
     def make_instance(self, payload):
         return AquaticfaunaData(**payload)

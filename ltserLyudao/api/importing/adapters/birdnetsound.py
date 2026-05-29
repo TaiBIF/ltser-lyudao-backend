@@ -58,11 +58,12 @@ class BirdNetSoundDataAdapter:
     def fetch_existing_hash_map(self, keys):
         if not keys:
             return {}
-        return dict(
-            BirdNetSoundData.objects.filter(dataID__in=keys).values_list(
-                "dataID", "data_hash"
-            )
-        )
+        return {
+            data_id: {"id": pk, "data_hash": data_hash}
+            for data_id, pk, data_hash in BirdNetSoundData.objects.filter(
+                dataID__in=keys
+            ).values_list("dataID", "id", "data_hash")
+        }
 
     def make_instance(self, payload):
         return BirdNetSoundData(**payload)
