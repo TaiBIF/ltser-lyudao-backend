@@ -1538,7 +1538,11 @@ class GetTableSeriesAPIView(APIView):
                 }
 
                 if "time" in record:
-                    formatted_record["time"] = record["time"].strftime(date_format)
+                    formatted_record["time"] = (
+                        record["time"].strftime(date_format)
+                        if record["time"]
+                        else ""
+                    )
                 formatted_data.append(formatted_record)
         else:
             grouped_data = defaultdict(dict)
