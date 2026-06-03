@@ -1126,7 +1126,7 @@ class IptAquaticfaunaOccurrenceExtension(IptOccurrenceExtensionBaseField):
     family = models.CharField(max_length=255, null=True, blank=True)
     genus = models.CharField(max_length=255, null=True, blank=True)
     taxonRank = models.CharField(max_length=255, null=True, blank=True)
-    parentNameUsageID = models.CharField(max_length=255, null=True, blank=True)
+    acceptedNameUsageID = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = "ipt_aquaticfauna_occurrence_extension"
