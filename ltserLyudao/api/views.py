@@ -96,6 +96,8 @@ import numpy as np
 
 
 class SurveymapDropdownDataView(APIView):
+    CACHE_KEY = "surveymap_options_v2"
+
     REVERSED_TABLE_MODELS = {
         CoralCommData: "coral-comm",
         WaterData: "water",
@@ -150,6 +152,9 @@ class SurveymapDropdownDataView(APIView):
                 )
 
             for year in year_values:
+                if year in (None, ""):
+                    continue
+
                 year_str = str(year)
                 existing_year = next(
                     (y for y in site_data[site]["years"] if y["year"] == year_str), None
@@ -166,7 +171,7 @@ class SurveymapDropdownDataView(APIView):
 
     def get(self, request, *args, **kwargs):
 
-        cached_data = cache.get("surveymap_options")
+        cached_data = cache.get(self.CACHE_KEY)
 
         if cached_data:  # 如果 Redis 中已有資料直接回傳
             return Response(json.loads(cached_data), status=status.HTTP_200_OK)
@@ -216,7 +221,7 @@ class SurveymapDropdownDataView(APIView):
 
         # 將結果用 redis cache 起來，保存期限為 7 天
         cache.set(
-            "surveymap_options", json.dumps(list(all_data.values())), timeout=604800
+            self.CACHE_KEY, json.dumps(list(all_data.values())), timeout=604800
         )
 
         return Response(list(all_data.values()), status=status.HTTP_200_OK)
@@ -1539,9 +1544,7 @@ class GetTableSeriesAPIView(APIView):
 
                 if "time" in record:
                     formatted_record["time"] = (
-                        record["time"].strftime(date_format)
-                        if record["time"]
-                        else ""
+                        record["time"].strftime(date_format) if record["time"] else ""
                     )
                 formatted_data.append(formatted_record)
         else:
@@ -2804,8 +2807,6 @@ class SyncIptAquaticfaunaEventAPIView(APIView):
 
 class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
     permission_classes = [HasInternalApiKey]
-
-    DEFAULT_BASIS_OF_RECORD = "HumanObservation"
 
     @staticmethod
     def _to_bool(value, default=False):
