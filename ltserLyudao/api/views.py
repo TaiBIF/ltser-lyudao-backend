@@ -80,6 +80,11 @@ from api.utils.ipt_aquaticfauna_sync import (
     sync_aquaticfauna_events,
     sync_aquaticfauna_occurrence_extensions,
 )
+from api.utils.ipt_plant_sync import (
+    sync_plant_events,
+    sync_plant_measurement_or_fact_extensions,
+    sync_plant_occurrence_extensions,
+)
 from celery import chain
 
 import json
@@ -2823,6 +2828,72 @@ class SyncIptAquaticfaunaOccurrenceExtensionAPIView(APIView):
 
         try:
             result = sync_aquaticfauna_occurrence_extensions(
+                dry_run=dry_run, truncate=truncate, limit=limit
+            )
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class SyncIptPlantEventAPIView(APIView):
+    permission_classes = [HasInternalApiKey]
+
+    @staticmethod
+    def _to_bool(value, default=False):
+        return SyncIptAquaticfaunaEventAPIView._to_bool(value, default=default)
+
+    def post(self, request):
+        dry_run = self._to_bool(request.data.get("dry_run"), default=False)
+        truncate = self._to_bool(request.data.get("truncate"), default=False)
+        limit = request.data.get("limit")
+
+        try:
+            result = sync_plant_events(
+                dry_run=dry_run, truncate=truncate, limit=limit
+            )
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class SyncIptPlantOccurrenceExtensionAPIView(APIView):
+    permission_classes = [HasInternalApiKey]
+
+    @staticmethod
+    def _to_bool(value, default=False):
+        return SyncIptAquaticfaunaEventAPIView._to_bool(value, default=default)
+
+    def post(self, request):
+        dry_run = self._to_bool(request.data.get("dry_run"), default=False)
+        truncate = self._to_bool(request.data.get("truncate"), default=False)
+        limit = request.data.get("limit")
+
+        try:
+            result = sync_plant_occurrence_extensions(
+                dry_run=dry_run, truncate=truncate, limit=limit
+            )
+        except ValueError as exc:
+            return Response({"error": str(exc)}, status=400)
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class SyncIptPlantMeasurementOrFactExtensionAPIView(APIView):
+    permission_classes = [HasInternalApiKey]
+
+    @staticmethod
+    def _to_bool(value, default=False):
+        return SyncIptAquaticfaunaEventAPIView._to_bool(value, default=default)
+
+    def post(self, request):
+        dry_run = self._to_bool(request.data.get("dry_run"), default=False)
+        truncate = self._to_bool(request.data.get("truncate"), default=False)
+        limit = request.data.get("limit")
+
+        try:
+            result = sync_plant_measurement_or_fact_extensions(
                 dry_run=dry_run, truncate=truncate, limit=limit
             )
         except ValueError as exc:

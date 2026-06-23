@@ -1130,3 +1130,49 @@ class IptAquaticfaunaOccurrenceExtension(IptOccurrenceExtensionBaseField):
 
     class Meta:
         db_table = "ipt_aquaticfauna_occurrence_extension"
+
+
+class IptMeasurementOrFactExtensionBaseField(models.Model):
+    occurrenceID = models.CharField(max_length=255, unique=True)
+    measurementType = models.CharField(max_length=255)
+    measurementValue = models.CharField(max_length=255)
+    measurementUnit = models.CharField(max_length=255)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return self.occurrenceID
+
+
+class IptPlantEvent(IptEventBaseField):
+    coordinatePrecision = models.FloatField(blank=True, null=True)
+    verbatimElevation = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = "ipt_plant_event"
+
+
+class IptPlantOccurrenceExtension(IptOccurrenceExtensionBaseField):
+    kingdom = models.CharField(max_length=255, default="Plantae")
+    phylum = models.CharField(max_length=255, null=True, blank=True)
+    class_field = models.CharField(
+        max_length=255, db_column="class", null=True, blank=True
+    )
+    order = models.CharField(max_length=255, null=True, blank=True)
+    family = models.CharField(max_length=255, null=True, blank=True)
+    genus = models.CharField(max_length=255, null=True, blank=True)
+    taxonRank = models.CharField(max_length=255, null=True, blank=True)
+    acceptedNameUsageID = models.CharField(max_length=255, null=True, blank=True)
+    recordedBy = models.CharField(max_length=255, null=True, blank=True)
+    identifiedBy = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        db_table = "ipt_plant_occurrence_extension"
+
+
+class IptPlantMeasurementOrFactExtension(IptMeasurementOrFactExtensionBaseField):
+    measurementDeterminedDate = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = "ipt_plant_measurement_or_fact_extension"

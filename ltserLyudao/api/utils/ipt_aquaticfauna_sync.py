@@ -142,32 +142,42 @@ def iter_taibif_match_items(value):
             yield from iter_taibif_match_items(item)
 
 
-def taxon_payload_from_result(result):
+def taxon_payload_from_result(result, default_kingdom=DEFAULT_KINGDOM):
     accepted_namecode = result.get("accepted_namecode")
-    parent_name_usage_id = None
+    accepted_name_usage_id = None
     if accepted_namecode:
-        parent_name_usage_id = f"{accepted_namecode}(TaiCOL)"
+        accepted_name_usage_id = f"{accepted_namecode}(TaiCOL)"
 
     return {
-        "kingdom": result.get("kingdom") or DEFAULT_KINGDOM,
+        "kingdom": result.get("kingdom") or default_kingdom,
         "phylum": result.get("phylum"),
         "class_field": result.get("class"),
         "order": result.get("order"),
         "family": result.get("family"),
         "genus": result.get("genus"),
         "taxonRank": result.get("taxon_rank"),
-        "parentNameUsageID": parent_name_usage_id,
+        "acceptedNameUsageID": accepted_name_usage_id,
     }
 
 
-def select_nomenmatch_result(results):
+def select_nomenmatch_result(
+    results, kingdom=DEFAULT_KINGDOM, strict_kingdom=False
+):
+    normalized_kingdom = str(kingdom).strip().lower()
     for result in results:
-        if str(result.get("kingdom") or "").strip().lower() == "animalia":
+        if (
+            str(result.get("kingdom") or "").strip().lower()
+            == normalized_kingdom
+        ):
             return result
+    if strict_kingdom:
+        return None
     return results[0]
 
 
-def fetch_nomenmatch_taxon_map(scientific_names):
+def fetch_nomenmatch_taxon_map(
+    scientific_names, kingdom=DEFAULT_KINGDOM, strict_kingdom=False
+):
     taxon_map = {}
     errors = []
     names = sorted({normalize_taxon_name(name) for name in scientific_names if name})
@@ -198,8 +208,16 @@ def fetch_nomenmatch_taxon_map(scientific_names):
             if not results:
                 continue
 
-            result = select_nomenmatch_result(results)
-            taxon_payload = taxon_payload_from_result(result)
+            result = select_nomenmatch_result(
+                results,
+                kingdom=kingdom,
+                strict_kingdom=strict_kingdom,
+            )
+            if result is None:
+                continue
+            taxon_payload = taxon_payload_from_result(
+                result, default_kingdom=kingdom
+            )
             for key in (
                 item.get("search_term"),
                 item.get("name_cleaned"),
@@ -411,7 +429,7 @@ def sync_aquaticfauna_occurrence_extensions(dry_run=False, truncate=False, limit
             "family": taxon.get("family") or row.family,
             "genus": taxon.get("genus"),
             "taxonRank": taxon.get("taxonRank") or lowercase_taxon_rank(row.taxonRank),
-            "parentNameUsageID": taxon.get("parentNameUsageID"),
+            "acceptedNameUsageID": taxon.get("acceptedNameUsageID"),
         }
 
     existing_ids = set()

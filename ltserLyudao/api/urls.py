@@ -33,6 +33,9 @@ from .views import (
     GetBuoyRealtimeDataAPIView,
     SyncIptAquaticfaunaEventAPIView,
     SyncIptAquaticfaunaOccurrenceExtensionAPIView,
+    SyncIptPlantEventAPIView,
+    SyncIptPlantMeasurementOrFactExtensionAPIView,
+    SyncIptPlantOccurrenceExtensionAPIView,
     import_ckan_resource,
 )
 
@@ -161,6 +164,21 @@ urlpatterns = [
         "internal/ipt/aquaticfauna-occurrence-extensions/sync/",
         SyncIptAquaticfaunaOccurrenceExtensionAPIView.as_view(),
         name="sync-ipt-aquaticfauna-occurrence-extensions",
+    ),
+    path(
+        "internal/ipt/plant-events/sync/",
+        SyncIptPlantEventAPIView.as_view(),
+        name="sync-ipt-plant-events",
+    ),
+    path(
+        "internal/ipt/plant-occurrence-extensions/sync/",
+        SyncIptPlantOccurrenceExtensionAPIView.as_view(),
+        name="sync-ipt-plant-occurrence-extensions",
+    ),
+    path(
+        "internal/ipt/plant-measurement-or-fact-extensions/sync/",
+        SyncIptPlantMeasurementOrFactExtensionAPIView.as_view(),
+        name="sync-ipt-plant-measurement-or-fact-extensions",
     ),
     # 外部 API
     path("occurrence", OccurrenceAPIView.as_view(), name="get_occurrence"),
