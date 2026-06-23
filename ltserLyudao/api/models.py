@@ -1172,6 +1172,7 @@ class IptPlantOccurrenceExtension(IptOccurrenceExtensionBaseField):
 
 
 class IptPlantMeasurementOrFactExtension(IptMeasurementOrFactExtensionBaseField):
+    eventID = models.CharField(max_length=255)
     measurementDeterminedDate = models.CharField(max_length=50)
 
     class Meta:

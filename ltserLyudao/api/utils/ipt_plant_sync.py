@@ -287,6 +287,7 @@ def sync_plant_measurement_or_fact_extensions(
             continue
 
         measurement_payloads[row.dataID] = {
+            "eventID": build_event_id(row),
             "measurementType": row.measurementType,
             "measurementValue": str(row.measurementValue),
             "measurementUnit": row.measurementUnit or "",
