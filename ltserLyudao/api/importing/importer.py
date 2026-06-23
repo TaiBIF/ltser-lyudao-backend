@@ -10,6 +10,21 @@ def bump_error_breakdown(breakdown, row_errors):
         key = "%s.%s" % (field, code)
         breakdown[key] = breakdown.get(key, 0) + 1
 
+def is_blank_record(record, fields=None):
+    if fields:
+        values = (record.get(field) for field in fields)
+    else:
+        values = (
+            value for field, value in record.items() if not field.startswith("_")
+        )
+
+    for value in values:
+        if value is None:
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return False
+    return True
 
 def import_ckan_resource(resource_id, base_url, limit, adapter):
     started_at = timezone.now()
@@ -54,6 +69,12 @@ def import_ckan_resource(resource_id, base_url, limit, adapter):
 
         ok_payloads = []
         for rec in records:
+            blank_check_fields = getattr(adapter, "hash_fields", None)
+            if is_blank_record(rec, blank_check_fields):
+                report["skipped"] += 1
+                continue
+
+
             payload, row_errors, row_warnings = adapter.build_payload(rec)
 
             if row_errors:
