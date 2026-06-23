@@ -17,10 +17,18 @@ from api.utils.ipt_aquaticfauna_sync import (
     sync_aquaticfauna_events,
     sync_aquaticfauna_occurrence_extensions,
 )
+from api.utils.ipt_plant_sync import (
+    sync_plant_events,
+    sync_plant_measurement_or_fact_extensions,
+    sync_plant_occurrence_extensions,
+)
 
 IPT_AQUATICFAUNA_OBSERVATION_ITEMS = {"溪流生物", "底棲動物"}
 IPT_AQUATICFAUNA_SYNC_LOCK_KEY = "ipt_aquaticfauna_sync_lock"
 IPT_AQUATICFAUNA_SYNC_LOCK_TIMEOUT = 60 * 30
+IPT_PLANT_OBSERVATION_ITEMS = {"陸域植物"}
+IPT_PLANT_SYNC_LOCK_KEY = "ipt_plant_sync_lock"
+IPT_PLANT_SYNC_LOCK_TIMEOUT = 60 * 30
 
 ERROR_PROBLEM_LABELS = {
     # 通用
@@ -46,14 +54,14 @@ def format_slack_ipt_sync_lines(report):
 
     if ipt_sync.get("skipped"):
         reason = ipt_sync.get("reason", "unknown")
-        if reason == "not_aquaticfauna":
+        if reason in {"not_aquaticfauna", "not_plant"}:
             return []
         return ["", "IPT sync:", f"skipped: {reason}"]
 
     occurrence_result = ipt_sync.get("occurrence_extension") or {}
     event_result = ipt_sync.get("event") or {}
 
-    return [
+    lines = [
         "",
         "IPT sync:",
         f"event_core.synced: {event_result.get('synced_events', 0)}",
@@ -63,6 +71,18 @@ def format_slack_ipt_sync_lines(report):
         f"occurrence_extension.created: {occurrence_result.get('created', 0)}",
         f"occurrence_extension.updated: {occurrence_result.get('updated', 0)}",
     ]
+
+    measurement_result = ipt_sync.get("measurement_or_fact_extension") or {}
+    if measurement_result:
+        lines.extend(
+            [
+                f"measurement_or_fact_extension.synced: {measurement_result.get('synced_measurements', 0)}",
+                f"measurement_or_fact_extension.created: {measurement_result.get('created', 0)}",
+                f"measurement_or_fact_extension.updated: {measurement_result.get('updated', 0)}",
+            ]
+        )
+
+    return lines
 
 
 def format_slack_text(
@@ -319,6 +339,56 @@ def sync_ipt_aquaticfauna_after_success(
         }
     finally:
         cache.delete(IPT_AQUATICFAUNA_SYNC_LOCK_KEY)
+
+    return report
+
+
+@shared_task(
+    bind=True,
+    autoretry_for=(Exception,),
+    retry_backoff=True,
+    retry_kwargs={"max_retries": 3},
+)
+def sync_ipt_plant_after_success(
+    self,
+    report,
+    *,
+    observation_item=None,
+):
+    if observation_item not in IPT_PLANT_OBSERVATION_ITEMS:
+        report["ipt_sync"] = {"skipped": True, "reason": "not_plant"}
+        return report
+
+    if not is_successful_import(report):
+        report["ipt_sync"] = {"skipped": True, "reason": "import_not_successful"}
+        return report
+
+    lock_acquired = cache.add(
+        IPT_PLANT_SYNC_LOCK_KEY,
+        self.request.id,
+        timeout=IPT_PLANT_SYNC_LOCK_TIMEOUT,
+    )
+    if not lock_acquired:
+        report["ipt_sync"] = {
+            "skipped": True,
+            "reason": "sync_already_running",
+        }
+        return report
+
+    try:
+        occurrence_result = sync_plant_occurrence_extensions()
+        event_result = sync_plant_events()
+        measurement_result = sync_plant_measurement_or_fact_extensions()
+
+        report["ipt_sync"] = {
+            "skipped": False,
+            "celery_task_id": self.request.id,
+            "occurrence_extension": occurrence_result,
+            "event": event_result,
+            "measurement_or_fact_extension": measurement_result,
+        }
+    finally:
+        cache.delete(IPT_PLANT_SYNC_LOCK_KEY)
 
     return report
 

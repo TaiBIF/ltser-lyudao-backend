@@ -68,10 +68,12 @@ from rest_framework.decorators import api_view, permission_classes
 
 from api.tasks import (
     IPT_AQUATICFAUNA_OBSERVATION_ITEMS,
+    IPT_PLANT_OBSERVATION_ITEMS,
     import_ckan_and_notify,
     send_import_email,
     send_import_slack,
     sync_ipt_aquaticfauna_after_success,
+    sync_ipt_plant_after_success,
 )
 from api.utils.email_recipients import get_email_targets
 from api.importing.registry import ADAPTERS, normalize_package_name
@@ -2966,6 +2968,11 @@ def import_ckan_resource(request):
 
     if observation_item in IPT_AQUATICFAUNA_OBSERVATION_ITEMS:
         sig_sync_ipt = sync_ipt_aquaticfauna_after_success.s(
+            observation_item=observation_item,
+        )
+        result = chain(sig1, sig_sync_ipt, sig_slack, sig2).apply_async()
+    elif observation_item in IPT_PLANT_OBSERVATION_ITEMS:
+        sig_sync_ipt = sync_ipt_plant_after_success.s(
             observation_item=observation_item,
         )
         result = chain(sig1, sig_sync_ipt, sig_slack, sig2).apply_async()
