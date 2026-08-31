@@ -15,11 +15,11 @@ OBSERVATION_EMAILS = {
         "cc": ["chiuywlab@gmail.com", "kunchang.li@gmail.com"],
     },
     "聲音指數": {
-        "to": ["janiceli0918@gmail.com"],
+        "to": ["cylee918@as.edu.tw"],
         "cc": ["mntuanmu@gate.sinica.edu.tw", "kunchang.li@gmail.com"],
     },
     "生物辨識": {
-        "to": ["janiceli0918@gmail.com"],
+        "to": ["cylee918@as.edu.tw"],
         "cc": ["mntuanmu@gate.sinica.edu.tw", "kunchang.li@gmail.com"],
     },
     "棲地評估": {
@@ -58,7 +58,7 @@ OBSERVATION_EMAILS = {
         "cc": ["kunchang.li@gmail.com"],
     },
     "鳥音辨識": {
-        "to": ["janiceli0918@gmail.com"],
+        "to": ["cylee918@as.edu.tw"],
         "cc": ["mntuanmu@gate.sinica.edu.tw", "kunchang.li@gmail.com"],
     },
 }
